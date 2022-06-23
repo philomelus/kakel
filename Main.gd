@@ -17,7 +17,7 @@ func _ready():
 
 
 func _on_New_pressed():
-	get_tree().change_scene("res://NewGame.tscn")
+	var _unused = get_tree().change_scene("res://NewGame.tscn")
 
 
 func _on_Load_pressed():
