@@ -22,25 +22,25 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VerticalBox" type="VBoxContainer" parent="PanelContainer/CenterBox"]
-margin_left = 327.0
-margin_top = 219.0
-margin_right = 682.0
-margin_bottom = 367.0
+margin_left = 438.0
+margin_top = 255.0
+margin_right = 572.0
+margin_bottom = 331.0
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterBox/VerticalBox"]
-margin_right = 355.0
-margin_bottom = 124.0
+margin_right = 134.0
+margin_bottom = 52.0
 columns = 2
 
 [node name="Label" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
 margin_top = 5.0
-margin_right = 88.0
+margin_right = 56.0
 margin_bottom = 19.0
 text = "Columns"
 
 [node name="Columns" type="SpinBox" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 92.0
-margin_right = 166.0
+margin_left = 60.0
+margin_right = 134.0
 margin_bottom = 24.0
 size_flags_horizontal = 0
 min_value = 3.0
@@ -51,14 +51,14 @@ align = 2
 
 [node name="Label2" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
 margin_top = 33.0
-margin_right = 88.0
+margin_right = 56.0
 margin_bottom = 47.0
 text = "Rows"
 
 [node name="Rows" type="SpinBox" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 92.0
+margin_left = 60.0
 margin_top = 28.0
-margin_right = 166.0
+margin_right = 134.0
 margin_bottom = 52.0
 size_flags_horizontal = 0
 min_value = 3.0
@@ -67,56 +67,21 @@ value = 4.0
 rounded = true
 align = 2
 
-[node name="Label3" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_top = 69.0
-margin_right = 88.0
-margin_bottom = 83.0
-text = "Use Numbers"
-
-[node name="UseNumbers" type="CheckButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 92.0
-margin_top = 56.0
-margin_right = 355.0
-margin_bottom = 96.0
-
-[node name="Label4" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_top = 105.0
-margin_right = 88.0
-margin_bottom = 119.0
-text = "Image"
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 92.0
-margin_top = 100.0
-margin_right = 355.0
-margin_bottom = 124.0
-
-[node name="LineEdit" type="LineEdit" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/HBoxContainer"]
-margin_right = 200.0
-margin_bottom = 24.0
-rect_min_size = Vector2( 200, 0 )
-
-[node name="Button" type="Button" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/HBoxContainer"]
-margin_left = 204.0
-margin_right = 263.0
-margin_bottom = 24.0
-text = "Browse"
-
 [node name="CommandsBox" type="HBoxContainer" parent="PanelContainer/CenterBox/VerticalBox"]
-margin_top = 128.0
-margin_right = 355.0
-margin_bottom = 148.0
+margin_top = 56.0
+margin_right = 134.0
+margin_bottom = 76.0
 alignment = 1
 
 [node name="Cancel" type="Button" parent="PanelContainer/CenterBox/VerticalBox/CommandsBox"]
-margin_left = 128.0
-margin_right = 182.0
+margin_left = 17.0
+margin_right = 71.0
 margin_bottom = 20.0
 text = "Cancel"
 
 [node name="Start" type="Button" parent="PanelContainer/CenterBox/VerticalBox/CommandsBox"]
-margin_left = 186.0
-margin_right = 227.0
+margin_left = 75.0
+margin_right = 116.0
 margin_bottom = 20.0
 text = "Start"
 
@@ -129,6 +94,5 @@ mode_overrides_title = false
 mode = 0
 access = 2
 
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/UseNumbers" to="." method="_on_UseNumbers_pressed"]
 [connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Cancel" to="." method="_on_Cancel_pressed"]
 [connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Start" to="." method="_on_Start_pressed"]

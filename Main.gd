@@ -17,7 +17,7 @@ func _ready():
 
 
 func _on_New_pressed():
-	var _unused = get_tree().change_scene("res://NewGame.tscn")
+	new_game()
 
 
 func _on_Load_pressed():
@@ -26,3 +26,13 @@ func _on_Load_pressed():
 
 func _on_Quit_pressed():
 	get_tree().quit()
+
+
+func _unhandled_input(event):
+	if event.is_action_pressed("quit"):
+		get_tree().quit()
+	if event.is_action_pressed("new"):
+		new_game()
+
+func new_game():
+	var _unused =  get_tree().change_scene("res://NewGame.tscn")
