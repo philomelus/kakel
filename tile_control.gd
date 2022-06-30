@@ -1,10 +1,10 @@
 extends Control
 
 # Spacing between edge of canvas and tiles
-const margin = Vector2(10, 10)
+export var margin = Vector2(10, 10)
 
 # Spacing between each tile
-const tile_spacing = Vector2(5, 5)
+export var tile_spacing = Vector2(5, 5)
 
 # Font for drawing numerical id's of tiles
 var tile_font: DynamicFont = load("res://tile_font.tres")
@@ -40,6 +40,11 @@ var move_left_index: int = -1
 var move_right_index: int = -1
 var move_up_index: int = -1
 
+# Number of movements made since initial display
+var moves: int = 0
+
+signal moved(count)
+
 # Index within tiles of the empty tile
 var empty: int
 
@@ -73,8 +78,20 @@ func _draw():
 		index += 1
 
 
+func _on_Control_item_rect_changed():
+	print("_on_Control_item_rect_changed")
+
+
+func _on_Control_minimum_size_changed():
+	print("_on_Control_minimum_size_changed")
+
+
 func _on_Control_resized():
-	_ready()
+	print("_on_Control_resized")
+
+
+func _on_Control_size_flags_changed():
+	print("_on_Control_size_flags_changed")
 
 
 func _ready():
@@ -111,7 +128,6 @@ func _ready():
 			tile = {}
 			tile["dest_rect"] = Rect2(Vector2(margin.x + (col * xext), margin.y + (row * yext)),
 									  Vector2(tile_size.x, tile_size.y))
-			print("tile %d @ %s" % [len(tiles) + 1, tile["dest_rect"]])
 			tile["src_rect"] = Rect2(Vector2(int(col * tile_size.x), int(row * tile_size.y)), tile_size)
 			tiles.append(tile)
 
@@ -283,6 +299,8 @@ func move_down():
 	tiles_order[move_down_index] = empty_id
 	tiles_order[empty] = newEmpty
 	empty = move_down_index
+	moves += 1
+	emit_signal("moved", moves)
 	calc_movables()
 	update()
 	if is_complete():
@@ -294,6 +312,8 @@ func move_left():
 	tiles_order[move_left_index] = empty_id
 	tiles_order[empty] = newEmpty
 	empty = move_left_index
+	moves += 1
+	emit_signal("moved", moves)
 	calc_movables()
 	update()
 	if is_complete():
@@ -305,6 +325,8 @@ func move_right():
 	tiles_order[move_right_index] = empty_id
 	tiles_order[empty] = newEmpty
 	empty = move_right_index
+	moves += 1
+	emit_signal("moved", moves)
 	calc_movables()
 	update()
 	if is_complete():
@@ -316,7 +338,15 @@ func move_up():
 	tiles_order[move_up_index] = empty_id
 	tiles_order[empty] = newEmpty
 	empty = move_up_index
+	moves += 1
+	emit_signal("moved", moves)
 	calc_movables()
 	update()
 	if is_complete():
 		get_tree().change_scene("res://Main.tscn")
+
+
+
+
+
+
