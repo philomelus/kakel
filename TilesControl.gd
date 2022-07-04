@@ -1,5 +1,15 @@
 extends Control
 
+# Precalc these as they are used several times
+var columns: int
+var columns0: int
+var rows: int
+var rows0: int
+
+# Total number of tiles
+var num_tiles: int
+var num_tiles0: int
+
 # Spacing between edge of canvas and tiles
 export var margin = Vector2(10, 10)
 
@@ -10,23 +20,22 @@ export var tile_spacing = Vector2(5, 5)
 var tile_font: DynamicFont = load("res://tile_font.tres")
 
 # Image/Texture for display
-var tile_image: Image
-var tile_texture: ImageTexture
+var tiles_image: Image
+var tiles_texture: ImageTexture
+
+# Total size of tile display image in pixels
+#var tiles_size: Vector2
 
 # Size of each tile in pixels
 var tile_size: Vector2
 
-# Data for each tile.  Each item is a dictionary.
-# Valid indexes of dictionaries:
-# dest_rect = Rect2 of display location
-# src_rect = Rect2 of source image
+# Data for each tile.  Each tile is a two item Rect array
 var tiles: Array
+const IDX_DEST: int = 0
+const IDX_SRC: int = 1
 
-# Actual position of each tile (i.e. index 0 = tile at upper left)
+# Actual positions of each tile (i.e. index 0 = tile at upper left)
 var tiles_order: Array
-
-# Total size of tile image in pixels
-var tiles_size: Vector2
 
 # When true, move_*_index holds index of tile than can move there
 var can_move_down: bool = false
@@ -60,7 +69,7 @@ func _draw():
 	var tile
 	for tile_index in tiles_order:
 		tile = tiles[index]
-		area = tile["dest_rect"]
+		area = tile[IDX_DEST]
 		#if tile_index == empty_id:
 		#	draw_line(area.position, area.end, Color(1,0,0,1))
 		#else:
@@ -73,52 +82,24 @@ func _draw():
 											   area.position.y + ((area.size.y - extent.y) / 2) + extent.y),
 							name, Globals.TilesFontColor)
 			else:
-				draw_texture_rect_region(tile_texture, tiles[index]["dest_rect"],
-										 tiles[tiles_order[index]]["src_rect"])
+				draw_texture_rect_region(tiles_texture, tiles[index][IDX_DEST],
+										 tiles[tiles_order[index]][IDX_SRC])
 		index += 1
 
 
 func _ready():
 	# Precalc these as they are used several times
-	var columns = int(Globals.TilesSize.x)
-	var columns0 = columns - 1
-	var rows = int(Globals.TilesSize.y)
-	var rows0 = rows - 1
-
-	# Determine width and height of tiles from viewport size
-	#var screen = get_viewport_rect()
-	var screen = Rect2(rect_position, rect_size)
-	tile_size = Vector2(int((screen.size.x - (2 * margin.x) - (columns0 * tile_spacing.x)) / columns),
-						int((screen.size.y - (2 * margin.y) - (rows0 * tile_spacing.y)) / rows))
-	tiles_size = Vector2(int(((tile_size.x + margin.x) * columns0) + tile_size.x),
-						 int(((tile_size.y + margin.y) * rows0) + tile_size.y))
-
-	# Total size of each tile with spacing between tiles
-	var xext = tile_size.x + tile_spacing.x
-	var yext = tile_size.y + tile_spacing.y
-
-	# Load and resize image for display
-	tile_image = ResourceLoader.load("res://default_image.png", "Image")
-	# warning-ignore:narrowing_conversion
-	# warning-ignore:narrowing_conversion
-	tile_image.resize(tile_size.x * columns, tile_size.y * rows, Image.INTERPOLATE_LANCZOS)
-	tile_texture = ImageTexture.new()
-	tile_texture.create_from_image(tile_image, 0)
-
-	# Pre-calculate the bounding boxes for each tile for both display and image
-	tiles = []
-	var tile
-	for row in range(rows):
-		for col in range(columns):
-			tile = {}
-			tile["dest_rect"] = Rect2(Vector2(margin.x + (col * xext), margin.y + (row * yext)),
-									  Vector2(tile_size.x, tile_size.y))
-			tile["src_rect"] = Rect2(Vector2(int(col * tile_size.x), int(row * tile_size.y)), tile_size)
-			tiles.append(tile)
+	columns = int(Globals.TilesSize.x)
+	columns0 = columns - 1
+	rows = int(Globals.TilesSize.y)
+	rows0 = rows - 1
 
 	# Total number of tiles
-	var num_tiles = columns * rows
-	var num_tiles0 = num_tiles - 1
+	num_tiles = columns * rows
+	num_tiles0 = num_tiles - 1
+
+	# Calculdate image and tile data
+	recalc_tiles()
 
 	# Initial blank tiles is last tile
 	empty = num_tiles0
@@ -128,7 +109,7 @@ func _ready():
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
 
-	# Determine initial random tile order
+	# Determine tile order
 	tiles_order = []
 	var order
 	for i in range(num_tiles):
@@ -154,85 +135,105 @@ func _ready():
 
 
 func _unhandled_input(event):
+	# Do nothing when paused
 	if get_tree().paused:
 		return
-	if event.is_action_type():
-		if event.is_action_pressed("refresh"):
-			update()
-		if event.is_action_pressed("quit"):
-			var _unused = get_tree().change_scene("res://Main.tscn")
-		if event.is_action_pressed("move_left"):
-			if can_move_left:
-				accept_event()
-				move_left()
-				return
-		if event.is_action_pressed("move_right"):
-			if can_move_right:
-				accept_event()
-				move_right()
-				return
-		if event.is_action_pressed("move_up"):
-			if can_move_up:
-				accept_event()
-				move_up()
-				return
-		if event.is_action_pressed("move_down"):
-			if can_move_down:
-				accept_event()
-				move_down()
-				return
+
+	# If event isn't an action, ignore
+	if not event.is_action_type():
+		return
+
+	# Take appropriate action
+	if event.is_action_pressed("refresh"):
+		accept_event()
+		update()
+		return
+	if event.is_action_pressed("quit"):
+		accept_event()
+		var _unused = get_tree().change_scene("res://Main.tscn")
+		return
+	if event.is_action_pressed("move_left"):
+		if can_move_left:
+			accept_event()
+			move_left()
+			return
+	if event.is_action_pressed("move_right"):
+		if can_move_right:
+			accept_event()
+			move_right()
+			return
+	if event.is_action_pressed("move_up"):
+		if can_move_up:
+			accept_event()
+			move_up()
+			return
+	if event.is_action_pressed("move_down"):
+		if can_move_down:
+			accept_event()
+			move_down()
+			return
 
 
 func _input(event):
+	# Do nothing while paused
 	if get_tree().paused:
 		return
-	if event is InputEventMouseButton:
-		if event.button_index == 1:
-			if not event.doubleclick:
-				if not event.pressed:
-					var p = event.position
-					p -= rect_position
-					if can_move_down:
-						if tiles[move_down_index]["dest_rect"].has_point(p):
-							accept_event()
-							move_down();
-							return
-					if can_move_left:
-						if tiles[move_left_index]["dest_rect"].has_point(p):
-							accept_event()
-							move_left();
-							return
-					if can_move_right:
-						if tiles[move_right_index]["dest_rect"].has_point(p):
-							accept_event()
-							move_right();
-							return
-					if can_move_up:
-						if tiles[move_up_index]["dest_rect"].has_point(p):
-							accept_event()
-							move_up();
-							return
+
+	# Only handle mouse clicks here
+	if not event is InputEventMouseButton:
+		return
+	# warning-ignore:unsafe_cast
+	var ev = event as InputEventMouseButton
+
+	# Only handle left mouse clicks
+	if ev.button_index != 1:
+		return
+
+	# Don't pay attention to double clicks
+	if ev.doubleclick:
+		return
+
+	# Only repond to clicks when released
+	if ev.pressed:
+		return
+
+	# Adjust position of click for our position
+	var p = event.position
+	p -= rect_position
+
+	# If click was valid, take appropriate action
+	if can_move_down:
+		if tiles[move_down_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_down();
+			return
+	if can_move_left:
+		if tiles[move_left_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_left();
+			return
+	if can_move_right:
+		if tiles[move_right_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_right();
+			return
+	if can_move_up:
+		if tiles[move_up_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_up();
+			return
 
 
 func calc_movables():
-	# These calcs are done more than once (_mo = minus one)
-	var cols = int(Globals.TilesSize.x)
-	var cols0: int = cols - 1
-	var rows = int(Globals.TilesSize.y)
-	var rows0: int = rows - 1
-
 	# Row and column of blank tile
 	# warning-ignore:integer_division
-	var row: int = int(empty / cols)
-	var column: int = empty % cols
+	var row: int = int(empty / columns)
+	var column: int = empty % columns
 
 	# Determine tiles that can move horizontally
 	var left_side: bool = (column == 0)
-	var right_side: bool = (column == cols0)
-	var inside_h: bool = (column > 0 and column < cols0)
-	var can_move_left_index = ((row * cols) + column + 1)
-	var can_move_right_index = ((row * cols) + column - 1)
-
+	var right_side: bool = (column == columns0)
+	var inside_h: bool = (column > 0 and column < columns0)
 	if left_side:
 		can_move_left = true
 		can_move_right = false
@@ -243,20 +244,15 @@ func calc_movables():
 		assert(inside_h)
 		can_move_left = true
 		can_move_right = true
-
 	if can_move_left:
-		move_left_index = can_move_left_index
+		move_left_index = ((row * columns) + column + 1)
 	if can_move_right:
-		move_right_index = can_move_right_index
+		move_right_index = ((row * columns) + column - 1)
 
 	# Determine tiles that can move vertically
 	var top_side: bool = (row == 0)
 	var bottom_side: bool = (row == rows0)
 	var inside_v: bool = (row > 0 and row < rows0)
-
-	var can_move_up_index = (((row + 1) * cols) + column)
-	var can_move_down_index = (((row - 1) * cols) + column)
-
 	if top_side:
 		can_move_up = true
 		can_move_down = false
@@ -267,11 +263,10 @@ func calc_movables():
 		assert(inside_v)
 		can_move_up = true
 		can_move_down = true
-
 	if can_move_up:
-		move_up_index = can_move_up_index
+		move_up_index = (((row + 1) * columns) + column)
 	if can_move_down:
-		move_down_index = can_move_down_index
+		move_down_index = (((row - 1) * columns) + column)
 
 
 # Return true if puzzle is in correct sequence
@@ -336,7 +331,38 @@ func move_up():
 		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
+func recalc_tiles():
+	# Determine width and height of tiles from our size
+	tile_size = Vector2(int((rect_size.x - (2 * margin.x) - (columns0 * tile_spacing.x)) / columns),
+						int((rect_size.y - (2 * margin.y) - (rows0 * tile_spacing.y)) / rows))
+#	tiles_size = Vector2(int(((tile_size.x + margin.x) * columns0) + tile_size.x),
+#						 int(((tile_size.y + margin.y) * rows0) + tile_size.y))
 
+	# Size of each tile with spacing on right
+	var xext = tile_size.x + tile_spacing.x
+	var yext = tile_size.y + tile_spacing.y
 
+	# Resize image for display
+	if Globals.TilesImage == null:
+		tiles_image = Globals.TilesDefaultImage.duplicate()
+	else:
+		tiles_image = Globals.TilesImage.duplicate()
+	# warning-ignore:narrowing_conversion
+	# warning-ignore:narrowing_conversion
+	tiles_image.resize(tile_size.x * columns, tile_size.y * rows, Image.INTERPOLATE_LANCZOS)
 
+	# Convert image to texture for display
+	tiles_texture = ImageTexture.new()
+	tiles_texture.create_from_image(tiles_image, 0)
 
+	# Calculate the bounding boxes for each tile for both display and image
+	tiles = []
+	var tile
+	for row in range(rows):
+		for col in range(columns):
+			tile = [null, null]
+			tile[IDX_DEST] = Rect2(Vector2(margin.x + (col * xext), margin.y + (row * yext)),
+								   Vector2(tile_size.x, tile_size.y))
+			tile[IDX_SRC] = Rect2(Vector2(int(col * tile_size.x), int(row * tile_size.y)),
+								  tile_size)
+			tiles.append(tile)

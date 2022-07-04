@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
-[ext_resource path="res://tile_control.gd" type="Script" id=2]
+[ext_resource path="res://TilesControl.gd" type="Script" id=2]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -110,16 +110,10 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
 
-[connection signal="item_rect_changed" from="." to="." method="_on_Control_item_rect_changed"]
-[connection signal="minimum_size_changed" from="." to="." method="_on_Control_minimum_size_changed"]
-[connection signal="resized" from="." to="." method="_on_Control_resized"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Quit" to="." method="_on_Quit_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Hint" to="." method="_on_Hint_pressed"]
 [connection signal="item_rect_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_item_rect_changed"]
-[connection signal="minimum_size_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_minimum_size_changed"]
 [connection signal="moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_moved"]
-[connection signal="resized" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_resized"]
-[connection signal="size_flags_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_size_flags_changed"]
