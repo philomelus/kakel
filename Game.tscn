@@ -1,104 +1,125 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
-[ext_resource path="res://tile_control.tscn" type="PackedScene" id=2]
+[ext_resource path="res://tile_control.gd" type="Script" id=2]
 
-[node name="Node2D" type="Node2D"]
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 240, 240 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource( 1 )
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = 1024.0
-margin_bottom = 600.0
-grow_horizontal = 2
-grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 1017.0
-margin_bottom = 593.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
-margin_right = 1010.0
-margin_bottom = 24.0
+margin_right = 233.0
+margin_bottom = 233.0
 size_flags_horizontal = 3
-size_flags_vertical = 0
-alignment = 1
+size_flags_vertical = 3
 
-[node name="Load" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 318.0
-margin_right = 360.0
+[node name="HFlowContainer" type="HFlowContainer" parent="PanelContainer/VBoxContainer"]
+margin_right = 226.0
+margin_bottom = 72.0
+size_flags_horizontal = 3
+
+[node name="Load" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_right = 42.0
 margin_bottom = 20.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 disabled = true
 text = "Load"
 
-[node name="Save" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 364.0
-margin_right = 405.0
+[node name="Save" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 46.0
+margin_right = 87.0
 margin_bottom = 20.0
 size_flags_vertical = 0
 disabled = true
 text = "Save"
 
-[node name="VSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 409.0
-margin_right = 413.0
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 91.0
+margin_right = 95.0
 margin_bottom = 3.0
 size_flags_vertical = 0
 
-[node name="Abort" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 417.0
-margin_right = 457.0
+[node name="Abort" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 99.0
+margin_right = 139.0
 margin_bottom = 20.0
 size_flags_vertical = 0
 text = "Quit"
 
-[node name="Quit" type="Button" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 461.0
-margin_right = 575.0
-margin_bottom = 20.0
+[node name="Quit" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_top = 24.0
+margin_right = 114.0
+margin_bottom = 44.0
 size_flags_vertical = 0
 text = "Quit to Desktop"
 
-[node name="VSeparator2" type="VSeparator" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 579.0
-margin_right = 583.0
-margin_bottom = 24.0
+[node name="VSeparator2" type="VSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 118.0
+margin_top = 24.0
+margin_right = 122.0
+margin_bottom = 44.0
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 587.0
-margin_top = 5.0
-margin_right = 629.0
-margin_bottom = 19.0
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 126.0
+margin_top = 27.0
+margin_right = 168.0
+margin_bottom = 41.0
 text = "Moves"
 
-[node name="Moves" type="LineEdit" parent="PanelContainer/VBoxContainer/HBoxContainer"]
-margin_left = 633.0
-margin_right = 691.0
-margin_bottom = 24.0
+[node name="Moves" type="LineEdit" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_top = 48.0
+margin_right = 58.0
+margin_bottom = 72.0
 text = "0"
 align = 1
 editable = false
 context_menu_enabled = false
 virtual_keyboard_enabled = false
 
-[node name="Tiles" parent="PanelContainer/VBoxContainer" instance=ExtResource( 2 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
-margin_top = 28.0
-margin_right = 1010.0
-margin_bottom = 586.0
+[node name="VSeparator3" type="VSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 62.0
+margin_top = 48.0
+margin_right = 66.0
+margin_bottom = 72.0
+
+[node name="Hint" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+margin_left = 70.0
+margin_top = 48.0
+margin_right = 109.0
+margin_bottom = 72.0
+text = "Hint"
+
+[node name="Tiles" type="Control" parent="PanelContainer/VBoxContainer"]
+margin_top = 76.0
+margin_right = 226.0
+margin_bottom = 226.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource( 2 )
 
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/Load" to="." method="_on_Load_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/Save" to="." method="_on_Save_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/Abort" to="." method="_on_Abort_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HBoxContainer/Quit" to="." method="_on_Quit_pressed"]
+[connection signal="item_rect_changed" from="." to="." method="_on_Control_item_rect_changed"]
+[connection signal="minimum_size_changed" from="." to="." method="_on_Control_minimum_size_changed"]
+[connection signal="resized" from="." to="." method="_on_Control_resized"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Load" to="." method="_on_Load_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Save" to="." method="_on_Save_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Quit" to="." method="_on_Quit_pressed"]
+[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Hint" to="." method="_on_Hint_pressed"]
+[connection signal="item_rect_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_item_rect_changed"]
+[connection signal="minimum_size_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_minimum_size_changed"]
 [connection signal="moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_moved"]
+[connection signal="resized" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_resized"]
+[connection signal="size_flags_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_size_flags_changed"]

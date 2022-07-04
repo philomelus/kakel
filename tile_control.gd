@@ -20,10 +20,10 @@ var tile_size: Vector2
 # Valid indexes of dictionaries:
 # dest_rect = Rect2 of display location
 # src_rect = Rect2 of source image
-var tiles: Array = []
+var tiles: Array
 
 # Actual position of each tile (i.e. index 0 = tile at upper left)
-var tiles_order: Array = []
+var tiles_order: Array
 
 # Total size of tile image in pixels
 var tiles_size: Vector2
@@ -78,22 +78,6 @@ func _draw():
 		index += 1
 
 
-func _on_Control_item_rect_changed():
-	print("_on_Control_item_rect_changed")
-
-
-func _on_Control_minimum_size_changed():
-	print("_on_Control_minimum_size_changed")
-
-
-func _on_Control_resized():
-	print("_on_Control_resized")
-
-
-func _on_Control_size_flags_changed():
-	print("_on_Control_size_flags_changed")
-
-
 func _ready():
 	# Precalc these as they are used several times
 	var columns = int(Globals.TilesSize.x)
@@ -122,6 +106,7 @@ func _ready():
 	tile_texture.create_from_image(tile_image, 0)
 
 	# Pre-calculate the bounding boxes for each tile for both display and image
+	tiles = []
 	var tile
 	for row in range(rows):
 		for col in range(columns):
@@ -144,6 +129,7 @@ func _ready():
 	rng.randomize()
 
 	# Determine initial random tile order
+	tiles_order = []
 	var order
 	for i in range(num_tiles):
 		if i == empty:
@@ -168,6 +154,8 @@ func _ready():
 
 
 func _unhandled_input(event):
+	if get_tree().paused:
+		return
 	if event.is_action_type():
 		if event.is_action_pressed("refresh"):
 			update()
@@ -196,6 +184,8 @@ func _unhandled_input(event):
 
 
 func _input(event):
+	if get_tree().paused:
+		return
 	if event is InputEventMouseButton:
 		if event.button_index == 1:
 			if not event.doubleclick:
@@ -304,7 +294,7 @@ func move_down():
 	calc_movables()
 	update()
 	if is_complete():
-		get_tree().change_scene("res://Main.tscn")
+		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func move_left():
@@ -317,7 +307,7 @@ func move_left():
 	calc_movables()
 	update()
 	if is_complete():
-		get_tree().change_scene("res://Main.tscn")
+		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func move_right():
@@ -330,7 +320,7 @@ func move_right():
 	calc_movables()
 	update()
 	if is_complete():
-		get_tree().change_scene("res://Main.tscn")
+		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func move_up():
@@ -343,7 +333,7 @@ func move_up():
 	calc_movables()
 	update()
 	if is_complete():
-		get_tree().change_scene("res://Main.tscn")
+		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 
