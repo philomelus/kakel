@@ -1,5 +1,8 @@
 extends Control
 
+# When false, no movement is allowed
+var moves_enabled = true
+
 # Precalc these as they are used several times
 var columns: int
 var columns0: int
@@ -22,9 +25,6 @@ var tile_font: DynamicFont = load("res://tile_font.tres")
 # Image/Texture for display
 var tiles_image: Image
 var tiles_texture: ImageTexture
-
-# Total size of tile display image in pixels
-#var tiles_size: Vector2
 
 # Size of each tile in pixels
 var tile_size: Vector2
@@ -52,7 +52,12 @@ var move_up_index: int = -1
 # Number of movements made since initial display
 var moves: int = 0
 
-signal moved(count)
+# This is signalled every time a tile is moved
+enum DIRECTION { NORTH, EAST, SOUTH, WEST}
+signal moved(direction, count)
+
+# This is signalled when the tiles are all in correct order
+signal won()
 
 # Index within tiles of the empty tile
 var empty: int
@@ -86,6 +91,9 @@ func _draw():
 										 tiles[tiles_order[index]][IDX_SRC])
 		index += 1
 
+
+func _physics_process(_delta):
+	check_complete()
 
 func _ready():
 	# Precalc these as they are used several times
@@ -136,7 +144,7 @@ func _ready():
 
 func _unhandled_input(event):
 	# Do nothing when paused
-	if get_tree().paused:
+	if get_tree().paused or not moves_enabled:
 		return
 
 	# If event isn't an action, ignore
@@ -176,7 +184,7 @@ func _unhandled_input(event):
 
 func _input(event):
 	# Do nothing while paused
-	if get_tree().paused:
+	if get_tree().paused or not moves_enabled:
 		return
 
 	# Only handle mouse clicks here
@@ -269,13 +277,14 @@ func calc_movables():
 		move_down_index = (((row - 1) * columns) + column)
 
 
-# Return true if puzzle is in correct sequence
-func is_complete():
+func check_complete():
 	var index = 0
 	for tile in tiles:
 		if tiles_order[index] != index:
 			return false
 		index += 1
+	moves_enabled = false
+	emit_signal("won")
 	return true
 
 
@@ -285,11 +294,9 @@ func move_down():
 	tiles_order[empty] = newEmpty
 	empty = move_down_index
 	moves += 1
-	emit_signal("moved", moves)
+	emit_signal("moved", DIRECTION.SOUTH, moves)
 	calc_movables()
 	update()
-	if is_complete():
-		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func move_left():
@@ -298,11 +305,9 @@ func move_left():
 	tiles_order[empty] = newEmpty
 	empty = move_left_index
 	moves += 1
-	emit_signal("moved", moves)
+	emit_signal("moved", DIRECTION.WEST, moves)
 	calc_movables()
 	update()
-	if is_complete():
-		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func move_right():
@@ -311,11 +316,9 @@ func move_right():
 	tiles_order[empty] = newEmpty
 	empty = move_right_index
 	moves += 1
-	emit_signal("moved", moves)
+	emit_signal("moved", DIRECTION.EAST, moves)
 	calc_movables()
 	update()
-	if is_complete():
-		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func move_up():
@@ -324,19 +327,15 @@ func move_up():
 	tiles_order[empty] = newEmpty
 	empty = move_up_index
 	moves += 1
-	emit_signal("moved", moves)
+	emit_signal("moved", DIRECTION.NORTH, moves)
 	calc_movables()
 	update()
-	if is_complete():
-		var _unused = get_tree().change_scene("res://Main.tscn")
 
 
 func recalc_tiles():
 	# Determine width and height of tiles from our size
 	tile_size = Vector2(int((rect_size.x - (2 * margin.x) - (columns0 * tile_spacing.x)) / columns),
 						int((rect_size.y - (2 * margin.y) - (rows0 * tile_spacing.y)) / rows))
-#	tiles_size = Vector2(int(((tile_size.x + margin.x) * columns0) + tile_size.x),
-#						 int(((tile_size.y + margin.y) * rows0) + tile_size.y))
 
 	# Size of each tile with spacing on right
 	var xext = tile_size.x + tile_spacing.x

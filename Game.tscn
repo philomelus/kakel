@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
 [ext_resource path="res://TilesControl.gd" type="Script" id=2]
+[ext_resource path="res://win_font.tres" type="DynamicFont" id=3]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -110,6 +111,37 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
 
+[node name="WindowDialog" type="WindowDialog" parent="."]
+margin_right = 48.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 240, 240 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="WindowDialog"]
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_right = 120.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="WindowDialog/CenterContainer"]
+margin_left = 8.0
+margin_top = 30.0
+margin_right = 232.0
+margin_bottom = 89.0
+custom_fonts/font = ExtResource( 3 )
+text = "Congratulations!
+You won!"
+align = 1
+
+[node name="Close" type="Button" parent="WindowDialog"]
+margin_left = 98.0
+margin_top = 207.0
+margin_right = 145.0
+margin_bottom = 227.0
+text = "Close"
+
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
@@ -117,3 +149,5 @@ script = ExtResource( 2 )
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Hint" to="." method="_on_Hint_pressed"]
 [connection signal="item_rect_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_item_rect_changed"]
 [connection signal="moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_moved"]
+[connection signal="won" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_won"]
+[connection signal="pressed" from="WindowDialog/Close" to="." method="_on_Close_pressed"]
