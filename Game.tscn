@@ -47,15 +47,14 @@ size_flags_vertical = 0
 disabled = true
 text = "Save"
 
-[node name="VSeparator" type="VSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
 margin_left = 91.0
-margin_right = 95.0
-margin_bottom = 3.0
-size_flags_vertical = 0
+margin_right = 94.0
+margin_bottom = 20.0
 
 [node name="Abort" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 99.0
-margin_right = 139.0
+margin_left = 98.0
+margin_right = 138.0
 margin_bottom = 20.0
 size_flags_vertical = 0
 text = "Quit"
@@ -67,16 +66,16 @@ margin_bottom = 44.0
 size_flags_vertical = 0
 text = "Quit to Desktop"
 
-[node name="VSeparator2" type="VSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
 margin_left = 118.0
 margin_top = 24.0
-margin_right = 122.0
+margin_right = 121.0
 margin_bottom = 44.0
 
 [node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 126.0
+margin_left = 125.0
 margin_top = 27.0
-margin_right = 168.0
+margin_right = 167.0
 margin_bottom = 41.0
 text = "Moves"
 
@@ -90,16 +89,16 @@ editable = false
 context_menu_enabled = false
 virtual_keyboard_enabled = false
 
-[node name="VSeparator3" type="VSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+[node name="HSeparator3" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
 margin_left = 62.0
 margin_top = 48.0
-margin_right = 66.0
+margin_right = 65.0
 margin_bottom = 72.0
 
 [node name="Hint" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 70.0
+margin_left = 69.0
 margin_top = 48.0
-margin_right = 109.0
+margin_right = 108.0
 margin_bottom = 72.0
 text = "Hint"
 
@@ -111,21 +110,24 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
 
-[node name="WindowDialog" type="WindowDialog" parent="."]
-margin_right = 48.0
-margin_bottom = 40.0
+[node name="WinnerDialog" type="WindowDialog" parent="."]
+pause_mode = 2
+margin_right = 240.0
+margin_bottom = 240.0
 rect_min_size = Vector2( 240, 240 )
+input_pass_on_modal_close_click = false
 size_flags_horizontal = 3
 size_flags_vertical = 3
+popup_exclusive = true
 
-[node name="CenterContainer" type="CenterContainer" parent="WindowDialog"]
+[node name="CenterContainer" type="CenterContainer" parent="WinnerDialog"]
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_right = 120.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="WindowDialog/CenterContainer"]
+[node name="Label" type="Label" parent="WinnerDialog/CenterContainer"]
 margin_left = 8.0
 margin_top = 30.0
 margin_right = 232.0
@@ -135,11 +137,36 @@ text = "Congratulations!
 You won!"
 align = 1
 
-[node name="Close" type="Button" parent="WindowDialog"]
+[node name="Close" type="Button" parent="WinnerDialog"]
 margin_left = 98.0
 margin_top = 207.0
 margin_right = 145.0
 margin_bottom = 227.0
+text = "Close"
+
+[node name="HintDialog" type="WindowDialog" parent="."]
+pause_mode = 2
+margin_right = 240.0
+margin_bottom = 240.0
+rect_min_size = Vector2( 240, 240 )
+popup_exclusive = true
+resizable = true
+
+[node name="TextureRect" type="TextureRect" parent="HintDialog"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 230.0
+margin_bottom = 200.0
+expand = true
+stretch_mode = 6
+
+[node name="CloseHint" type="Button" parent="HintDialog"]
+margin_left = 96.0
+margin_top = 210.0
+margin_right = 143.0
+margin_bottom = -10.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
 text = "Close"
 
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Load" to="." method="_on_Load_pressed"]
@@ -150,4 +177,8 @@ text = "Close"
 [connection signal="item_rect_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_item_rect_changed"]
 [connection signal="moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_moved"]
 [connection signal="won" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_won"]
-[connection signal="pressed" from="WindowDialog/Close" to="." method="_on_Close_pressed"]
+[connection signal="pressed" from="WinnerDialog/Close" to="." method="_on_Close_pressed"]
+[connection signal="item_rect_changed" from="HintDialog" to="." method="_on_HintDialog_item_rect_changed"]
+[connection signal="modal_closed" from="HintDialog" to="." method="_on_HintDialog_modal_closed"]
+[connection signal="popup_hide" from="HintDialog" to="." method="_on_HintDialog_popup_hide"]
+[connection signal="pressed" from="HintDialog/CloseHint" to="." method="_on_CloseHint_pressed"]

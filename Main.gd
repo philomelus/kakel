@@ -1,5 +1,7 @@
 extends Control
 
+onready var _control = get_node(".")
+
 
 func _on_Load_pressed():
 	pass
@@ -11,6 +13,16 @@ func _on_New_pressed():
 
 func _on_Quit_pressed():
 	get_tree().quit()
+
+
+func _ready():
+	# Start with appropriate screen size for detected OS
+	get_tree().paused = false
+	match OS.get_name():
+		"Windows":
+			OS.min_window_size = Vector2(640, 480)
+		_:
+			OS.min_window_size = Vector2(240, 240)
 
 
 func _unhandled_input(event):

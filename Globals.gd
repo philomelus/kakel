@@ -1,11 +1,5 @@
 extends Node
 
-# Size of the tile board
-var TilesSize: Vector2 = Vector2(4, 4)
-
-# Path of default image
-var TilesImageDefault: String = "res://default_image.png"
-
 # Color for tile edges
 var TilesColor: Color = Color(0, 0, 1, 1)
 
@@ -14,6 +8,13 @@ var TilesFontColor: Color = Color(0, 1, 0, 1)
 
 # Image used on tiles
 var TilesImage: Image = null
+var TilesImagePath: String = ""
 
 # Default image for tiles (used as TilesImage when not overridden)
-var TilesDefaultImage: Image = ResourceLoader.load("res://default_image.png", "Image", false)
+var TilesImageDefault: Image = ResourceLoader.load("res://default_image.png", "Image", false)
+
+# Size of the tile board
+var TilesSize: Vector2 = Vector2(4, 4)
+
+# When false, draw rect for tiles instead of image
+var TilesUseImage: bool = true

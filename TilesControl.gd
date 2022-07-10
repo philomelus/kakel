@@ -14,13 +14,16 @@ var num_tiles: int
 var num_tiles0: int
 
 # Spacing between edge of canvas and tiles
-export var margin = Vector2(10, 10)
+export(Vector2) var margin = Vector2(10, 10)
 
 # Spacing between each tile
-export var tile_spacing = Vector2(5, 5)
+export(Vector2) var tile_spacing = Vector2(5, 5)
 
 # Font for drawing numerical id's of tiles
 var tile_font: DynamicFont = load("res://tile_font.tres")
+
+# If true, default image was used
+var tiles_image_default = true
 
 # Image/Texture for display
 var tiles_image: Image
@@ -65,6 +68,8 @@ var empty: int
 # Index value of the empty tile (always the last global tile index)
 var empty_id: int
 
+#var _log: File = null
+
 
 func _draw():
 	var index = 0
@@ -75,20 +80,17 @@ func _draw():
 	for tile_index in tiles_order:
 		tile = tiles[index]
 		area = tile[IDX_DEST]
-		#if tile_index == empty_id:
-		#	draw_line(area.position, area.end, Color(1,0,0,1))
-		#else:
 		if tile_index != empty_id:
-			if false:
+			if Globals.TilesUseImage:
+				draw_texture_rect_region(tiles_texture, tiles[index][IDX_DEST],
+										 tiles[tiles_order[index]][IDX_SRC])
+			else:
 				name = "%d" % (tile_index + 1)
 				extent = tile_font.get_string_size(name)
 				draw_rect(area, Globals.TilesColor, false)
 				draw_string(tile_font, Vector2(area.position.x + ((area.size.x - extent.x) / 2),
 											   area.position.y + ((area.size.y - extent.y) / 2) + extent.y),
 							name, Globals.TilesFontColor)
-			else:
-				draw_texture_rect_region(tiles_texture, tiles[index][IDX_DEST],
-										 tiles[tiles_order[index]][IDX_SRC])
 		index += 1
 
 
@@ -96,6 +98,9 @@ func _physics_process(_delta):
 	check_complete()
 
 func _ready():
+#	_log = File.new()
+#	var _unused = _log.open("user://TileControl.log", File.WRITE_READ)
+
 	# Precalc these as they are used several times
 	columns = int(Globals.TilesSize.x)
 	columns0 = columns - 1
@@ -107,7 +112,7 @@ func _ready():
 	num_tiles0 = num_tiles - 1
 
 	# Calculdate image and tile data
-	recalc_tiles()
+	#recalc_tiles()
 
 	# Initial blank tiles is last tile
 	empty = num_tiles0
@@ -206,8 +211,9 @@ func _input(event):
 		return
 
 	# Adjust position of click for our position
-	var p = event.position
-	p -= rect_position
+	var p = event.position - rect_position
+
+#	_log.store_string("click: %s --> %s\n" % [event.position, p])
 
 	# If click was valid, take appropriate action
 	if can_move_down:
@@ -278,11 +284,12 @@ func calc_movables():
 
 
 func check_complete():
-	var index = 0
-	for tile in tiles:
-		if tiles_order[index] != index:
-			return false
-		index += 1
+	if moves < 5:
+		var index = 0
+		for tile in tiles:
+			if tiles_order[index] != index:
+				return false
+			index += 1
 	moves_enabled = false
 	emit_signal("won")
 	return true
@@ -334,34 +341,47 @@ func move_up():
 
 func recalc_tiles():
 	# Determine width and height of tiles from our size
-	tile_size = Vector2(int((rect_size.x - (2 * margin.x) - (columns0 * tile_spacing.x)) / columns),
-						int((rect_size.y - (2 * margin.y) - (rows0 * tile_spacing.y)) / rows))
+	tile_size = Vector2((rect_size.x - (columns0 * tile_spacing.x)) / columns,
+						(rect_size.y - (rows0 * tile_spacing.y)) / rows)
+	assert(tile_size.x > 0 and tile_size.y > 0)
 
-	# Size of each tile with spacing on right
-	var xext = tile_size.x + tile_spacing.x
-	var yext = tile_size.y + tile_spacing.y
+	# Resize image for display if needed
+	if Globals.TilesUseImage:
+		if Globals.TilesImagePath == "":
+			tiles_image = Globals.TilesImageDefault.duplicate()
+		else:
+			tiles_image = Globals.TilesImage.duplicate()
+		# warning-ignore:narrowing_conversion
+		# warning-ignore:narrowing_conversion
+		tiles_image.resize(tile_size.x * columns, tile_size.y * rows, Image.INTERPOLATE_LANCZOS)
 
-	# Resize image for display
-	if Globals.TilesImage == null:
-		tiles_image = Globals.TilesDefaultImage.duplicate()
+		# Convert image to texture for display
+		tiles_texture = ImageTexture.new()
+		tiles_texture.create_from_image(tiles_image, 0)
 	else:
-		tiles_image = Globals.TilesImage.duplicate()
-	# warning-ignore:narrowing_conversion
-	# warning-ignore:narrowing_conversion
-	tiles_image.resize(tile_size.x * columns, tile_size.y * rows, Image.INTERPOLATE_LANCZOS)
-
-	# Convert image to texture for display
-	tiles_texture = ImageTexture.new()
-	tiles_texture.create_from_image(tiles_image, 0)
+		tiles_image = null
 
 	# Calculate the bounding boxes for each tile for both display and image
+	var tile_size_int = Vector2(int(tile_size.x), int(tile_size.y))
 	tiles = []
 	var tile
+	var left
+	var top
+#	_log.store_string("tile_size: %s\n" % tile_size)
+#	_log.store_string("tile_spacing: %s\n" % tile_spacing)
 	for row in range(rows):
 		for col in range(columns):
 			tile = [null, null]
-			tile[IDX_DEST] = Rect2(Vector2(margin.x + (col * xext), margin.y + (row * yext)),
-								   Vector2(tile_size.x, tile_size.y))
-			tile[IDX_SRC] = Rect2(Vector2(int(col * tile_size.x), int(row * tile_size.y)),
-								  tile_size)
+			left = (col * tile_size.x) + (col * tile_spacing.x)
+			top = (row * tile_size.y) + (row * tile_spacing.y)
+			tile[IDX_DEST] = Rect2(Vector2(int(left), int(top)), tile_size_int)
+			left = col * tile_size.x
+			top = row * tile_size.y
+			tile[IDX_SRC] = Rect2(Vector2(int(left), int(top)), tile_size_int)
 			tiles.append(tile)
+
+#			_log.store_string("tile %2d: D=[(%3d, %3d), (%3d, %3d)]\n" % [len(tiles),
+#																			tile[IDX_DEST].position.x,
+#																			tile[IDX_DEST].position.y,
+#																			tile[IDX_DEST].end.x,
+#																			tile[IDX_DEST].end.y])
