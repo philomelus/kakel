@@ -284,12 +284,11 @@ func calc_movables():
 
 
 func check_complete():
-	if moves < 5:
-		var index = 0
-		for tile in tiles:
-			if tiles_order[index] != index:
-				return false
-			index += 1
+ 	var index = 0
+	for tile in tiles:
+		if tiles_order[index] != index:
+			return false
+		index += 1
 	moves_enabled = false
 	emit_signal("won")
 	return true
