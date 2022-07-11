@@ -1,29 +1,26 @@
 extends Control
 
+# For save files, version of file format
+const FILE_VERSION = 1
+
 # When false, no movement is allowed
 var moves_enabled = true
 
 # Precalc these as they are used several times
-var columns: int
-var columns0: int
-var rows: int
-var rows0: int
+var columns: int	# columns in tiles
+var columns0: int	# columns in tile minus 1
+var rows: int		# rows in tiles
+var rows0: int		# rows in tiles minus 1
 
 # Total number of tiles
 var num_tiles: int
 var num_tiles0: int
-
-# Spacing between edge of canvas and tiles
-export(Vector2) var margin = Vector2(10, 10)
 
 # Spacing between each tile
 export(Vector2) var tile_spacing = Vector2(5, 5)
 
 # Font for drawing numerical id's of tiles
 var tile_font: DynamicFont = load("res://tile_font.tres")
-
-# If true, default image was used
-var tiles_image_default = true
 
 # Image/Texture for display
 var tiles_image: Image
@@ -59,6 +56,10 @@ var moves: int = 0
 enum DIRECTION { NORTH, EAST, SOUTH, WEST}
 signal moved(direction, count)
 
+# Generated when Load is called, and it fails
+enum WHY { UNKNOWN, BAD_VERSION }
+signal load_failed(path, why)
+
 # This is signalled when the tiles are all in correct order
 signal won()
 
@@ -68,12 +69,18 @@ var empty: int
 # Index value of the empty tile (always the last global tile index)
 var empty_id: int
 
-#var _log: File = null
-
+onready var _tree: SceneTree = get_tree()
 
 func _draw():
-	var index = 0
 	var extent
+	if Globals.TilesLoading:
+		var message = "Loading ... one moment please"
+		extent = tile_font.get_string_size(message)
+		draw_string(tile_font, Vector2(rect_position.x + ((rect_size.x - extent.x) / 2),
+									   rect_position.y + ((rect_size.y - extent.y) / 2) + extent.y),
+					message, Globals.TilesFontColor)
+		return
+	var index = 0
 	var area
 	var name
 	var tile
@@ -98,8 +105,10 @@ func _physics_process(_delta):
 	check_complete()
 
 func _ready():
-#	_log = File.new()
-#	var _unused = _log.open("user://TileControl.log", File.WRITE_READ)
+	if Globals.TilesLoading:
+		Load(Globals.TilesLoadPath)
+		Globals.TilesLoading = false
+		return
 
 	# Precalc these as they are used several times
 	columns = int(Globals.TilesSize.x)
@@ -110,9 +119,6 @@ func _ready():
 	# Total number of tiles
 	num_tiles = columns * rows
 	num_tiles0 = num_tiles - 1
-
-	# Calculdate image and tile data
-	#recalc_tiles()
 
 	# Initial blank tiles is last tile
 	empty = num_tiles0
@@ -149,7 +155,7 @@ func _ready():
 
 func _unhandled_input(event):
 	# Do nothing when paused
-	if get_tree().paused or not moves_enabled:
+	if _tree.paused or not moves_enabled:
 		return
 
 	# If event isn't an action, ignore
@@ -163,7 +169,7 @@ func _unhandled_input(event):
 		return
 	if event.is_action_pressed("quit"):
 		accept_event()
-		var _unused = get_tree().change_scene("res://Main.tscn")
+		var _unused = _tree.change_scene("res://Main.tscn")
 		return
 	if event.is_action_pressed("move_left"):
 		if can_move_left:
@@ -189,7 +195,7 @@ func _unhandled_input(event):
 
 func _input(event):
 	# Do nothing while paused
-	if get_tree().paused or not moves_enabled:
+	if _tree.paused or not moves_enabled:
 		return
 
 	# Only handle mouse clicks here
@@ -212,8 +218,6 @@ func _input(event):
 
 	# Adjust position of click for our position
 	var p = event.position - rect_position
-
-#	_log.store_string("click: %s --> %s\n" % [event.position, p])
 
 	# If click was valid, take appropriate action
 	if can_move_down:
@@ -284,7 +288,7 @@ func calc_movables():
 
 
 func check_complete():
- 	var index = 0
+	var index = 0
 	for tile in tiles:
 		if tiles_order[index] != index:
 			return false
@@ -339,10 +343,15 @@ func move_up():
 
 
 func recalc_tiles():
+	# This can be called before everything is ready
+	if columns == 0 or rows == 0:
+		return
+
 	# Determine width and height of tiles from our size
 	tile_size = Vector2((rect_size.x - (columns0 * tile_spacing.x)) / columns,
 						(rect_size.y - (rows0 * tile_spacing.y)) / rows)
-	assert(tile_size.x > 0 and tile_size.y > 0)
+	if tile_size.x <= 0 or tile_size.y <= 0:
+		return
 
 	# Resize image for display if needed
 	if Globals.TilesUseImage:
@@ -366,8 +375,6 @@ func recalc_tiles():
 	var tile
 	var left
 	var top
-#	_log.store_string("tile_size: %s\n" % tile_size)
-#	_log.store_string("tile_spacing: %s\n" % tile_spacing)
 	for row in range(rows):
 		for col in range(columns):
 			tile = [null, null]
@@ -379,8 +386,110 @@ func recalc_tiles():
 			tile[IDX_SRC] = Rect2(Vector2(int(left), int(top)), tile_size_int)
 			tiles.append(tile)
 
-#			_log.store_string("tile %2d: D=[(%3d, %3d), (%3d, %3d)]\n" % [len(tiles),
-#																			tile[IDX_DEST].position.x,
-#																			tile[IDX_DEST].position.y,
-#																			tile[IDX_DEST].end.x,
-#																			tile[IDX_DEST].end.y])
+
+func Load(path):
+	# Ignore input until load is complete
+	moves_enabled = false
+
+	var inp = File.new()
+	inp.open(path, File.READ)
+
+	# Read file format version
+	var v = inp.get_16()
+	if v != FILE_VERSION:
+		emit_signal("load_failed", path, WHY.BAD_VERSION)
+		inp.close()
+		return
+
+	# Load TilesSize
+	var x = inp.get_float()
+	var y = inp.get_float()
+
+	# Load UseImage
+	var useImage = inp.get_8()
+
+	# Load image path
+	var imagePath = inp.get_pascal_string()
+
+	# Load tiles order
+	var numTiles = inp.get_32()
+	var order = []
+	for _i in range(numTiles):
+		order.append(inp.get_32())
+
+	# Read blank tiles index
+	var e = inp.get_32()
+	var eid = inp.get_32()
+
+	# Read moves so far
+	var m = inp.get_64()
+
+	# Done loading data
+	inp.close()
+
+	# Set globals
+	Globals.TilesSize = Vector2(x, y)
+	Globals.TilesImagePath = imagePath
+	Globals.TilesUseImage = (useImage != 0)
+	if Globals.TilesUseImage and Globals.TilesImagePath != "":
+		Globals.TilesImage = Image.new()
+		var _unused = Globals.TilesImage.load(Globals.TilesImagePath)
+
+	# Set local parameters
+	columns = int(Globals.TilesSize.x)
+	columns0 = columns - 1
+	rows = int(Globals.TilesSize.y)
+	rows0 = rows - 1
+	num_tiles = columns * rows
+	num_tiles0 = num_tiles - 1
+	tiles_order = order
+	moves = m
+	empty = e
+	empty_id = eid
+
+	# Reset tiles
+	call_deferred("recalc_tiles")
+	call_deferred("calc_movables")
+	#recalc_tiles()
+
+	# All ready
+	moves_enabled = true
+	call_deferred("update")
+	#update()
+
+
+func Save(path):
+	var out = File.new()
+	out.open(path, File.WRITE)
+
+	# Save file version
+	out.store_16(FILE_VERSION)
+
+	# Save TilesSize
+	out.store_float(Globals.TilesSize.x)
+	out.store_float(Globals.TilesSize.y)
+
+	# Save UseImage state
+	if Globals.TilesUseImage:
+		out.store_8(1)
+	else:
+		out.store_8(0)
+
+	# Save image path
+	out.store_pascal_string(Globals.TilesImagePath)
+
+	# Save tiles order
+	assert(len(tiles_order) == len(tiles))
+	out.store_32(len(tiles_order))
+	for index in tiles_order:
+		out.store_32(index)
+
+	# Save index of empty
+	out.store_32(empty)
+	out.store_32(empty_id)
+
+	# Save number of moves so far
+	out.store_64(moves)
+
+	# All done
+	out.close()

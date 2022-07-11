@@ -48,7 +48,6 @@ margin_top = 83.0
 margin_right = 145.0
 margin_bottom = 103.0
 hint_tooltip = "Load a previously interrupted game"
-disabled = true
 text = "Load"
 
 [node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
@@ -58,6 +57,28 @@ margin_bottom = 127.0
 hint_tooltip = "Exit the game"
 text = "Quit"
 
+[node name="FileDialog" type="FileDialog" parent="."]
+pause_mode = 2
+margin_right = 316.0
+margin_bottom = 169.0
+rect_min_size = Vector2( 316, 169 )
+popup_exclusive = true
+window_title = "Open a File"
+resizable = true
+mode = 0
+access = 2
+filters = PoolStringArray( "*.kakel;Kakel Games" )
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+pause_mode = 2
+margin_right = 83.0
+margin_bottom = 58.0
+popup_exclusive = true
+
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="_on_New_pressed"]
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="_on_Quit_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
+[connection signal="modal_closed" from="FileDialog" to="." method="_on_FileDialog_modal_closed"]
+[connection signal="popup_hide" from="FileDialog" to="." method="_on_FileDialog_popup_hide"]
+[connection signal="confirmed" from="AcceptDialog" to="." method="_on_AcceptDialog_confirmed"]

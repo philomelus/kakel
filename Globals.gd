@@ -18,3 +18,9 @@ var TilesSize: Vector2 = Vector2(4, 4)
 
 # When false, draw rect for tiles instead of image
 var TilesUseImage: bool = true
+
+# When true, game is loading rather than starting new so
+# TileControl should skip initialization as load will do
+# it after construction.
+var TilesLoading: bool = false
+var TilesLoadPath: String = ""

@@ -36,7 +36,6 @@ margin_right = 42.0
 margin_bottom = 20.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-disabled = true
 text = "Load"
 
 [node name="Save" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
@@ -44,7 +43,6 @@ margin_left = 46.0
 margin_right = 87.0
 margin_bottom = 20.0
 size_flags_vertical = 0
-disabled = true
 text = "Save"
 
 [node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
@@ -169,6 +167,33 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "Close"
 
+[node name="LoadDialog" type="FileDialog" parent="."]
+pause_mode = 2
+margin_right = 316.0
+margin_bottom = 149.0
+rect_min_size = Vector2( 316, 169 )
+popup_exclusive = true
+window_title = "Load Game"
+resizable = true
+mode_overrides_title = false
+mode = 0
+filters = PoolStringArray( "*.kakel;Kakel Game" )
+
+[node name="SaveDialog" type="FileDialog" parent="."]
+pause_mode = 2
+margin_right = 316.0
+margin_bottom = 149.0
+rect_min_size = Vector2( 316, 169 )
+popup_exclusive = true
+window_title = "Save Game"
+resizable = true
+mode_overrides_title = false
+filters = PoolStringArray( "*.kakel;Kakel Game" )
+
+[node name="AlertDialog" type="AcceptDialog" parent="."]
+margin_right = 83.0
+margin_bottom = 58.0
+
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Save" to="." method="_on_Save_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
@@ -182,3 +207,9 @@ text = "Close"
 [connection signal="modal_closed" from="HintDialog" to="." method="_on_HintDialog_modal_closed"]
 [connection signal="popup_hide" from="HintDialog" to="." method="_on_HintDialog_popup_hide"]
 [connection signal="pressed" from="HintDialog/CloseHint" to="." method="_on_CloseHint_pressed"]
+[connection signal="file_selected" from="LoadDialog" to="." method="_on_LoadDialog_file_selected"]
+[connection signal="modal_closed" from="LoadDialog" to="." method="_on_LoadDialog_modal_closed"]
+[connection signal="popup_hide" from="LoadDialog" to="." method="_on_LoadDialog_popup_hide"]
+[connection signal="file_selected" from="SaveDialog" to="." method="_on_SaveDialog_file_selected"]
+[connection signal="modal_closed" from="SaveDialog" to="." method="_on_SaveDialog_modal_closed"]
+[connection signal="popup_hide" from="SaveDialog" to="." method="_on_SaveDialog_popup_hide"]
