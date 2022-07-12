@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://NewGame.gd" type="Script" id=1]
+[ext_resource path="res://NewGame.cs" type="Script" id=1]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -136,7 +136,7 @@ text = "Start"
 margin_right = 316.0
 margin_bottom = 149.0
 rect_min_size = Vector2( 300, 200 )
-window_title = "Open Image"
+window_title = "Open a File"
 resizable = true
 mode = 0
 access = 2
