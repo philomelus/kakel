@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Game.gd" type="Script" id=1]
-[ext_resource path="res://TilesControl.gd" type="Script" id=2]
+[ext_resource path="res://Game.cs" type="Script" id=1]
+[ext_resource path="res://TilesControl.cs" type="Script" id=2]
 [ext_resource path="res://win_font.tres" type="DynamicFont" id=3]
 
 [node name="Control" type="Control"]
@@ -199,8 +199,8 @@ margin_bottom = 58.0
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Quit" to="." method="_on_Quit_pressed"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Hint" to="." method="_on_Hint_pressed"]
+[connection signal="Moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_Moved"]
 [connection signal="item_rect_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_item_rect_changed"]
-[connection signal="moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_moved"]
 [connection signal="won" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_won"]
 [connection signal="pressed" from="WinnerDialog/Close" to="." method="_on_Close_pressed"]
 [connection signal="item_rect_changed" from="HintDialog" to="." method="_on_HintDialog_item_rect_changed"]

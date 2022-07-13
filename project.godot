@@ -24,6 +24,7 @@ config/name="Kakel"
 run/main_scene="res://Main.tscn"
 run/flush_stdout_on_print=true
 boot_splash/show_image=false
+boot_splash/fullsize=false
 config/icon="res://icon.png"
 
 [autoload]
@@ -48,6 +49,10 @@ version_control_autoload_on_startup=true
 version_control_plugin_name="GitAPI"
 version_control/autoload_on_startup=true
 version_control/plugin_name="GitAPI"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/MonoDebuggerQM/plugin.cfg" )
 
 [gui]
 
@@ -102,6 +107,10 @@ new={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":78,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
+
+[logging]
+
+file_logging/enable_file_logging=true
 
 [physics]
 
