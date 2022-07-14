@@ -17,3 +17,4 @@ data_*/
 .dir-locals.el
 
 .vscode/*
+*.kakel
