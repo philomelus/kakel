@@ -1,151 +1,157 @@
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146
+
 using Godot;
 using System;
 
 public class Game : Control
 {
-	Button _closeHint;
-	WindowDialog _hintDialog;
-	FileDialog _loadDialog;
-	LineEdit _moves;
-	FileDialog _saveDialog;
-	TextureRect _textureRect;
-	TilesControl _tiles;
-	SceneTree _tree;
-	VBoxContainer _vboxContainer;
-	WindowDialog _win;
+    Button _closeHint;
+    Globals _globals;
+    WindowDialog _hintDialog;
+    FileDialog _loadDialog;
+    LineEdit _moves;
+    FileDialog _saveDialog;
+    TextureRect _textureRect;
+    TilesControl _tiles;
+    SceneTree _tree;
+    VBoxContainer _vboxContainer;
+    WindowDialog _win;
 
-	private void _on_Abort_pressed()
-	{
-		_tree.ChangeScene("res://Main.tscn");
-	}
+    public override void _Ready()
+    {
+        _closeHint = GetNode<Button>("HintDialog/CloseHint");
+        _hintDialog = GetNode<WindowDialog>("HintDialog");
+        _globals = GetNode<Globals>("/root/Globals");
+        _loadDialog = GetNode<FileDialog>("LoadDialog");
+        _moves = GetNode<LineEdit>("PanelContainer/VBoxContainer/HFlowContainer/Moves");
+        _saveDialog = GetNode<FileDialog>("SaveDialog");
+        _textureRect = GetNode<TextureRect>("HintDialog/TextureRect");
+        _tiles = GetNode<TilesControl>("PanelContainer/VBoxContainer/Tiles");
+        _tree = GetTree();
+        _vboxContainer = GetNode<VBoxContainer>("PanelContainer/VBoxContainer");
+        _win = GetNode<WindowDialog>("WinnerDialog");
+    }
 
-	private void _on_CloseHint_pressed()
-	{
-		HideHint();
-	}
+    private void HideHint()
+    {
+        _tree.Paused = false;
+        _vboxContainer.Show();
+        _hintDialog.Hide();
+    }
 
-	private void _on_HintDialog_item_rect_changed()
-	{
-		Vector2 s = _hintDialog.RectSize;
-		Vector2 cs = _closeHint.RectSize;
-		_textureRect.RectSize = new Vector2(s.x - 20, s.y - 50);
-		_closeHint.RectPosition = new Vector2((s.x - cs.x) / 2, s.y - cs.y - 10);
-	}
+    private void OnAbortPressed()
+    {
+        _tree.ChangeScene("res://Main.tscn");
+    }
 
-	private void _on_HintDialog_modal_closed()
-	{
-		HideHint();
-	}
+    private void OnHintDialogClosePressed()
+    {
+        HideHint();
+    }
 
-	private void _on_HintDialog_popup_hide()
-	{
-		HideHint();
-	}
+    private void OnHintDialogItemRectChanged()
+    {
+        Vector2 s = _hintDialog.RectSize;
+        Vector2 cs = _closeHint.RectSize;
+        _textureRect.RectSize = new Vector2(s.x - 20, s.y - 50);
+        _closeHint.RectPosition = new Vector2((s.x - cs.x) / 2, s.y - cs.y - 10);
+    }
 
-	private void _on_Hint_pressed()
-	{
-		_tree.Paused = true;
-		_vboxContainer.Hide();
-		if (_textureRect.Texture == null)
-		{
-			Image image;
-			Globals globals = GetNode<Globals>("/root/Globals");
-			if (globals.TilesImage == null)
-				image = globals.TilesImageDefault.Duplicate() as Image;
-			else
-				image = globals.TilesImage.Duplicate() as Image;
-			ImageTexture t = new ImageTexture();
-			t.CreateFromImage(image);
-			_textureRect.Texture = t;
-		}
-		_hintDialog.PopupCentered();
-	}
+    private void OnHintDialogModalClosed()
+    {
+        HideHint();
+    }
 
-	private void _on_LoadDialog_file_selected(string path)
-	{
-		_tiles.Load(path);
-		_tree.Paused = false;
-	}
+    private void OnHintDialogPopupHide()
+    {
+        HideHint();
+    }
 
-	private void _on_LoadDialog_modal_closed()
-	{
-		_tree.Paused = false;
-	}
+    private void OnHintPressed()
+    {
+        _tree.Paused = true;
+        _vboxContainer.Hide();
+        if (_textureRect.Texture == null)
+        {
+            Image image;
+            if (_globals.TilesImage == null)
+                image = _globals.TilesImageDefault.Duplicate() as Image;
+            else
+                image = _globals.TilesImage.Duplicate() as Image;
+            ImageTexture t = new ImageTexture();
+            t.CreateFromImage(image);
+            _textureRect.Texture = t;
+        }
+        _hintDialog.PopupCentered();
+    }
 
-	private void _on_LoadDialog_popup_hide()
-	{
-		_tree.Paused = false;
-	}
+    private void OnLoadDialogFileSelected(string path)
+    {
+        _tiles.Load(path);
+        _tree.Paused = false;
+    }
 
-	private void _on_Load_pressed()
-	{
-		_tree.Paused = true;
-		_loadDialog.PopupCentered();
-	}
+    private void OnLoadDialogModalClosed()
+    {
+        _tree.Paused = false;
+    }
 
-	private void _on_Quit_pressed()
-	{
-		_tree.Quit();
-	}
+    private void OnLoadDialogPopupHide()
+    {
+        _tree.Paused = false;
+    }
 
-	private void _on_SaveDialog_file_selected(string path)
-	{
-		_tiles.Save(path);
-		_tree.Paused = false;
-	}
+    private void OnLoadPressed()
+    {
+        _tree.Paused = true;
+        _loadDialog.PopupCentered();
+    }
 
-	private void _on_SaveDialog_modal_closed()
-	{
-		_tree.Paused = false;
-	}
+    private void OnQuitPressed()
+    {
+        _tree.Quit();
+    }
 
+    private void OnSaveDialogFileSelected(string path)
+    {
+        _tiles.Save(path);
+        _tree.Paused = false;
+    }
 
-	private void _on_SaveDialog_popup_hide()
-	{
-		_tree.Paused = false;
-	}
+    private void OnSaveDialogModalClosed()
+    {
+        _tree.Paused = false;
+    }
 
-	private void _on_Save_pressed()
-	{
-		_tree.Paused = true;
-		_saveDialog.PopupCentered();
-	}
+    private void OnSaveDialogPopupHide()
+    {
+        _tree.Paused = false;
+    }
 
-	private void _on_Tiles_item_rect_changed()
-	{
-		if (_tiles != null)
-			_tiles.RecalcTiles();
-	}
+    private void OnSavePressed()
+    {
+        _tree.Paused = true;
+        _saveDialog.PopupCentered();
+    }
 
-	private void _on_Tiles_moved(TilesControl.DIRECTION _direction, int count)
-	{
-		_moves.Text = count.ToString();
-	}
+    private void OnTilesItemRectChanged()
+    {
+        if (_tiles != null)
+            _tiles.RecalcTiles();
+    }
 
-	private void _on_Tiles_won()
-	{
-		_tree.Paused = true;
-		_win.PopupCentered();
-	}
+    private void OnTilesMoved(int count)
+    {
+        _moves.Text = count.ToString();
+    }
 
-	protected void HideHint()
-	{
-		_tree.Paused = false;
-		_vboxContainer.Show();
-		_hintDialog.Hide();
-	}
+    private void OnTilesWon()
+    {
+        _tree.Paused = true;
+        _win.PopupCentered();
+    }
 
-	public override void _Ready()
-	{
-		_closeHint = GetNode<Button>("HintDialog/CloseHint");
-		_hintDialog = GetNode<WindowDialog>("HintDialog");
-		_loadDialog = GetNode<FileDialog>("LoadDialog");
-		_moves = GetNode<LineEdit>("PanelContainer/VBoxContainer/HFlowContainer/Moves");
-		_saveDialog = GetNode<FileDialog>("SaveDialog");
-		_textureRect = GetNode<TextureRect>("HintDialog/TextureRect");
-		_tiles = GetNode<TilesControl>("PanelContainer/VBoxContainer/Tiles");
-		_tree = GetTree();
-		_vboxContainer = GetNode<VBoxContainer>("PanelContainer/VBoxContainer");
-		_win = GetNode<WindowDialog>("WinnerDialog");
-	}
+    private void OnWinnerDialogClosePressed()
+    {
+    }
 }

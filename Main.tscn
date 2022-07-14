@@ -60,11 +60,12 @@ text = "Quit"
 [node name="FileDialog" type="FileDialog" parent="."]
 pause_mode = 2
 margin_right = 316.0
-margin_bottom = 169.0
+margin_bottom = 149.0
 rect_min_size = Vector2( 316, 169 )
 popup_exclusive = true
 window_title = "Open a File"
 resizable = true
+mode_overrides_title = false
 mode = 0
 access = 2
 filters = PoolStringArray( "*.kakel;Kakel Games" )
@@ -75,10 +76,10 @@ margin_right = 83.0
 margin_bottom = 58.0
 popup_exclusive = true
 
-[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="_on_New_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="_on_Load_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="_on_Quit_pressed"]
-[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
-[connection signal="modal_closed" from="FileDialog" to="." method="_on_FileDialog_modal_closed"]
-[connection signal="popup_hide" from="FileDialog" to="." method="_on_FileDialog_popup_hide"]
-[connection signal="confirmed" from="AcceptDialog" to="." method="_on_AcceptDialog_confirmed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="OnNewPressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="OnLoadPressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="OnQuitPressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="OnFileDialogFileSelected"]
+[connection signal="modal_closed" from="FileDialog" to="." method="OnFileDialogModalClosed"]
+[connection signal="popup_hide" from="FileDialog" to="." method="OnFileDialogPopupHide"]
+[connection signal="confirmed" from="AcceptDialog" to="." method="OnAcceptDialogConfirmed"]

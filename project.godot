@@ -112,6 +112,12 @@ new={
 
 file_logging/enable_file_logging=true
 
+[mono]
+
+runtime/unhandled_exception_policy=1
+debugger_agent/wait_for_debugger=true
+project/auto_update_project=false
+
 [physics]
 
 common/enable_pause_aware_picking=true

@@ -1,3 +1,5 @@
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146
+
 using Godot;
 using System;
 

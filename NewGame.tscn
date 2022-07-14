@@ -142,9 +142,9 @@ mode = 0
 access = 2
 filters = PoolStringArray( "*.png,*.jpg,*.jpeg,*.bmp;Images" )
 
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/UseImage" to="." method="_on_UseImage_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Default" to="." method="_on_Default_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Browse" to="." method="_on_Browse_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Cancel" to="." method="_on_Cancel_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Start" to="." method="_on_Start_pressed"]
-[connection signal="file_selected" from="OpenTileImage" to="." method="_on_OpenTileImage_file_selected"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/UseImage" to="." method="OnUseImagePressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Default" to="." method="OnDefaultPressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Browse" to="." method="OnBrowsePressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Cancel" to="." method="OnCancelPressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Start" to="." method="OnStartPressed"]
+[connection signal="file_selected" from="OpenTileImage" to="." method="OnOpenTileImageFileSelected"]

@@ -1,3 +1,5 @@
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146
+
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -38,6 +40,7 @@ public class TilesControl : Control
 	Rect2[][] tiles;
 	const int IDX_DEST = 0;
 	const int IDX_SRC = 1;
+    bool tiles_ready = false;
 
 	// Actual positions of each tile (i.e. index 0 = tile at upper left)
 	int[] tiles_order;
@@ -58,14 +61,13 @@ public class TilesControl : Control
 	int moves = 0;
 
 	// This is signalled every time a tile is moved
-	public enum DIRECTION { NORTH, EAST, SOUTH, WEST };
 	[Signal]
-	public delegate void Moved(DIRECTION dir, int count);
+	public delegate void moved(int count);
 
 	// Generated when Load is called, and it fails
 	public enum WHY { UNKNOWN, BAD_VERSION };
 	[Signal]
-	public delegate void LoadFailed(string path, WHY why);
+	public delegate void load_failed(string path, WHY why);
 
 	// This is signalled when the tiles are all in correct order
 	[Signal]
@@ -78,18 +80,22 @@ public class TilesControl : Control
 	int empty_id;
 
 	SceneTree _tree;
-	Globals globals;
+	Globals _globals;
+    bool readyToRun = false;
 
-	public override void _Draw()
-	{
-		Vector2 extent;
-		if (globals.TilesLoading)
+    public override void _Draw()
+    {
+        base._Draw();
+        if (!readyToRun || !tiles_ready)
+            return;
+ 		Vector2 extent;
+		if (_globals.TilesLoading)
 		{
-			string message = "Loading ... one moment please";
+			const string message = "Loading ... one moment please";
 			extent = tile_font.GetStringSize(message);
 			DrawString(tile_font, new Vector2(RectPosition.x + ((RectSize.x - extent.x) / 2),
 											   RectPosition.y + ((RectSize.y - extent.y) / 2) + extent.y),
-						message, globals.TilesFontColor);
+						message, _globals.TilesFontColor);
 			return;
 		}
 
@@ -98,7 +104,7 @@ public class TilesControl : Control
 		{
 			if (tile_index != empty_id)
 			{
-				if (globals.TilesUseImage)
+				if (_globals.TilesUseImage)
 				{
 					DrawTextureRectRegion(tiles_texture, tiles[index][IDX_DEST],
 										  tiles[tiles_order[index]][IDX_SRC]);
@@ -109,43 +115,45 @@ public class TilesControl : Control
 					Rect2 area = tile[IDX_DEST];
 					string name = (tile_index + 1).ToString();
 					extent = tile_font.GetStringSize(name);
-					DrawRect(area, globals.TilesColor, false);
+					DrawRect(area, _globals.TilesColor, false);
 					DrawString(tile_font, new Vector2(area.Position.x + ((area.Size.x - extent.x) / 2),
 													   area.Position.y + ((area.Size.y - extent.y) / 2) + extent.y),
-								name, globals.TilesFontColor);
+								name, _globals.TilesFontColor);
 				}
 			}
 			++index;
 		}
-	}
+   }
 
-	public override void _Input(InputEvent evnt)
-	{
-		base._Input(evnt);
-		
+    public override void _Input(InputEvent ev)
+    {
+		base._Input(ev);
+        if (!readyToRun || !tiles_ready)
+            return;
+
 		// Do nothing while paused
 		if (_tree.Paused || !moves_enabled)
 			return;
 
 		// Only handle mouse clicks here
-		if (!(evnt is InputEventMouseButton))
+		if (!(ev is InputEventMouseButton))
 			return;
-		InputEventMouseButton ev = evnt as InputEventMouseButton;
+		InputEventMouseButton iemb = ev as InputEventMouseButton;
 
 		// Only handle left mouse clicks
-		if (ev.ButtonIndex != 1)
+		if (iemb.ButtonIndex != 1)
 			return;
 
 		// Don't pay attention to double clicks
-		if (ev.Doubleclick)
+		if (iemb.Doubleclick)
 			return;
 
 		// Only repond to clicks when released
-		if (ev.Pressed)
+		if (iemb.Pressed)
 			return;
 
 		// Adjust position of click for our position
-		Vector2 p = new Vector2(ev.Position);
+		Vector2 p = new Vector2(iemb.Position);
 		p -= RectPosition;
 
 		// If click was valid, take appropriate action
@@ -185,34 +193,36 @@ public class TilesControl : Control
 				return;
 			}
 		}
-	}
+    }
 
-	public override void _PhysicsProcess(float delta)
-	{
+    public override void _PhysicsProcess(float delta)
+    {
+        if (!readyToRun || !tiles_ready)
+            return;
 		base._PhysicsProcess(delta);
 		CheckComplete();
-	}
+    }
 
-	public override void _Ready()
-	{
+    public override void _Ready()
+    {
 		base._Ready();
-		
 		tile_font = GD.Load<DynamicFont>("res://tile_font.tres");
 		_tree = GetTree();
-		globals = GetNode<Globals>("/root/Globals");
+		_globals = GetNode<Globals>("/root/Globals");
 
 		// Load save if requested
-		if (globals.TilesLoading)
+		if (_globals.TilesLoading)
 		{
-			Load(globals.TilesLoadPath);
-			globals.TilesLoading = false;
+			readyToRun = true;
+			Load(_globals.TilesLoadPath);
+			_globals.TilesLoading = false;
 			return;
 		}
 
 		// Precalc these as they are used several times
-		columns = (int) globals.TilesSize.x;
+		columns = (int) _globals.TilesSize.x;
 		columns0 = columns - 1;
-		rows = (int) globals.TilesSize.y;
+		rows = (int) _globals.TilesSize.y;
 		rows0 = rows - 1;
 
 		// Total number of tiles
@@ -235,21 +245,23 @@ public class TilesControl : Control
 		for(int i = 0; i < num_tiles; ++i)
 		{
 			if (i == empty)
+			{
 				tiles_order[i] = empty_id;
+			}
 			else
 			{
-				order = rng.RandiRange(0, num_tiles0);
+				order = rng.RandiRange(0, num_tiles0 - 1);
 				if (i > 0)
 				{
 					while (Array.IndexOf(tiles_order, order) != -1)
-						order = rng.RandiRange(0, num_tiles0);
+						order = rng.RandiRange(0, num_tiles0 - 1);
 				}
 				else
 				{
 					if (order == empty)
 					{
 						while (order == empty)
-							order = rng.RandiRange(0, num_tiles0);
+							order = rng.RandiRange(0, num_tiles0 - 1);
 					}
 				}
 				tiles_order[i] = order;
@@ -257,74 +269,82 @@ public class TilesControl : Control
 		}
 
 		// Determine valid moves
-		CalcMovables();
-	}
+        readyToRun = true;
+        CallDeferred("RecalcTiles");
+        CallDeferred("CalcMovables");
+    }
 
-	public override void _UnhandledInput(InputEvent evnt)
-	{
-		base._UnhandledInput(evnt);
-		
+    public override void _UnhandledInput(InputEvent ev)
+    {
+		base._UnhandledInput(ev);
+        if (!readyToRun || !tiles_ready)
+            return;
+
 		// Do nothing when paused
 		if (_tree.Paused || !moves_enabled)
 			return;
 
 		// If event isn't an action, ignore
-		if (!evnt.IsActionType())
+		if (!ev.IsActionType())
 			return;
 
 		// Take appropriate action
-		if (evnt.IsActionPressed("refresh"))
+		if (ev.IsActionPressed("refresh"))
 		{
 			AcceptEvent();
 			Update();
 			return;
 		}
-		if (evnt.IsActionPressed("quit"))
+		if (ev.IsActionPressed("quit"))
 		{
 			AcceptEvent();
 			_tree.ChangeScene("res://Main.tscn");
 			return;
 		}
-		if (evnt.IsActionPressed("move_left"))
+        if (can_move_left)
 		{
-			if (can_move_left)
+    		if (ev.IsActionPressed("move_left"))
 			{
 				AcceptEvent();
 				MoveLeft();
 				return;
 			}
 		}
-		if (evnt.IsActionPressed("move_right"))
+        if (can_move_right)
 		{
-			if (can_move_right)
+    		if (ev.IsActionPressed("move_right"))
 			{
 				AcceptEvent();
 				MoveRight();
 				return;
 			}
 		}
-		if (evnt.IsActionPressed("move_up"))
+        if (can_move_up)
 		{
-			if (can_move_up)
+    		if (ev.IsActionPressed("move_up"))
 			{
 				AcceptEvent();
 				MoveUp();
 				return;
 			}
 		}
-		if (evnt.IsActionPressed("move_down"))
+        if (can_move_down)
 		{
-			if (can_move_down)
+    		if (ev.IsActionPressed("move_down"))
 			{
 				AcceptEvent();
 				MoveDown();
 				return;
 			}
 		}
-	}
+    }
 
-	protected void CalcMovables()
-	{
+    private void CalcMovables()
+    {
+        // Do nothing until initialized
+        if (!readyToRun)
+            return;
+
 		// Row and column of blank tile
 		int row = empty / columns;
 		int column = empty % columns;
@@ -376,10 +396,10 @@ public class TilesControl : Control
 			move_up_index = ((row + 1) * columns) + column;
 		if (can_move_down)
 			move_down_index = ((row - 1) * columns) + column;
-	}
+    }
 
-	protected bool CheckComplete()
-	{
+    private bool CheckComplete()
+    {
 		for(int index = 0; index < num_tiles; ++index)
 		{
 			if (tiles_order[index] != index)
@@ -388,10 +408,10 @@ public class TilesControl : Control
 		moves_enabled = false;
 		EmitSignal("won");
 		return true;
-	}
+    }
 
-	public void Load(string path)
-	{
+    public void Load(string path)
+    {
 		// Ignore input until load is complete
 		moves_enabled = false;
 
@@ -433,20 +453,23 @@ public class TilesControl : Control
 		// Done loading data
 		inp.Close();
 
+		// Internal variables are not correct, so disable
+		tiles_ready = false;
+
 		// Set globals
-		globals.TilesSize = new Vector2(x, y);
-		globals.TilesImagePath = imagePath;
-		globals.TilesUseImage = (useImage != 0);
-		if (globals.TilesUseImage && globals.TilesImagePath != "")
+		_globals.TilesSize = new Vector2(x, y);
+		_globals.TilesImagePath = imagePath;
+		_globals.TilesUseImage = (useImage != 0);
+		if (_globals.TilesUseImage && _globals.TilesImagePath != "")
 		{
-			globals.TilesImage = new Image();
-			globals.TilesImage.Load(globals.TilesImagePath);
+			_globals.TilesImage = new Image();
+			_globals.TilesImage.Load(_globals.TilesImagePath);
 		}
 
 		// Set local parameters
-		columns = (int) globals.TilesSize.x;
+		columns = (int) _globals.TilesSize.x;
 		columns0 = columns - 1;
-		rows = (int) globals.TilesSize.y;
+		rows = (int) _globals.TilesSize.y;
 		rows0 = rows - 1;
 		num_tiles = columns * rows;
 		num_tiles0 = num_tiles - 1;
@@ -456,64 +479,74 @@ public class TilesControl : Control
 		empty_id = eid;
 
 		// Reset tiles
-		CallDeferred("recalc_tiles");
-		CallDeferred("calc_movables");
+		CallDeferred("RecalcTiles");
+		CallDeferred("CalcMovables");
 
 		// All ready
 		moves_enabled = true;
 		CallDeferred("update");
-	}
 
-	protected void MoveDown()
-	{
+		// Number of moves changed
+		CallDeferred("moved", moves);
+    }
+
+    public void MoveDown()
+    {
 		int newEmpty = tiles_order[move_down_index];
 		tiles_order[move_down_index] = empty_id;
 		tiles_order[empty] = newEmpty;
 		empty = move_down_index;
-		moves += 1;
-		EmitSignal("moved", DIRECTION.SOUTH, moves);
+		++moves;
+		EmitSignal("moved", moves);
 		CalcMovables();
 		Update();
-	}
+    }
 
-	protected void MoveLeft()
-	{
+    public void MoveLeft()
+    {
 		int newEmpty = tiles_order[move_left_index];
 		tiles_order[move_left_index] = empty_id;
 		tiles_order[empty] = newEmpty;
 		empty = move_left_index;
-		moves += 1;
-		EmitSignal("moved", DIRECTION.WEST, moves);
+		++moves;
+		EmitSignal("moved", moves);
 		CalcMovables();
 		Update();
-	}
+    }
 
-	protected void MoveRight()
-	{
+    public void MoveRight()
+    {
 		int newEmpty = tiles_order[move_right_index];
 		tiles_order[move_right_index] = empty_id;
 		tiles_order[empty] = newEmpty;
 		empty = move_right_index;
-		moves += 1;
-		EmitSignal("moved", DIRECTION.EAST, moves);
+		++moves;
+		EmitSignal("moved", moves);
 		CalcMovables();
 		Update();
-	}
+    }
 
-	protected void MoveUp()
-	{
+    public void MoveUp()
+    {
 		int newEmpty = tiles_order[move_up_index];
 		tiles_order[move_up_index] = empty_id;
 		tiles_order[empty] = newEmpty;
 		empty = move_up_index;
-		moves += 1;
-		EmitSignal("moved", DIRECTION.NORTH, moves);
+		++moves;
+		EmitSignal("moved", moves);
 		CalcMovables();
 		Update();
-	}
+    }
 
-	public void RecalcTiles()
-	{
+    public void RecalcTiles()
+    {
+        // Do nothing if we didn't finish initializing yet
+        if (!readyToRun)
+            return;
+
+        // Stop processing that relies on tiles being set
+        tiles_ready = false;
+
 		// This can be called before everything is ready
 		if (columns == 0 || rows == 0)
 			return;
@@ -525,12 +558,12 @@ public class TilesControl : Control
 			return;
 
 		// Resize image for display if needed
-		if (globals.TilesUseImage)
+		if (_globals.TilesUseImage)
 		{
-			if (globals.TilesImagePath == "")
-				tiles_image = globals.TilesImageDefault.Duplicate() as Image;
+			if (_globals.TilesImagePath.Length == 0)
+				tiles_image = _globals.TilesImageDefault.Duplicate() as Image;
 			else
-				tiles_image = globals.TilesImage.Duplicate() as Image;
+				tiles_image = _globals.TilesImage.Duplicate() as Image;
 			tiles_image.Resize((int) (tile_size.x * columns), (int) (tile_size.y * rows), Image.Interpolation.Lanczos);
 
 			// Convert image to texture for display
@@ -538,34 +571,40 @@ public class TilesControl : Control
 			tiles_texture.CreateFromImage(tiles_image, 0);
 		}
 		else
+		{
 			tiles_image = null;
+		}
 
 		// Calculate the bounding boxes for each tile for both display and image
 		Vector2 tile_size_int = new Vector2((int) tile_size.x, (int) tile_size.y);
 		tiles = new Rect2[num_tiles][];
 		Rect2[] tile;
-		int left;
-		int top;
-		for (int row = 0; row < rows; ++rows)
+		float left;
+		float top;
+        int row;
+        int col;
+		for (row = 0; row < rows; ++row)
 		{
-			for (int col = 0; col < columns; ++columns)
+			for (col = 0; col < columns; ++col)
 			{
 				tile = new Rect2[2];
-				left = (int) (((((float) col) * ((float) tile_size.x))) + (((float) col)
-					   * ((float) tile_spacing.x)));
-				top = (int) ((float) row * (float) tile_size.y + (float) row
-					  * (float) tile_spacing.y);
+				left = (col * tile_size.x) + (col * tile_spacing.x);
+				top = (row * tile_size.y) + (row * tile_spacing.y);
 				tile[IDX_DEST] = new Rect2(new Vector2(left, top), tile_size_int);
 				left = (int) (col * tile_size.x);
 				top =  (int) (row * tile_size.y);
 				tile[IDX_SRC] = new Rect2(new Vector2(left, top), tile_size_int);
-				tiles[col + row] = tile;
+				tiles[(row * columns) + col ] = tile;
 			}
 		}
-	}
+        tiles_ready = true;
+    }
 
-	public void Save(string path)
-	{
+    public void Save(string path)
+    {
+        if (!readyToRun)
+            return;
+
 		File sav = new File();
 		sav.Open(path, File.ModeFlags.Write);
 
@@ -573,17 +612,17 @@ public class TilesControl : Control
 		sav.Store16(FILE_VERSION);
 
 		// Save TilesSize
-		sav.StoreFloat(globals.TilesSize.x);
-		sav.StoreFloat(globals.TilesSize.y);
+		sav.StoreFloat(_globals.TilesSize.x);
+		sav.StoreFloat(_globals.TilesSize.y);
 
 		// Save UseImage state
-		if (globals.TilesUseImage)
+		if (_globals.TilesUseImage)
 			sav.Store8(1);
 		else
 			sav.Store8(0);
 
 		// Save image path
-		sav.StorePascalString(globals.TilesImagePath);
+		sav.StorePascalString(_globals.TilesImagePath);
 
 		// Save tiles order
 		sav.Store32((uint) num_tiles);
@@ -599,5 +638,5 @@ public class TilesControl : Control
 
 		// All done
 		sav.Close();
-	}
+    }
 }
