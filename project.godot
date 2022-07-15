@@ -21,6 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Kakel"
+config/description="Sliding tiles game."
 run/main_scene="res://Main.tscn"
 run/flush_stdout_on_print=true
 boot_splash/show_image=false
@@ -115,7 +116,6 @@ file_logging/enable_file_logging=true
 [mono]
 
 runtime/unhandled_exception_policy=1
-debugger_agent/wait_for_debugger=true
 project/auto_update_project=false
 
 [physics]
