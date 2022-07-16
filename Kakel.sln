@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kakel", "Kakel.csproj", "{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kakel", "Kakel.csproj", "{D91E92A6-8006-4550-A289-16B9EA493EBD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,11 +9,11 @@ Global
 	ExportRelease|Any CPU = ExportRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
-		{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
-		{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
-		{C8208B54-4732-4D09-9CA9-CD3BAE4CFE17}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{D91E92A6-8006-4550-A289-16B9EA493EBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D91E92A6-8006-4550-A289-16B9EA493EBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D91E92A6-8006-4550-A289-16B9EA493EBD}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{D91E92A6-8006-4550-A289-16B9EA493EBD}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{D91E92A6-8006-4550-A289-16B9EA493EBD}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{D91E92A6-8006-4550-A289-16B9EA493EBD}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
 	EndGlobalSection
 EndGlobal
