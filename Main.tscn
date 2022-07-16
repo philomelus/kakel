@@ -4,17 +4,92 @@
 script/source = "extends Control
 
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+@onready var _tree: SceneTree = get_tree()
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
+func _on_new_pressed():
+	new_game()
+
+
+func _on_load_pressed():
+	$FileDialog.popup_centered()
+
+
+func _on_quit_pressed():
+	quit()
+
+
+func _unhandled_input(event):
+	if event.is_action_pressed(\"new\"):
+		accept_event()
+		new_game()
+		return
+	elif event.is_action_pressed(\"quit\"):
+		accept_event()
+		quit()
+		return
+
+func new_game():
+	var _x = _tree.change_scene(\"res://NewGame.tscn\")
+
+
+func quit():
+	_tree.quit()
 "
 
 [node name="Control" type="Control"]
+custom_minimum_size = Vector2(1024, 600)
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = SubResource("GDScript_7my2o")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+offset_right = 1024.0
+offset_bottom = 600.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+offset_left = 464.0
+offset_top = 223.0
+offset_right = 560.0
+offset_bottom = 376.0
+
+[node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_right = 96.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 32
+text = "KAKEL"
+
+[node name="New" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 52.0
+offset_right = 96.0
+offset_bottom = 83.0
+text = "New"
+
+[node name="Load" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 87.0
+offset_right = 96.0
+offset_bottom = 118.0
+text = "Load"
+
+[node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 122.0
+offset_right = 96.0
+offset_bottom = 153.0
+text = "Quit"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.kakel;Kakel Games")
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="_on_new_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

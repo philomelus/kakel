@@ -17,10 +17,10 @@ var num_tiles: int
 var num_tiles0: int
 
 # Spacing between each tile
-export(Vector2) var tile_spacing = Vector2(5, 5)
+@export var tile_spacing: Vector2 = Vector2(5, 5)
 
 # Font for drawing numerical id's of tiles
-var tile_font: DynamicFont = load("res://tile_font.tres")
+var tile_font: Font = load("res://tile_font.ttf")
 
 # Image/Texture for display
 var tiles_image: Image
@@ -33,6 +33,7 @@ var tile_size: Vector2
 var tiles: Array
 const IDX_DEST: int = 0
 const IDX_SRC: int = 1
+var tiles_ready: bool = false
 
 # Actual positions of each tile (i.e. index 0 = tile at upper left)
 var tiles_order: Array
@@ -69,16 +70,22 @@ var empty: int
 # Index value of the empty tile (always the last global tile index)
 var empty_id: int
 
-onready var _tree: SceneTree = get_tree()
+# Disable some functionality until after _ready() (or equivelent) is done
+var ready_complete: bool = false
+
+@onready var _tree: SceneTree = get_tree()
 
 func _draw():
+	if not ready_complete or not tiles_ready:
+		return
+
 	var extent
 	if Globals.TilesLoading:
 		var message = "Loading ... one moment please"
 		extent = tile_font.get_string_size(message)
-		draw_string(tile_font, Vector2(rect_position.x + ((rect_size.x - extent.x) / 2),
-									   rect_position.y + ((rect_size.y - extent.y) / 2) + extent.y),
-					message, Globals.TilesFontColor)
+		draw_string(tile_font, Vector2(position.x + ((size.x - extent.x) / 2),
+					position.y + ((size.y - extent.y) / 2) + extent.y),
+					message, 0, -1, 24, Globals.TilesFontColor)
 		return
 	var index = 0
 	var area
@@ -90,22 +97,81 @@ func _draw():
 		if tile_index != empty_id:
 			if Globals.TilesUseImage:
 				draw_texture_rect_region(tiles_texture, tiles[index][IDX_DEST],
-										 tiles[tiles_order[index]][IDX_SRC])
+						tiles[tiles_order[index]][IDX_SRC])
 			else:
 				name = "%d" % (tile_index + 1)
 				extent = tile_font.get_string_size(name)
 				draw_rect(area, Globals.TilesColor, false)
 				draw_string(tile_font, Vector2(area.position.x + ((area.size.x - extent.x) / 2),
-											   area.position.y + ((area.size.y - extent.y) / 2) + extent.y),
-							name, Globals.TilesFontColor)
+							area.position.y + ((area.size.y - extent.y) / 2) + extent.y),
+							name, 0, -1, 24, Globals.TilesFontColor)
 		index += 1
 
 
+
+func _input(event):
+	# Do nothing if not ready
+	if not ready_complete or not tiles_ready:
+		return
+
+	# Do nothing while paused
+	if _tree.paused or not moves_enabled:
+		return
+
+	# Only handle mouse clicks here
+	if not event is InputEventMouseButton:
+		return
+	# warning-ignore:unsafe_cast
+	var ev = event as InputEventMouseButton
+
+	# Only handle left mouse clicks
+	if ev.button_index != 1:
+		return
+
+	# Don't pay attention to double clicks
+	if ev.double_click:
+		return
+
+	# Only repond to clicks when released
+	if ev.pressed:
+		return
+
+	# Adjust position of click for our position
+	var p = event.position - position
+
+	# If click was valid, take appropriate action
+	if can_move_down:
+		if tiles[move_down_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_down();
+			return
+	if can_move_left:
+		if tiles[move_left_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_left();
+			return
+	if can_move_right:
+		if tiles[move_right_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_right();
+			return
+	if can_move_up:
+		if tiles[move_up_index][IDX_DEST].has_point(p):
+			accept_event()
+			move_up();
+			return
+
+
 func _physics_process(_delta):
+	# Do nothing if not initialized
+	if not ready_complete or not tiles_ready:
+		return
 	check_complete()
+
 
 func _ready():
 	if Globals.TilesLoading:
+		ready_complete = true
 		Load(Globals.TilesLoadPath)
 		Globals.TilesLoading = false
 		return
@@ -150,10 +216,16 @@ func _ready():
 			tiles_order.append(order)
 
 	# Determine valid moves
-	calc_movables()
+	ready_complete = true
+	call_deferred("recalc_tiles")
+	call_deferred("calc_movables")
 
 
 func _unhandled_input(event):
+	# Do nothing if not initialized
+	if not ready_complete or not tiles_ready:
+		return
+
 	# Do nothing when paused
 	if _tree.paused or not moves_enabled:
 		return
@@ -193,56 +265,11 @@ func _unhandled_input(event):
 			return
 
 
-func _input(event):
-	# Do nothing while paused
-	if _tree.paused or not moves_enabled:
-		return
-
-	# Only handle mouse clicks here
-	if not event is InputEventMouseButton:
-		return
-	# warning-ignore:unsafe_cast
-	var ev = event as InputEventMouseButton
-
-	# Only handle left mouse clicks
-	if ev.button_index != 1:
-		return
-
-	# Don't pay attention to double clicks
-	if ev.doubleclick:
-		return
-
-	# Only repond to clicks when released
-	if ev.pressed:
-		return
-
-	# Adjust position of click for our position
-	var p = event.position - rect_position
-
-	# If click was valid, take appropriate action
-	if can_move_down:
-		if tiles[move_down_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_down();
-			return
-	if can_move_left:
-		if tiles[move_left_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_left();
-			return
-	if can_move_right:
-		if tiles[move_right_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_right();
-			return
-	if can_move_up:
-		if tiles[move_up_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_up();
-			return
-
-
 func calc_movables():
+	# Do nothing if not initialized
+	if not ready_complete:
+		return
+
 	# Row and column of blank tile
 	# warning-ignore:integer_division
 	var row: int = int(empty / columns)
@@ -343,13 +370,20 @@ func move_up():
 
 
 func recalc_tiles():
+	# Do nothing until initialized
+	if not ready_complete:
+		return
+
 	# This can be called before everything is ready
 	if columns == 0 or rows == 0:
 		return
 
+	# Don't handle processing that requires tiles
+	tiles_ready = false
+
 	# Determine width and height of tiles from our size
-	tile_size = Vector2((rect_size.x - (columns0 * tile_spacing.x)) / columns,
-						(rect_size.y - (rows0 * tile_spacing.y)) / rows)
+	tile_size = Vector2((size.x - (columns0 * tile_spacing.x)) / columns,
+						(size.y - (rows0 * tile_spacing.y)) / rows)
 	if tile_size.x <= 0 or tile_size.y <= 0:
 		return
 
@@ -364,8 +398,7 @@ func recalc_tiles():
 		tiles_image.resize(tile_size.x * columns, tile_size.y * rows, Image.INTERPOLATE_LANCZOS)
 
 		# Convert image to texture for display
-		tiles_texture = ImageTexture.new()
-		tiles_texture.create_from_image(tiles_image, 0)
+		tiles_texture = ImageTexture.create_from_image(tiles_image)
 	else:
 		tiles_image = null
 
@@ -385,6 +418,9 @@ func recalc_tiles():
 			top = row * tile_size.y
 			tile[IDX_SRC] = Rect2(Vector2(int(left), int(top)), tile_size_int)
 			tiles.append(tile)
+
+	# Tiles are usable now
+	tiles_ready = true
 
 
 func Load(path):
@@ -427,6 +463,9 @@ func Load(path):
 	# Done loading data
 	inp.close()
 
+	# Back to an uninitialized state
+	tiles_ready = false
+
 	# Set globals
 	Globals.TilesSize = Vector2(x, y)
 	Globals.TilesImagePath = imagePath
@@ -459,6 +498,11 @@ func Load(path):
 
 
 func Save(path):
+	# Nothing to do if not initialized
+	# TODO:  This should generate an error or something, instead of just ignoring
+	if not ready_complete:
+		return
+
 	var out = File.new()
 	out.open(path, File.WRITE)
 

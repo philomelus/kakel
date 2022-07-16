@@ -25,3 +25,4 @@ data_*/
 # Kakel specific
 *.kakel
 
+bin/*
