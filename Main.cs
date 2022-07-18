@@ -7,6 +7,7 @@ public partial class Main : Control
 {
 	private Globals _globals;
 	private FileDialog _loadDialog;
+	private bool _loadDialogUsed = false;
 	private SceneTree _tree;
 
 	public override void _Ready()
@@ -41,7 +42,6 @@ public partial class Main : Control
 
 	private void OnLoadDialogFileSelected(string path)
 	{
-		_tree.Paused = false;
 		_globals.TilesLoading = true;
 		_globals.TilesLoadPath = path;
 		_tree.ChangeScene("res://Game.tscn");
@@ -49,8 +49,15 @@ public partial class Main : Control
 
 	private void OnLoadPressed()
 	{
-		_tree.Paused = true;
-		_loadDialog.PopupCentered();
+		if (_loadDialogUsed)
+		{
+			_loadDialog.Popup();
+		}
+		else
+		{
+			_loadDialogUsed = true;
+			_loadDialog.PopupCentered();
+		}
 	}
 
 	private void OnNewPressed()

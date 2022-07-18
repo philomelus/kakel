@@ -35,9 +35,7 @@ public partial class TilesControl : Control
 			_columns0 = value - 1;
 			_numTiles = value * _rows;
 			_numTiles0 = _numTiles - 1;
-			ResetTiles();
 			_tilesReady = false;
-			CallDeferred("RecalcTiles");
 		}
 	}
 
@@ -54,9 +52,7 @@ public partial class TilesControl : Control
 			_rows0 = value - 1;
 			_numTiles = value * _columns;
 			_numTiles0 = _numTiles - 1;
-			ResetTiles();
 			_tilesReady = false;
-			CallDeferred("RecalcTiles");
 		}
 	}
 
@@ -104,7 +100,13 @@ public partial class TilesControl : Control
 	[Export]
 	public bool ShowNumbers {
 		get { return _showNumbers; }
-		set { _showNumbers = value; }
+		set {
+			if (_showNumbers != value)
+			{
+				_showNumbers = value;
+				Update();
+			}
+		}
 	}
 
 	private bool UseImage {
@@ -244,7 +246,7 @@ public partial class TilesControl : Control
 					{
 						string name = (tileIndex + 1).ToString();
 						extent = _numberFont.GetStringSize(name);
-						DrawString(_numberFont, new Vector2(_tiles[index][IDX_DEST].Position.x + 10,
+						DrawString(_numberFont, new Vector2(_tiles[index][IDX_DEST].Position.x + 5,
 								_tiles[index][IDX_DEST].Position.y + 10 + (extent.y / 2)),
 								name, HorizontalAlignment.Left, -1, 24, _numberColor);
 					}
@@ -369,21 +371,10 @@ public partial class TilesControl : Control
 
     public override void _Ready()
     {
-		_readyToRun = false;
-		_movesEnabled = false;
-
 		_tree = GetTree();
 
-		// // Load save if requested.
-		// if (_globals.TilesLoading)
-		// {
-		// 	_readyToRun = true;
-		// 	Load(_globals.TilesLoadPath);
-		// 	_globals.TilesLoading = false;
-		// 	return;
-		// }
-
-		ResetTiles();
+		_readyToRun = false;
+		_movesEnabled = false;
     }
 
     public override void _UnhandledInput(InputEvent ev)
@@ -395,18 +386,6 @@ public partial class TilesControl : Control
 		}
 
 		// Take appropriate action
-		if (ev.IsActionPressed("refresh"))
-		{
-			AcceptEvent();
-			Update();
-			return;
-		}
-		if (ev.IsActionPressed("quit"))
-		{
-			AcceptEvent();
-			_tree.ChangeScene("res://Main.tscn");
-			return;
-		}
         if (_canMoveLeft)
 		{
     		if (ev.IsActionPressed("move_left"))
@@ -518,14 +497,12 @@ public partial class TilesControl : Control
 
     public void Load(string path)
     {
-		// Ignore input until load is complete
 		_movesEnabled = false;
 
 		File inp = new();
 		inp.Open(path, File.ModeFlags.Read);
 
-/*
-		// Read file format version
+		// Read file format version.
 		int v = (int) inp.Get16();
 		if (v != FILE_VERSION)
 		{
@@ -533,61 +510,65 @@ public partial class TilesControl : Control
 			throw new FormatException($"Uknown Save File Version: {v}");
 		}
 
-		// Load TilesSize
-		int c = inp.Get8();
-		int r = inp.Get8();
+		// Load columns and rows.
+		int co = inp.Get8();
+		int ro = inp.Get8();
 
-		// Load UseImage
+		// Load UseImage.
 		byte tmp = inp.Get8();
 		bool useImage = tmp != 0;
 
-		// Load image path
+		// Load image path.
 		string imagePath = inp.GetPascalString();
 
-		// Load tiles order
+		// Load tiles order.
 		int numTiles = (int) inp.Get16();
 		int[] order = new int[numTiles];
 		for (int i = 0; i < numTiles; ++i)
 			order[i] = (int) inp.Get16();
 
-		// Read blank tile index
+		// Read blank tile index.
 		int e = (int) inp.Get16();
 		int eid = (int) inp.Get16();
 
 		// Read moves so far
 		int m = (int) inp.Get32();
 
+		tmp = inp.Get8();
+		bool showNumbers = tmp != 0;
+
 		// Done loading data
 		inp.Close();
 
-		// Internal variables are not correct, so disable
-		_tilesReady = false;
-
-		// Set globals
-		_globals.TilesColumns = c;
-		_globals.TilesRows = r;
-		_globals.TilesImagePath = imagePath;
-		_globals.TilesUseImage = useImage;
-		_globals.TilesShowNumbers = showNumbers;
-
-		// Set local parameters
-		Columns = c;
-		Rows = r;
+		if (useImage)
+		{
+			_imagePath = imagePath;
+			_image = new();
+			_image.Load(_imagePath);
+		}
+		else
+		{
+			_imagePath = null;
+			_image = null;
+		}
+		Columns = co;
+		Rows = ro;
 		_tilesOrder = order;
 		_moves = m;
-		if (m > 0)
-			_movedSignal = 1;
 		_empty = e;
 		_emptyId = eid;
+		_showNumbers = showNumbers;
+		++_movedSignal;
 
 		// Reset tiles
 		CallDeferred("RecalcTiles");
 		CallDeferred("CalcMovables");
 
 		// All ready
+		_readyToRun = true;
 		_movesEnabled = true;
+		_tilesReady = false;
 		CallDeferred("update");
-*/
     }
 
     private void MoveDown()
@@ -768,19 +749,26 @@ public partial class TilesControl : Control
 		foreach (int index in _tilesOrder)
 			sav.Store16((ushort) index);
 
-		// Save index of empty
+		// Save index of empty.
 		sav.Store16((ushort) _empty);
 		sav.Store16((ushort) _emptyId);
 
-		// Save number of moves so far
+		// Save number of moves so far.
 		sav.Store32((uint) _moves);
+
+		// Save show numbers.
+		if (_showNumbers)
+			sav.Store8(1);
+		else
+			sav.Store8(0);
 
 		// All done
 		sav.Close();
     }
 
-	public void Stop()
+	// Called to begin game.
+	public void Start()
 	{
-		// Rows, Columns, _tilesImagePath
+		ResetTiles();
 	}
 }

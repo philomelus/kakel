@@ -16,11 +16,29 @@ public partial class Game : Control
     LineEdit _moves;
     FileDialog _saveDialog;
     bool _saveDialogUsed;
+    CheckButton _showNumbers;
     TilesControl _tiles;
     SceneTree _tree;
     Button _winnerClose;
     Window _winnerDialog;
     Label _winnerLabel;
+
+    public override void _Input(InputEvent ev)
+    {
+        base._Input(ev);
+		if (ev.IsActionPressed("quit"))
+		{
+			AcceptEvent();
+			_tree.ChangeScene("res://Main.tscn");
+			return;
+		}
+		if (ev.IsActionPressed("refresh"))
+		{
+			AcceptEvent();
+			Update();
+			return;
+		}
+    }
 
     public override void _Ready()
     {
@@ -35,30 +53,43 @@ public partial class Game : Control
         _moves = GetNode<LineEdit>("GameBoard/HFlowContainer/Moves");
         _saveDialog = GetNode<FileDialog>("SaveDialog");
         _saveDialogUsed = false;
+        _showNumbers = GetNode<CheckButton>("GameBoard/HFlowContainer/ShowNumbers");
         _tiles = GetNode<TilesControl>("GameBoard/MarginContainer/Tiles");
         _tree = GetTree();
         _winnerClose = GetNode<Button>("WinnerDialog/CloseWinner");
         _winnerDialog = GetNode<Window>("WinnerDialog");
         _winnerLabel = GetNode<Label>("WinnerDialog/Label");
 
-        // Pass on global settings to tiles control.
-        _tiles.Columns = _globals.TilesColumns;
-        _tiles.Rows = _globals.TilesRows;
-        if (_globals.TilesUseImage)
-        {
-            if (_globals.TilesDefaultImage)
-                _tiles.ImagePath = _globals.TilesImageDefault;
-            else
-                _tiles.ImagePath = _globals.TilesImagePath;
-        }
-        else
-        {
-            _tiles.ImagePath = "";
-        }
+        // If loading a game, no need to pass globals on
         _tiles.NumberColor = _globals.TilesNumberColor;
         _tiles.NumberFont = _globals.TilesNumberFont;
         _tiles.OutlineColor = _globals.TilesOutlineColor;
-        _tiles.ShowNumbers = _globals.TilesShowNumbers;
+        if (_globals.TilesLoading)
+        {
+            _globals.TilesLoading = false;
+            _tiles.Load(_globals.TilesLoadPath);
+            CallDeferred("SetShowNumbers");
+        }
+        else
+        {
+            // Pass on global settings to tiles control.
+            _tiles.Columns = _globals.TilesColumns;
+            _tiles.Rows = _globals.TilesRows;
+            if (_globals.TilesUseImage)
+            {
+                if (_globals.TilesDefaultImage)
+                    _tiles.ImagePath = _globals.TilesImageDefault;
+                else
+                    _tiles.ImagePath = _globals.TilesImagePath;
+            }
+            else
+            {
+                _tiles.ImagePath = "";
+            }
+            _tiles.ShowNumbers = _globals.TilesShowNumbers;
+            _showNumbers.ButtonPressed = _globals.TilesShowNumbers;
+            _tiles.Start();
+        }
     }
 
     void HideHint()
@@ -150,6 +181,11 @@ public partial class Game : Control
         }
     }
 
+    void OnShowNumbersPressed()
+    {
+        _tiles.ShowNumbers = _showNumbers.ButtonPressed;
+    }
+
     void OnTilesItemRectChanged()
     {
         if (_tiles != null)
@@ -174,5 +210,10 @@ public partial class Game : Control
     void OnWinnerDialogClosePressed()
     {
         _tree.ChangeScene("res://Main.tscn");
+    }
+
+    void SetShowNumbers()
+    {
+        _showNumbers.ButtonPressed = _tiles.ShowNumbers;
     }
 }

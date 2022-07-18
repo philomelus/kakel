@@ -75,9 +75,20 @@ offset_left = 378.0
 offset_right = 382.0
 offset_bottom = 31.0
 
-[node name="Hint" type="Button" parent="GameBoard/HFlowContainer"]
+[node name="ShowNumbers" type="CheckButton" parent="GameBoard/HFlowContainer"]
 offset_left = 386.0
-offset_right = 427.0
+offset_right = 488.0
+offset_bottom = 31.0
+text = "Tile #'s"
+
+[node name="VSeparator4" type="VSeparator" parent="GameBoard/HFlowContainer"]
+offset_left = 492.0
+offset_right = 496.0
+offset_bottom = 31.0
+
+[node name="Hint" type="Button" parent="GameBoard/HFlowContainer"]
+offset_left = 500.0
+offset_right = 541.0
 offset_bottom = 31.0
 text = "Hint
 "
@@ -164,6 +175,7 @@ text = "Close"
 title = "Open a File"
 size = Vector2i(480, 320)
 popup_window = true
+min_size = Vector2i(480, 320)
 ok_button_text = "Open"
 file_mode = 0
 access = 2
@@ -173,6 +185,7 @@ filters = PackedStringArray("*.kakel;Kakel Games")
 disable_3d = true
 size = Vector2i(480, 320)
 popup_window = true
+min_size = Vector2i(480, 320)
 ok_button_text = "Save"
 access = 2
 filters = PackedStringArray("*.kakel;Kakel Games")
@@ -181,6 +194,7 @@ filters = PackedStringArray("*.kakel;Kakel Games")
 [connection signal="pressed" from="GameBoard/HFlowContainer/Save" to="." method="OnSavePressed"]
 [connection signal="pressed" from="GameBoard/HFlowContainer/Abort" to="." method="OnAbortPressed"]
 [connection signal="pressed" from="GameBoard/HFlowContainer/Quit" to="." method="OnQuitPressed"]
+[connection signal="pressed" from="GameBoard/HFlowContainer/ShowNumbers" to="." method="OnShowNumbersPressed"]
 [connection signal="pressed" from="GameBoard/HFlowContainer/Hint" to="." method="OnHintPressed"]
 [connection signal="item_rect_changed" from="GameBoard/MarginContainer/Tiles" to="." method="OnTilesItemRectChanged"]
 [connection signal="moved" from="GameBoard/MarginContainer/Tiles" to="." method="OnTilesMoved"]
