@@ -6,3 +6,142 @@
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_rwr2w")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+offset_left = 409.0
+offset_top = 170.0
+offset_right = 614.0
+offset_bottom = 429.0
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/VBoxContainer"]
+offset_right = 205.0
+offset_bottom = 224.0
+columns = 2
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 2.0
+offset_right = 118.0
+offset_bottom = 28.0
+text = "Columns"
+
+[node name="Columns" type="SpinBox" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 122.0
+offset_right = 205.0
+offset_bottom = 31.0
+min_value = 3.0
+max_value = 99.0
+value = 4.0
+alignment = 1
+
+[node name="Label2" type="Label" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 37.0
+offset_right = 118.0
+offset_bottom = 63.0
+text = "Rows"
+
+[node name="Rows" type="SpinBox" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 122.0
+offset_top = 35.0
+offset_right = 205.0
+offset_bottom = 66.0
+min_value = 3.0
+max_value = 99.0
+value = 4.0
+alignment = 1
+
+[node name="Label3" type="Label" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 70.0
+offset_right = 118.0
+offset_bottom = 96.0
+text = "Use Image"
+
+[node name="UseImage" type="CheckButton" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 122.0
+offset_top = 70.0
+offset_right = 205.0
+offset_bottom = 96.0
+button_pressed = true
+
+[node name="Label4" type="Label" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 100.0
+offset_right = 118.0
+offset_bottom = 126.0
+text = "Default Image"
+
+[node name="DefaultImage" type="CheckButton" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 122.0
+offset_top = 100.0
+offset_right = 205.0
+offset_bottom = 126.0
+button_pressed = true
+
+[node name="TilesImage" type="TextureRect" parent="CenterContainer/VBoxContainer/GridContainer"]
+custom_minimum_size = Vector2(64, 64)
+offset_top = 130.0
+offset_right = 118.0
+offset_bottom = 194.0
+stretch_mode = 5
+
+[node name="Browse" type="Button" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 130.0
+offset_top = 130.0
+offset_right = 196.0
+offset_bottom = 161.0
+size_flags_horizontal = 4
+size_flags_vertical = 0
+text = "Browse"
+
+[node name="Label5" type="Label" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 198.0
+offset_right = 118.0
+offset_bottom = 224.0
+text = "Show Numbers"
+
+[node name="ShowNumbers" type="CheckButton" parent="CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 122.0
+offset_top = 198.0
+offset_right = 205.0
+offset_bottom = 224.0
+button_pressed = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+offset_top = 228.0
+offset_right = 205.0
+offset_bottom = 259.0
+alignment = 1
+
+[node name="Cancel" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+offset_left = 47.0
+offset_right = 107.0
+offset_bottom = 31.0
+text = "Cancel"
+
+[node name="Start" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+offset_left = 111.0
+offset_right = 157.0
+offset_bottom = 31.0
+text = "Start"
+
+[node name="TileImageDialog" type="FileDialog" parent="."]
+disable_3d = true
+title = "Open a File"
+size = Vector2i(480, 320)
+always_on_top = true
+popup_window = true
+min_size = Vector2i(480, 320)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.jpg,*.bmp,*.png;Images", "*.jpg;JPEG Images", "*.bmp;Bitmap Images", "*.png;PNG Images")
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/UseImage" to="." method="OnUseImagePressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/DefaultImage" to="." method="OnDefaultImagePressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/Browse" to="." method="OnBrowsePressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/ShowNumbers" to="." method="OnUseImagePressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/Cancel" to="." method="OnCancelPressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/Start" to="." method="OnStartPressed"]
+[connection signal="file_selected" from="TileImageDialog" to="." method="OnTileImageDialogFileSelected"]

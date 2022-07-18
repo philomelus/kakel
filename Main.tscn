@@ -5,4 +5,61 @@
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_obu43")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+offset_left = 464.0
+offset_top = 223.0
+offset_right = 560.0
+offset_bottom = 376.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="CenterContainer/VBoxContainer"]
+offset_right = 96.0
+offset_bottom = 48.0
+theme_override_font_sizes/font_size = 32
+text = "KAKEL"
+
+[node name="New" type="Button" parent="CenterContainer/VBoxContainer"]
+offset_top = 52.0
+offset_right = 96.0
+offset_bottom = 83.0
+text = "New"
+
+[node name="Load" type="Button" parent="CenterContainer/VBoxContainer"]
+offset_top = 87.0
+offset_right = 96.0
+offset_bottom = 118.0
+text = "Load"
+
+[node name="Quit" type="Button" parent="CenterContainer/VBoxContainer"]
+offset_top = 122.0
+offset_right = 96.0
+offset_bottom = 153.0
+text = "Quit"
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+process_mode = 2
+disable_3d = true
+title = "Open a File"
+size = Vector2i(480, 320)
+popup_window = true
+min_size = Vector2i(480, 320)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.kakel;Kakel Games")
+
+[connection signal="pressed" from="CenterContainer/VBoxContainer/New" to="." method="OnNewPressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Load" to="." method="OnLoadPressed"]
+[connection signal="pressed" from="CenterContainer/VBoxContainer/Quit" to="." method="OnQuitPressed"]
+[connection signal="file_selected" from="LoadDialog" to="." method="OnLoadDialogFileSelected"]

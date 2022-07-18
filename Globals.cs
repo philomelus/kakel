@@ -1,38 +1,63 @@
-#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0052
 
 using Godot;
 using System;
 
-public class Globals : Node
+public partial class Globals : Node
 {
-	// Color for tile edges
-	public Color TilesColor = new Color(0, 0, 1, 1);
+	// Number of columns in tiles.
+	public int TilesColumns = 4;
 
-	// Color for tile fonts
-	public Color TilesFontColor = new Color(0, 1, 0, 1);
+	// If true, use default image.
+	public bool TilesDefaultImage = true;
 
-	// Image used on tiles
-	public Image TilesImage  = null;
-	public string TilesImagePath = "";
+	// Image to use for default image.
+	public string TilesImageDefault = "res://default_image.png";
 
-	// Default image for tiles (used as TilesImage when not overridden)
-	public Image TilesImageDefault = null;
+	// If `TilesDefaultImage` is false and TilesUseImag is true, this
+	// contains the path of the image to use.
+	public string TilesImagePath;
 
-	// Size of the tile board
-	public Vector2 TilesSize = new Vector2(4, 4);
+	// When true, the main display will load the game in `TilesLoadPath` rather
+	// than using TilesColumns/TilesRows/TilesImage/TilesDefaultImage, etc.
+	public bool TilesLoading = false;
 
-	// When false, draw rect for tiles instead of image
+	// When TilesLoading is true, path to game file to load.
+	public string TilesLoadPath;
+
+	// Color used to draw tile numbers.
+	public Color TilesNumberColor = Colors.White;
+
+	// Font used to draw tile numbers.
+	public Font TilesNumberFont;
+
+	// Color to draw tile outlines when TilesUseImage is false.
+	public Color TilesOutlineColor = Colors.White;
+
+	// Number of rows in tiles.
+	public int TilesRows = 4;
+
+	// When true, show tile numbers on tiles.
+	public bool TilesShowNumbers = true;
+
+	// When true, use image for tiles.  Otherwise draw outlines with numbers.
 	public bool TilesUseImage = true;
 
-	// When true, game is loading rather than starting new so
-	// TileControl should skip initialization as load will do
-	// it after construction.
-	public bool TilesLoading = false;
-	public string TilesLoadPath = "";
-
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		TilesImageDefault = ResourceLoader.Load<Image>("res://default_image.png", "Image", false);
+	}
+
+	// Load global preferences from file.
+	public void Load(string path)
+	{
+		File inp = new();
+		inp.Open(path, File.ModeFlags.Read);
+	}
+
+	// Save global preferences into file.
+	public void Save(string path)
+	{
+		File outp = new();
+		outp.Open(path, File.ModeFlags.Write);
 	}
 }
