@@ -9,13 +9,13 @@ public class Main : Control
 	Control _control;
 	FileDialog _fileDialog;
 	SceneTree _tree;
-    Globals _globals;
+	Globals _globals;
 
-    public override void _Ready()
-    {
-        base._Ready();
+	public override void _Ready()
+	{
+		base._Ready();
 
-        _acceptDialog = GetNode<AcceptDialog>("AcceptDialog");
+		_acceptDialog = GetNode<AcceptDialog>("AcceptDialog");
 		_control = GetNode<Control>(".");
 		_fileDialog = GetNode<FileDialog>("FileDialog");
 		_globals = GetNode<Globals>("/root/Globals");
@@ -30,7 +30,7 @@ public class Main : Control
 			OS.MinWindowSize = new Vector2(240, 240);
 			break;
 		}
-    }
+	}
 
 	public override void _UnhandledInput(InputEvent @ev)
 	{
@@ -49,47 +49,47 @@ public class Main : Control
 		}
 	}
 
-    private void NewGame()
-    {
+	private void NewGame()
+	{
 		_tree.ChangeScene("res://NewGame.tscn");
-    }
+	}
 
-    private void OnAcceptDialogConfirmed()
-    {
-        _tree.Paused = false;
-    }
+	private void OnAcceptDialogConfirmed()
+	{
+		_tree.Paused = false;
+	}
 
-    private void OnFileDialogFileSelected(string path)
-    {
+	private void OnFileDialogFileSelected(string path)
+	{
 		_globals.TilesLoading = true;
 		_globals.TilesLoadPath = path;
 		_tree.Paused = false;
 		_tree.ChangeScene("res://Game.tscn");
-    }
+	}
 
-    private void OnFileDialogModalClosed()
-    {
-        _tree.Paused = false;
-    }
+	private void OnFileDialogModalClosed()
+	{
+		_tree.Paused = false;
+	}
 
-    private void OnFileDialogPopupHide()
-    {
-        _tree.Paused = false;
-    }
+	private void OnFileDialogPopupHide()
+	{
+		_tree.Paused = false;
+	}
 
-    private void OnLoadPressed()
-    {
-        _tree.Paused = true;
-        _fileDialog.PopupCentered();
-    }
+	private void OnLoadPressed()
+	{
+		_tree.Paused = true;
+		_fileDialog.PopupCentered();
+	}
 
-    private void OnNewPressed()
-    {
-        NewGame();
-    }
+	private void OnNewPressed()
+	{
+		NewGame();
+	}
 
-    private void OnQuitPressed()
-    {
-        _tree.Quit();
-    }
+	private void OnQuitPressed()
+	{
+		_tree.Quit();
+	}
 }
