@@ -12,6 +12,8 @@ public partial class NewGame : Control
     Image _image;
     string _imagePath;
     ImageTexture _imageTexture;
+    ColorPickerButton _numberColor;
+    ColorPickerButton _outlineColor;
     SpinBox _rows;
     CheckButton _showNumbers;
     TextureRect _tilesImage;
@@ -22,17 +24,19 @@ public partial class NewGame : Control
 
     public override void _Ready()
     {
-        _browse = GetNode<Button>("CenterContainer/VBoxContainer/GridContainer/Browse");
-        _columns = GetNode<SpinBox>("CenterContainer/VBoxContainer/GridContainer/Columns");
-        _defaultImage = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/DefaultImage");
+        _browse = GetNode<Button>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/Browse");
+        _columns = GetNode<SpinBox>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/Columns");
+        _defaultImage = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/DefaultImage");
         _globals = GetNode<Globals>("/root/Globals");
-        _rows = GetNode<SpinBox>("CenterContainer/VBoxContainer/GridContainer/Rows");
-        _showNumbers = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/ShowNumbers");
-        _tilesImage = GetNode<TextureRect>("CenterContainer/VBoxContainer/GridContainer/TilesImage");
+        _numberColor = GetNode<ColorPickerButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/NumberColor");
+        _outlineColor = GetNode<ColorPickerButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/OutlineColor");
+        _rows = GetNode<SpinBox>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/Rows");
+        _showNumbers = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/ShowNumbers");
+        _tilesImage = GetNode<TextureRect>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/TilesImage");
         _tilesImageDialog = GetNode<Window>("TileImageDialog");
         _tilesImageDialogUsed = false;
         _tree = GetTree();
-        _useImage = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/UseImage");
+        _useImage = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/UseImage");
 
         // Update variables from globals
         _useImage.ButtonPressed = _globals.TilesUseImage;
@@ -52,10 +56,10 @@ public partial class NewGame : Control
         _image = new();
         _image.Load(_imagePath);
         _showNumbers.ButtonPressed = _globals.TilesShowNumbers;
-
-		// Initialize tile grid size
 		_columns.Value = _globals.TilesColumns;
 		_rows.Value = _globals.TilesRows;
+        _numberColor.Color = _globals.TilesNumberColor;
+        _outlineColor.Color = _globals.TilesOutlineColor;
 
 		// Resize image and set as texture
         UpdateImage();
@@ -115,6 +119,8 @@ public partial class NewGame : Control
             _globals.TilesDefaultImage = true;
             _globals.TilesImagePath = _globals.TilesImageDefault;
         }
+        _globals.TilesNumberColor = _numberColor.Color;
+        _globals.TilesOutlineColor = _outlineColor.Color;
         _globals.TilesShowNumbers = _showNumbers.ButtonPressed;
 		_tree.ChangeScene("res://Game.tscn");
     }
