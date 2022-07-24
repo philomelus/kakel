@@ -24,6 +24,13 @@ Globals="*res://Globals.cs"
 
 file_logging/enable_file_logging=true
 
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
 [editor_plugins]
 
 enabled=PackedStringArray()

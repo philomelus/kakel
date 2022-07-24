@@ -24,19 +24,19 @@ public partial class NewGame : Control
 
     public override void _Ready()
     {
-        _browse = GetNode<Button>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/Browse");
-        _columns = GetNode<SpinBox>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/Columns");
-        _defaultImage = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/DefaultImage");
+        _browse = GetNode<Button>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/Browse");
+        _columns = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/Columns");
+        _defaultImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/DefaultImage");
         _globals = GetNode<Globals>("/root/Globals");
-        _numberColor = GetNode<ColorPickerButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/NumberColor");
-        _outlineColor = GetNode<ColorPickerButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/OutlineColor");
-        _rows = GetNode<SpinBox>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/Rows");
-        _showNumbers = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/ShowNumbers");
-        _tilesImage = GetNode<TextureRect>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/TilesImage");
+        _numberColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/NumberColor");
+        _outlineColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/OutlineColor");
+        _rows = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/Rows");
+        _showNumbers = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/ShowNumbers");
+        _tilesImage = GetNode<TextureRect>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/TilesImage");
         _tilesImageDialog = GetNode<Window>("TileImageDialog");
         _tilesImageDialogUsed = false;
         _tree = GetTree();
-        _useImage = GetNode<CheckButton>("CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/UseImage");
+        _useImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/UseImage");
 
         // Update variables from globals
         _useImage.ButtonPressed = _globals.TilesUseImage;
@@ -53,8 +53,15 @@ public partial class NewGame : Control
 			_defaultImage.ButtonPressed = false;
 			_browse.Disabled = false;
         }
-        _image = new();
-        _image.Load(_imagePath);
+        if (_imagePath.Substr(0, 4) == "res:")
+        {
+            _image = GD.Load<Image>(_imagePath);
+        }
+        else
+        {
+            _image = new();
+            _image.Load(_imagePath);
+        }
         _showNumbers.ButtonPressed = _globals.TilesShowNumbers;
 		_columns.Value = _globals.TilesColumns;
 		_rows.Value = _globals.TilesRows;
@@ -89,8 +96,15 @@ public partial class NewGame : Control
         if (_defaultImage.ButtonPressed)
         {
             _imagePath = _globals.TilesImageDefault;
-			_image = new();
-            _image.Load(_imagePath);
+            if (_imagePath.Substr(0, 4) == "res:")
+            {
+                _image = GD.Load<Image>(_imagePath);
+            }
+            else
+            {
+			    _image = new();
+                _image.Load(_imagePath);
+            }
             UpdateImage();
         }
     }
@@ -128,8 +142,15 @@ public partial class NewGame : Control
     void OnTileImageDialogFileSelected(string path)
     {
         _imagePath = path;
-		_image = new Image();
-		_image.Load(path);
+        if (_imagePath.Substr(0, 4) == "res:")
+        {
+            _image = GD.Load<Image>(_imagePath);
+        }
+        else
+        {
+		    _image = new Image();
+		    _image.Load(path);
+        }
         UpdateImage();
     }
 

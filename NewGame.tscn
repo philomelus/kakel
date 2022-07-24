@@ -7,39 +7,43 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_rwr2w")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
-offset_left = 268.0
-offset_top = 201.0
-offset_right = 756.0
-offset_bottom = 398.0
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+offset_right = 1280.0
+offset_bottom = 720.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+offset_left = 396.0
+offset_top = 261.0
+offset_right = 884.0
+offset_bottom = 458.0
 theme_override_constants/separation = 10
 
-[node name="GridContainer" type="GridContainer" parent="CenterContainer/VBoxContainer"]
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
 offset_right = 488.0
 offset_bottom = 156.0
 theme_override_constants/h_separation = 50
 columns = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 offset_right = 205.0
 offset_bottom = 156.0
 
-[node name="GridContainer" type="GridContainer" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer"]
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer"]
 offset_right = 205.0
 offset_bottom = 156.0
 columns = 2
 
-[node name="Label" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_top = 2.0
 offset_right = 118.0
 offset_bottom = 28.0
 text = "Columns"
 
-[node name="Columns" type="SpinBox" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Columns" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_left = 122.0
 offset_right = 205.0
 offset_bottom = 31.0
@@ -48,13 +52,13 @@ max_value = 99.0
 value = 4.0
 alignment = 1
 
-[node name="Label2" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Label2" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_top = 37.0
 offset_right = 118.0
 offset_bottom = 63.0
 text = "Rows"
 
-[node name="Rows" type="SpinBox" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Rows" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_left = 122.0
 offset_top = 35.0
 offset_right = 205.0
@@ -64,13 +68,13 @@ max_value = 99.0
 value = 4.0
 alignment = 1
 
-[node name="Label5" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Label5" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_top = 70.0
 offset_right = 118.0
 offset_bottom = 96.0
 text = "Show Numbers"
 
-[node name="ShowNumbers" type="CheckButton" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="ShowNumbers" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_left = 141.0
 offset_top = 70.0
 offset_right = 185.0
@@ -78,80 +82,80 @@ offset_bottom = 96.0
 size_flags_horizontal = 4
 button_pressed = true
 
-[node name="Label6" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Label6" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_top = 100.0
 offset_right = 118.0
 offset_bottom = 126.0
 text = "Outline Color
 "
 
-[node name="OutlineColor" type="ColorPickerButton" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="OutlineColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_left = 122.0
 offset_top = 100.0
 offset_right = 205.0
 offset_bottom = 126.0
 
-[node name="Label7" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="Label7" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_top = 130.0
 offset_right = 118.0
 offset_bottom = 156.0
 text = "Number Color
 "
 
-[node name="NumberColor" type="ColorPickerButton" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
+[node name="NumberColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer"]
 offset_left = 122.0
 offset_top = 130.0
 offset_right = 205.0
 offset_bottom = 156.0
 
-[node name="VSeparator" type="VSeparator" parent="CenterContainer/VBoxContainer/GridContainer"]
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 offset_left = 255.0
 offset_right = 259.0
 offset_bottom = 156.0
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="CenterContainer/VBoxContainer/GridContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 offset_left = 309.0
 offset_right = 488.0
 offset_bottom = 156.0
 theme_override_constants/separation = 0
 
-[node name="GridContainer2" type="GridContainer" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2"]
+[node name="GridContainer2" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2"]
 offset_right = 179.0
 offset_bottom = 124.0
 columns = 2
 
-[node name="Label3" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
+[node name="Label3" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
 offset_right = 109.0
 offset_bottom = 26.0
 text = "Use Image"
 
-[node name="UseImage" type="CheckButton" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
+[node name="UseImage" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
 offset_left = 113.0
 offset_right = 179.0
 offset_bottom = 26.0
 button_pressed = true
 
-[node name="Label4" type="Label" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
+[node name="Label4" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
 offset_top = 30.0
 offset_right = 109.0
 offset_bottom = 56.0
 text = "Default Image"
 
-[node name="DefaultImage" type="CheckButton" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
+[node name="DefaultImage" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
 offset_left = 113.0
 offset_top = 30.0
 offset_right = 179.0
 offset_bottom = 56.0
 button_pressed = true
 
-[node name="TilesImage" type="TextureRect" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
+[node name="TilesImage" type="TextureRect" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
 custom_minimum_size = Vector2(64, 64)
 offset_top = 60.0
 offset_right = 109.0
 offset_bottom = 124.0
 stretch_mode = 5
 
-[node name="Browse" type="Button" parent="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
+[node name="Browse" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2"]
 offset_left = 113.0
 offset_top = 60.0
 offset_right = 179.0
@@ -160,20 +164,20 @@ size_flags_horizontal = 4
 size_flags_vertical = 0
 text = "Browse"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
 offset_top = 166.0
 offset_right = 488.0
 offset_bottom = 197.0
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="Cancel" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="Cancel" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 offset_left = 186.0
 offset_right = 246.0
 offset_bottom = 31.0
 text = "Cancel"
 
-[node name="Start" type="Button" parent="CenterContainer/VBoxContainer/HBoxContainer"]
+[node name="Start" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/HBoxContainer"]
 offset_left = 256.0
 offset_right = 302.0
 offset_bottom = 31.0
@@ -191,10 +195,10 @@ file_mode = 0
 access = 2
 filters = PackedStringArray("*.jpg,*.bmp,*.png;Images", "*.jpg;JPEG Images", "*.bmp;Bitmap Images", "*.png;PNG Images")
 
-[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/ShowNumbers" to="." method="OnUseImagePressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/UseImage" to="." method="OnUseImagePressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/DefaultImage" to="." method="OnDefaultImagePressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/Browse" to="." method="OnBrowsePressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/Cancel" to="." method="OnCancelPressed"]
-[connection signal="pressed" from="CenterContainer/VBoxContainer/HBoxContainer/Start" to="." method="OnStartPressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer/GridContainer/ShowNumbers" to="." method="OnUseImagePressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/UseImage" to="." method="OnUseImagePressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/DefaultImage" to="." method="OnDefaultImagePressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/GridContainer/VBoxContainer2/GridContainer2/Browse" to="." method="OnBrowsePressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/HBoxContainer/Cancel" to="." method="OnCancelPressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/HBoxContainer/Start" to="." method="OnStartPressed"]
 [connection signal="file_selected" from="TileImageDialog" to="." method="OnTileImageDialogFileSelected"]

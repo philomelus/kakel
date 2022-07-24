@@ -98,6 +98,20 @@ public partial class Game : Control
         _hintDialog.Hide();
     }
 
+    Image LoadImage(string path)
+    {
+        if (path.Substr(0, 4) == "res:")
+        {
+            return GD.Load<Image>(path);
+        }
+        else
+        {
+            Image i = new Image();
+            i.Load(path);
+            return i;
+        }
+    }
+
     void OnAbortPressed()
     {
         _tree.ChangeScene("res://Main.tscn");
@@ -122,11 +136,11 @@ public partial class Game : Control
         _gameBoard.Hide();
         if (_hintTexture.Texture == null)
         {
-            Image image = new();
+            Image image;
             if (_globals.TilesDefaultImage)
-                image.Load(_globals.TilesImageDefault);
+                image = LoadImage(_globals.TilesImageDefault);
             else
-                image.Load(_globals.TilesImagePath);
+                image = LoadImage(_globals.TilesImagePath);
             _hintTexture.Texture = ImageTexture.CreateFromImage(image);
         }
         if (_hintDialogUsed)

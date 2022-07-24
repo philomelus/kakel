@@ -132,8 +132,7 @@ public partial class TilesControl : Control
 			else
 			{
 				_imagePath = value;
-				_image = new();
-				_image.Load(value);
+				_image = LoadImage(_imagePath);
 			}
 		}
 	}
@@ -543,8 +542,7 @@ public partial class TilesControl : Control
 		if (useImage)
 		{
 			_imagePath = imagePath;
-			_image = new();
-			_image.Load(_imagePath);
+			_image = LoadImage(_imagePath);
 		}
 		else
 		{
@@ -570,6 +568,21 @@ public partial class TilesControl : Control
 		_tilesReady = false;
 		CallDeferred("update");
     }
+
+	private Image LoadImage(string path)
+	{
+		if (path.Substr(0, 4) == "res:")
+		{
+			return ResourceLoader.Load<Image>(path, "Image", ResourceLoader.CacheMode.Ignore);
+			//return GD.Load<Image>(path);
+		}
+		else
+		{
+			Image i = new();
+			i.Load(path);
+			return i;
+		}
+	}
 
     private void MoveDown()
     {
@@ -637,8 +650,7 @@ public partial class TilesControl : Control
 		{
 			if (_image == null || Size.x != _image.GetWidth() || Size.y != _image.GetHeight())
 			{
-				_image = new();
-				_image.Load(_imagePath);
+				_image = LoadImage(_imagePath);
 				_image.Resize((int) Size.x, (int) Size.y);
 			}
 			_tilesTexture = ImageTexture.CreateFromImage(_image);
