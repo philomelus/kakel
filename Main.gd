@@ -10,7 +10,7 @@ onready var _tree: SceneTree = get_tree()
 func _on_LoadDialog_file_selected(path):
 	Globals.TilesLoading = true
 	Globals.TilesLoadPath = path
-	_tree.ChangeScene("res://Game.tscn")
+	_tree.change_scene("res://Game.tscn")
 
 
 func _on_Load_pressed():

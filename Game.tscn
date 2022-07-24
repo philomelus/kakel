@@ -222,4 +222,6 @@ filters = PoolStringArray( "*.kakel;Kakel Game" )
 [connection signal="resized" from="HintDialog" to="." method="_on_HintDialog_resized"]
 [connection signal="pressed" from="HintDialog/CloseHint" to="." method="_on_HintDialog_Close_pressed"]
 [connection signal="file_selected" from="LoadDialog" to="." method="_on_LoadDialog_file_selected"]
+[connection signal="popup_hide" from="LoadDialog" to="." method="_on_LoadDialog_popup_hide"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_SaveDialog_file_selected"]
+[connection signal="popup_hide" from="SaveDialog" to="." method="_on_SaveDialog_popup_hide"]

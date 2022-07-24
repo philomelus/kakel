@@ -67,7 +67,12 @@ func _on_LoadDialog_file_selected(path):
 	_tiles.load(path)
 
 
+func _on_LoadDialog_popup_hide():
+	_tiles.moves_enabled = true
+
+
 func _on_Load_pressed():
+	_tiles.moves_enabled = false
 	if _load_dialog_used:
 		_load_dialog.popup()
 	else:
@@ -83,7 +88,12 @@ func _on_SaveDialog_file_selected(path):
 	_tiles.save(path)
 
 
+func _on_SaveDialog_popup_hide():
+	_tiles.moves_enabled = true
+
+
 func _on_Save_pressed():
+	_tiles.moves_enabled = false
 	if _save_dialog_used:
 		_save_dialog.popup()
 	else:
@@ -157,4 +167,8 @@ func hide_hint():
 	
 func set_show_numbers():
 	_show_numbers.pressed = _tiles.show_numbers
+
+
+
+
 

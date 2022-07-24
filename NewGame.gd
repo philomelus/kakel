@@ -34,8 +34,11 @@ func _on_Default_pressed():
 	_browse.disabled = _default_image.pressed
 	if _default_image.pressed:
 		_image_path = Globals.TilesImageDefault
-		_image = Image.new()
-		var _x = _image.load(_image_path)
+		if _image_path.substr(0, 4) == "res:":
+			_image = load(_image_path)
+		else:
+			_image = Image.new()
+			var _x = _image.load(_image_path)
 		update_image()
 
 
@@ -64,6 +67,7 @@ func _on_Start_pressed():
 
 func _on_TilesImageDialog_file_selected(path):
 	_image_path = path
+	assert(path.substr(0, 4) != "res:")
 	_image = Image.new()
 	var _x = _image.load(path)
 	update_image()
@@ -86,8 +90,11 @@ func _ready():
 		_image_path = Globals.TilesImagePath
 		_default_image.pressed = false
 		_browse.disabled = false
-	_image = Image.new()
-	var _x = _image.load(_image_path)
+	if _image_path.substr(0, 4) == "res:":
+		_image = load(_image_path)
+	else:
+		_image = Image.new()
+		var _x = _image.load(_image_path)
 	_show_numbers.pressed = Globals.TilesShowNumbers
 	_columns.value = Globals.TilesColumns
 	_rows.value = Globals.TilesRows

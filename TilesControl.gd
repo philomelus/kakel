@@ -13,7 +13,8 @@ var _empty: int;
 var _empty_id: int
 
 # When false, no movement is allowed.
-var _moves_enabled: bool = false
+# Public (which has no meaning in GDScript)
+var moves_enabled: bool = false
 
 # Columns in tiles.
 export var columns: int = 4 setget columns_set
@@ -82,8 +83,11 @@ func image_path_set(path) -> void:
 		_image = null
 	else:
 		image_path = path
-		_image = Image.new()
-		var _x = _image.load(image_path)
+		if image_path.substr(0, 4) == "res:":
+			_image = load(image_path)
+		else:
+			_image = Image.new()
+			var _x = _image.load(image_path)
 
 # `_tilesImage` converted to texture.  Only valid when `_tilesReady` is true.
 var _tiles_texture: ImageTexture
@@ -192,7 +196,7 @@ func _draw() -> void:
 
 func _input(ev: InputEvent) -> void:
 	# Do nothing while paused or uninitialized.
-	if not _ready_to_run or not _tiles_ready or _tree.paused || not _moves_enabled:
+	if not _ready_to_run or not _tiles_ready or _tree.paused || not moves_enabled:
 		return
 
 	# Only handle mouse clicks here.
@@ -265,7 +269,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(ev: InputEvent) -> void:
-	if not _ready_to_run or not _tiles_ready or _tree.paused or not _moves_enabled or not ev.is_action_type():
+	if not _ready_to_run or not _tiles_ready or _tree.paused or not moves_enabled or not ev.is_action_type():
 		return
 
 	# Take appropriate action.
@@ -342,13 +346,13 @@ func check_complete() -> bool:
 	for index in range(_num_tiles):
 		if _tiles_order[index] != index:
 			return false
-	_moves_enabled = false
+	moves_enabled = false
 	emit_signal("won")
 	return true
 
 
 func load(path: String) -> void:
-	_moves_enabled = false
+	moves_enabled = false
 
 	var inp: File = File.new()
 	var _x = inp.open(path, File.READ)
@@ -409,7 +413,7 @@ func load(path: String) -> void:
 
 	# All ready
 	_ready_to_run = true
-	_moves_enabled = true
+	moves_enabled = true
 	_tiles_ready = false
 	call_deferred("update")
 
@@ -471,8 +475,11 @@ func recalc_tiles() -> void:
 	# Reload and resize if size changed
 	if self._use_image:
 		if _image == null or rect_size.x != _image.get_width() or rect_size.y != _image.get_height():
-			_image = Image.new()
-			var _x = _image.load(self.image_path)
+			if image_path.substr(0, 4) == "res:":
+				_image = load(image_path)
+			else:
+				_image = Image.new()
+				var _x = _image.load(self.image_path)
 			# warning-ignore:narrowing_conversion
 			# warning-ignore:narrowing_conversion
 			_image.resize(rect_size.x, rect_size.y)
@@ -532,7 +539,7 @@ func reset_tiles() -> void:
 
 	# Initialized, but queue movement and tiles calc.
 	_ready_to_run = true
-	_moves_enabled = true
+	moves_enabled = true
 	call_deferred("recalc_tiles")
 	call_deferred("calc_movables")
 	
