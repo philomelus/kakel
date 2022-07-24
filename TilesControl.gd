@@ -1,495 +1,587 @@
 extends Control
 
-# For save files, version of file format
-const FILE_VERSION = 1
+class_name TilesControl
 
-# When false, no movement is allowed
-var moves_enabled = true
+# For save files, version of file format.
+const FILE_VERSION: int = 1
 
-# Precalc these as they are used several times
-var columns: int	# columns in tiles
-var columns0: int	# columns in tile minus 1
-var rows: int		# rows in tiles
-var rows0: int		# rows in tiles minus 1
+# Index within tiles of the empty tile.
+var _empty: int;
 
-# Total number of tiles
-var num_tiles: int
-var num_tiles0: int
+# Index value of the empty tile (always the last global tile index,
+# i.e. `_numTiles0` below).
+var _empty_id: int
 
-# Spacing between each tile
-export(Vector2) var tile_spacing = Vector2(5, 5)
+# When false, no movement is allowed.
+var _moves_enabled: bool = false
 
-# Font for drawing numerical id's of tiles
-var tile_font: DynamicFont = load("res://tile_font.tres")
+# Columns in tiles.
+export var columns: int = 4 setget columns_set
+var _columns0: int = 3
 
-# Image/Texture for display
-var tiles_image: Image
-var tiles_texture: ImageTexture
+func columns_set(cols):
+	assert(cols >= 3 and cols <= 99)
+	columns = cols
+	_columns0 = cols - 1
+	_num_tiles = columns * rows
+	_num_tiles0 = _num_tiles - 1
+	_tiles_ready = false
 
-# Size of each tile in pixels
-var tile_size: Vector2
 
-# Data for each tile.  Each tile is a two item Rect array
-var tiles: Array
+# Rows in tiles.
+export var rows: int = 4 setget rows_set
+var _rows0: int = 3
+
+func rows_set(val):
+	assert(val >= 3 and val <= 99)
+	rows = val
+	_rows0 = rows - 1
+	_num_tiles = rows * columns
+	_num_tiles0 = _num_tiles - 1
+	_tiles_ready = false
+
+# Total number of tiles.
+var _num_tiles: int = 16
+var _num_tiles0: int = 15
+
+# Spacing between each tile.
+export var spacing : Vector2 = Vector2(5, 5)
+
+# Font for drawing numerical id's of tiles.
+export var number_font: Font
+
+# Outline color for non-image tiles.
+export var outline_color: Color = Color.black
+
+# Color of font for tile numbers.
+export var number_color: Color = Color.white
+
+# Whn true, add numbers to all tiles (incuding images).
+export var show_numbers: bool = false setget _show_numbers_set
+
+func _show_numbers_set(show):
+	if show_numbers != show:
+		show_numbers = show
+		update()
+
+# Used internally to know when image not used
+var _use_image: bool setget , _use_image_get
+
+func _use_image_get() -> bool:
+	return image_path != null and len(image_path) > 0
+
+# Image used for tiles.
+var _image: Image
+
+# Path to image file.
+export var image_path: String setget image_path_set
+
+func image_path_set(path) -> void:
+	if len(path) == 0:
+		image_path = ""
+		_image = null
+	else:
+		image_path = path
+		_image = Image.new()
+		var _x = _image.load(image_path)
+
+# `_tilesImage` converted to texture.  Only valid when `_tilesReady` is true.
+var _tiles_texture: ImageTexture
+
+# Size of each tile in pixels.  Only valid when `_tilesReady` is true.
+var _tile_size: Vector2
+
+# Data for each tile.  Each tile is a two item Rect array.
+var _tiles: Array
+
+# Index within `_tiles`[...][] of Rect2 of tile on `CanvasItem`.
 const IDX_DEST: int = 0
+
+# Index within `_tiles`[...][] of Rect2 of tile on `_tilesTexture`.
 const IDX_SRC: int = 1
 
-# Actual positions of each tile (i.e. index 0 = tile at upper left)
-var tiles_order: Array
+# When true, `_tiles`, `_tilesTexture`, and `_tileSize` are valid.
+var _tiles_ready: bool = false
 
-# When true, move_*_index holds index of tile than can move there
-var can_move_down: bool = false
-var can_move_left: bool = false
-var can_move_right: bool = false
-var can_move_up: bool = false
+# Actual positions of each tile (i.e. index 0 = tile at upper left).
+# Columns before rows (i.e. index 0 = row 0/col 0, index 1 = row 0/col 1,
+# index 2 = row 0/col 2, index 3 = row 1/col 0, etc. if `Columns` is 3).
+var _tiles_order: Array
 
-# Index within tiles_order that moves in direction
-var move_down_index: int = -1
-var move_left_index: int = -1
-var move_right_index: int = -1
-var move_up_index: int = -1
+# When true, `_moveDownIndex` holds index within `_tiles` that can move down.
+var _can_move_down: bool
 
-# Number of movements made since initial display
-var moves: int = 0
+# When true, `_moveLeftIndex` holds index within `_tiles` than can move left.
+var _can_move_left: bool
 
-# This is signalled every time a tile is moved
-enum DIRECTION { NORTH, EAST, SOUTH, WEST}
-signal moved(direction, count)
+# When true, `_moveRightIndex` holds index within `_tiles` than can move right.
+var _can_move_right: bool
 
-# Generated when Load is called, and it fails
-enum WHY { UNKNOWN, BAD_VERSION }
-signal load_failed(path, why)
+# When true, `_moveUpIndex` holds index within `_tiles` than can move up.
+var _can_move_up: bool
 
-# This is signalled when the tiles are all in correct order
+# Index within `_tilesOrder` that can move down. Valid only when `_canMoveDown`
+# is true.
+var _move_down_index: int
+
+# Index within `_tiles_order` that can moves left. Valid only when `_canMoveLeft`
+# is true.
+var _move_left_index: int
+
+# Index within `_tiles_order` that can move right. Valid only when `_canMoveRight`
+# is true.
+var _move_right_index: int
+
+# Index within `_tiles_order` that can move up. Valid only when `_canMoveUp`
+# is true.
+var _move_up_index: int
+
+# Number of movements made since initial display.
+var _moves: int = 0
+
+# Signalled when a tile is moved. Throttled to 1/50 second.
+signal moved(count)
+
+# When > 0, a move has occurred.  This hrottles the `moved` signal.
+var _moved_signal: int = 0;
+
+# This is signalled when the tiles are all in correct order.
 signal won()
 
-# Index within tiles of the empty tile
-var empty: int
+# When true internal variables are initialized and ready to use.
+var _ready_to_run: bool = false;
 
-# Index value of the empty tile (always the last global tile index)
-var empty_id: int
+# Time since last emit_signal for moves.
+var _last_signal: float = 0
+
+# Time since last check_complete().
+var _last_winner: float = 0
 
 onready var _tree: SceneTree = get_tree()
 
-func _draw():
-	var extent
-	if Globals.TilesLoading:
-		var message = "Loading ... one moment please"
-		extent = tile_font.get_string_size(message)
-		draw_string(tile_font, Vector2(rect_position.x + ((rect_size.x - extent.x) / 2),
-									   rect_position.y + ((rect_size.y - extent.y) / 2) + extent.y),
-					message, Globals.TilesFontColor)
+
+func _draw() -> void:
+	if not _ready_to_run or not _tiles_ready:
 		return
-	var index = 0
-	var area
-	var name
-	var tile
-	for tile_index in tiles_order:
-		tile = tiles[index]
-		area = tile[IDX_DEST]
-		if tile_index != empty_id:
-			if Globals.TilesUseImage:
-				draw_texture_rect_region(tiles_texture, tiles[index][IDX_DEST],
-										 tiles[tiles_order[index]][IDX_SRC])
+	var extent: Vector2
+	var index: int = 0
+	var tile_index: int
+	for i in range(_num_tiles):
+		tile_index = _tiles_order[i]
+		if tile_index != _empty_id:
+			if self._use_image:
+				draw_texture_rect_region(_tiles_texture, _tiles[index][IDX_DEST],
+						_tiles[_tiles_order[index]][IDX_SRC])
+				if self.show_numbers:
+					var name: String = str(tile_index + 1)
+					extent = self.number_font.get_string_size(name)
+					draw_string(self.number_font, Vector2(_tiles[index][IDX_DEST].position.x + 5,
+							_tiles[index][IDX_DEST].position.y + 10 + (extent.y / 2)),
+							name, self.number_color)
 			else:
-				name = "%d" % (tile_index + 1)
-				extent = tile_font.get_string_size(name)
-				draw_rect(area, Globals.TilesColor, false)
-				draw_string(tile_font, Vector2(area.position.x + ((area.size.x - extent.x) / 2),
-											   area.position.y + ((area.size.y - extent.y) / 2) + extent.y),
-							name, Globals.TilesFontColor)
+				var tile: Array = _tiles[index]
+				var area: Rect2 = tile[IDX_DEST]
+				var name: String = str(tile_index + 1)
+				extent = self.number_font.get_string_size(name)
+				draw_rect(area, self.outline_color, false)
+				draw_string(self.number_font, Vector2(area.position.x + ((area.size.x - extent.x) / 2),
+						area.position.y + ((area.size.y - extent.y) / 2) + extent.y),
+						name, self.number_color)
 		index += 1
 
 
-func _physics_process(_delta):
-	check_complete()
-
-func _ready():
-	if Globals.TilesLoading:
-		Load(Globals.TilesLoadPath)
-		Globals.TilesLoading = false
+func _input(ev: InputEvent) -> void:
+	# Do nothing while paused or uninitialized.
+	if not _ready_to_run or not _tiles_ready or _tree.paused || not _moves_enabled:
 		return
 
-	# Precalc these as they are used several times
-	columns = int(Globals.TilesSize.x)
-	columns0 = columns - 1
-	rows = int(Globals.TilesSize.y)
-	rows0 = rows - 1
+	# Only handle mouse clicks here.
+	if not ev is InputEventMouseButton:
+		return
+	var iemb: InputEventMouseButton = ev as InputEventMouseButton;
 
-	# Total number of tiles
-	num_tiles = columns * rows
-	num_tiles0 = num_tiles - 1
-
-	# Initial blank tiles is last tile
-	empty = num_tiles0
-	empty_id = empty
-
-	# Need some random numbers
-	var rng = RandomNumberGenerator.new()
-	rng.randomize()
-
-	# Determine tile order
-	tiles_order = []
-	var order
-	for i in range(num_tiles):
-		if i == empty:
-			assert(not empty in tiles_order)
-			tiles_order.append(empty_id)
-		else:
-			order = rng.randi_range(0, num_tiles0)
-			if len(tiles_order) > 0:
-				order = tiles_order[0]
-				while order in tiles_order or order == empty:
-					order = rng.randi_range(0, num_tiles0)
-			else:
-				if order == empty:
-					while order == empty:
-						order = rng.randi_range(0, num_tiles0)
-			assert(not order in tiles_order)
-			assert(order != empty)
-			tiles_order.append(order)
-
-	# Determine valid moves
-	calc_movables()
-
-
-func _unhandled_input(event):
-	# Do nothing when paused
-	if _tree.paused or not moves_enabled:
+	# Only handle left mouse clicks.
+	if iemb.button_index != BUTTON_LEFT:
 		return
 
-	# If event isn't an action, ignore
-	if not event.is_action_type():
+	# Don't pay attention to double clicks.
+	if iemb.doubleclick:
 		return
 
-	# Take appropriate action
-	if event.is_action_pressed("refresh"):
-		accept_event()
-		update()
+	# Only repond to clicks when released.
+	if iemb.pressed:
 		return
-	if event.is_action_pressed("quit"):
-		accept_event()
-		var _unused = _tree.change_scene("res://Main.tscn")
-		return
-	if event.is_action_pressed("move_left"):
-		if can_move_left:
+
+	# Adjust position of click to local coordinates
+	var evmb: InputEventMouseButton = make_input_local(iemb) as InputEventMouseButton
+
+	# Take appropriate action if needed
+	if _can_move_down:
+		if _tiles[_move_down_index][IDX_DEST].has_point(evmb.position):
+			accept_event()
+			move_down()
+			return
+	if _can_move_left:
+		if _tiles[_move_left_index][IDX_DEST].has_point(evmb.position):
 			accept_event()
 			move_left()
 			return
-	if event.is_action_pressed("move_right"):
-		if can_move_right:
+	if _can_move_right:
+		if _tiles[_move_right_index][IDX_DEST].has_point(evmb.position):
 			accept_event()
 			move_right()
 			return
-	if event.is_action_pressed("move_up"):
-		if can_move_up:
+	if _can_move_up:
+		if _tiles[_move_up_index][IDX_DEST].has_point(evmb.position):
 			accept_event()
 			move_up()
 			return
-	if event.is_action_pressed("move_down"):
-		if can_move_down:
+
+
+func _physics_process(delta: float) -> void:
+	if not _ready_to_run:
+		return
+
+	# Update tiles if needed.
+	if not _tiles_ready:
+		recalc_tiles()
+
+	# Emit moved signal if needed @ 1/50th second.
+	if _moved_signal > 0:
+		if _last_signal + delta > 0.02:
+			var m: int = _moves
+			_moved_signal = 0
+			emit_signal("moved", m)
+			_last_signal = 0
+		else:
+			_last_signal += delta
+
+	# Limit winning checks to 1/20 second.
+	if _last_winner + delta > 0.05:
+		var _x = check_complete()
+		_last_winner = 0
+	else:
+		_last_winner += delta
+
+
+func _unhandled_input(ev: InputEvent) -> void:
+	if not _ready_to_run or not _tiles_ready or _tree.paused or not _moves_enabled or not ev.is_action_type():
+		return
+
+	# Take appropriate action.
+	if _can_move_left:
+		if ev.is_action_pressed("move_left"):
+			accept_event()
+			move_left()
+			return
+	if _can_move_right:
+		if ev.is_action_pressed("move_right"):
+			accept_event()
+			move_right()
+			return
+	if _can_move_up:
+		if ev.is_action_pressed("move_up"):
+			accept_event()
+			move_up()
+			return
+	if _can_move_down:
+		if ev.is_action_pressed("move_down"):
 			accept_event()
 			move_down()
 			return
 
 
-func _input(event):
-	# Do nothing while paused
-	if _tree.paused or not moves_enabled:
+func calc_movables() -> void:
+	# Do nothing until initialized.
+	if not _ready_to_run:
 		return
 
-	# Only handle mouse clicks here
-	if not event is InputEventMouseButton:
-		return
-	# warning-ignore:unsafe_cast
-	var ev = event as InputEventMouseButton
-
-	# Only handle left mouse clicks
-	if ev.button_index != 1:
-		return
-
-	# Don't pay attention to double clicks
-	if ev.doubleclick:
-		return
-
-	# Only repond to clicks when released
-	if ev.pressed:
-		return
-
-	# Adjust position of click for our position
-	var p = event.position - rect_position
-
-	# If click was valid, take appropriate action
-	if can_move_down:
-		if tiles[move_down_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_down();
-			return
-	if can_move_left:
-		if tiles[move_left_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_left();
-			return
-	if can_move_right:
-		if tiles[move_right_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_right();
-			return
-	if can_move_up:
-		if tiles[move_up_index][IDX_DEST].has_point(p):
-			accept_event()
-			move_up();
-			return
-
-
-func calc_movables():
-	# Row and column of blank tile
+	# Row and column of blank tile.
 	# warning-ignore:integer_division
-	var row: int = int(empty / columns)
-	var column: int = empty % columns
+	var row: int = _empty / self.columns
+	var column: int = _empty % self.columns
 
-	# Determine tiles that can move horizontally
+	# Determine tiles that can move horizontally.
 	var left_side: bool = (column == 0)
-	var right_side: bool = (column == columns0)
-	var inside_h: bool = (column > 0 and column < columns0)
+	var right_side: bool = (column == _columns0)
+	var inside_h: bool = (column > 0 && column < _columns0)
 	if left_side:
-		can_move_left = true
-		can_move_right = false
+		_can_move_left = true
+		_can_move_right = false
 	elif right_side:
-		can_move_left = false
-		can_move_right = true
-	else:
-		assert(inside_h)
-		can_move_left = true
-		can_move_right = true
-	if can_move_left:
-		move_left_index = ((row * columns) + column + 1)
-	if can_move_right:
-		move_right_index = ((row * columns) + column - 1)
+		_can_move_left = false
+		_can_move_right = true
+	elif inside_h:
+		_can_move_left = true
+		_can_move_right = true
+	if _can_move_left:
+		_move_left_index = (row * self.columns) + column + 1
+	if _can_move_right:
+		_move_right_index = (row * self.columns) + column - 1;
 
-	# Determine tiles that can move vertically
+	# Determine tiles that can move vertically.
 	var top_side: bool = (row == 0)
-	var bottom_side: bool = (row == rows0)
-	var inside_v: bool = (row > 0 and row < rows0)
+	var bottom_side: bool = (row == _rows0)
+	var inside_v: bool = (row > 0 and row < _rows0)
 	if top_side:
-		can_move_up = true
-		can_move_down = false
+		_can_move_up = true
+		_can_move_down = false
 	elif bottom_side:
-		can_move_up = false
-		can_move_down = true
-	else:
-		assert(inside_v)
-		can_move_up = true
-		can_move_down = true
-	if can_move_up:
-		move_up_index = (((row + 1) * columns) + column)
-	if can_move_down:
-		move_down_index = (((row - 1) * columns) + column)
+		_can_move_up = false
+		_can_move_down = true
+	elif inside_v:
+		_can_move_up = true
+		_can_move_down = true
+	if _can_move_up:
+		_move_up_index = ((row + 1) * self.columns) + column
+	if _can_move_down:
+		_move_down_index = ((row - 1) * self.columns) + column
 
 
-func check_complete():
-	var index = 0
-	for tile in tiles:
-		if tiles_order[index] != index:
+func check_complete() -> bool:
+	for index in range(_num_tiles):
+		if _tiles_order[index] != index:
 			return false
-		index += 1
-	moves_enabled = false
+	_moves_enabled = false
 	emit_signal("won")
 	return true
 
 
-func move_down():
-	var newEmpty = tiles_order[move_down_index]
-	tiles_order[move_down_index] = empty_id
-	tiles_order[empty] = newEmpty
-	empty = move_down_index
-	moves += 1
-	emit_signal("moved", DIRECTION.SOUTH, moves)
-	calc_movables()
-	update()
+func load(path: String) -> void:
+	_moves_enabled = false
 
+	var inp: File = File.new()
+	var _x = inp.open(path, File.READ)
 
-func move_left():
-	var newEmpty = tiles_order[move_left_index]
-	tiles_order[move_left_index] = empty_id
-	tiles_order[empty] = newEmpty
-	empty = move_left_index
-	moves += 1
-	emit_signal("moved", DIRECTION.WEST, moves)
-	calc_movables()
-	update()
+	# Read file format version.
+	var v: int = inp.get_16()
+	assert(v == FILE_VERSION)
 
+	# Load columns and rows.
+	var co: int = inp.get_8()
+	var ro: int = inp.get_8()
 
-func move_right():
-	var newEmpty = tiles_order[move_right_index]
-	tiles_order[move_right_index] = empty_id
-	tiles_order[empty] = newEmpty
-	empty = move_right_index
-	moves += 1
-	emit_signal("moved", DIRECTION.EAST, moves)
-	calc_movables()
-	update()
+	# Load UseImage.
+	var tmp = inp.get_8()
+	var use_image: bool = tmp != 0
 
+	# Load image path.
+	var _image_path = inp.get_pascal_string()
 
-func move_up():
-	var newEmpty = tiles_order[move_up_index]
-	tiles_order[move_up_index] = empty_id
-	tiles_order[empty] = newEmpty
-	empty = move_up_index
-	moves += 1
-	emit_signal("moved", DIRECTION.NORTH, moves)
-	calc_movables()
-	update()
+	# Load tiles order.
+	var num_tiles: int = inp.get_16()
+	var order: Array = []
+	for _i in range(num_tiles):
+		order.append(9999)
+	for i in range(num_tiles):
+		order[i] = inp.get_16()
 
+	# Read blank tile index.
+	var e: int = inp.get_16()
+	var eid: int = inp.get_16()
 
-func recalc_tiles():
-	# This can be called before everything is ready
-	if columns == 0 or rows == 0:
-		return
+	# Read moves so far.
+	var m: int = inp.get_32()
 
-	# Determine width and height of tiles from our size
-	tile_size = Vector2((rect_size.x - (columns0 * tile_spacing.x)) / columns,
-						(rect_size.y - (rows0 * tile_spacing.y)) / rows)
-	if tile_size.x <= 0 or tile_size.y <= 0:
-		return
-
-	# Resize image for display if needed
-	if Globals.TilesUseImage:
-		if Globals.TilesImagePath == "":
-			tiles_image = Globals.TilesImageDefault.duplicate()
-		else:
-			tiles_image = Globals.TilesImage.duplicate()
-		# warning-ignore:narrowing_conversion
-		# warning-ignore:narrowing_conversion
-		tiles_image.resize(tile_size.x * columns, tile_size.y * rows, Image.INTERPOLATE_LANCZOS)
-
-		# Convert image to texture for display
-		tiles_texture = ImageTexture.new()
-		tiles_texture.create_from_image(tiles_image, 0)
-	else:
-		tiles_image = null
-
-	# Calculate the bounding boxes for each tile for both display and image
-	var tile_size_int = Vector2(int(tile_size.x), int(tile_size.y))
-	tiles = []
-	var tile
-	var left
-	var top
-	for row in range(rows):
-		for col in range(columns):
-			tile = [null, null]
-			left = (col * tile_size.x) + (col * tile_spacing.x)
-			top = (row * tile_size.y) + (row * tile_spacing.y)
-			tile[IDX_DEST] = Rect2(Vector2(int(left), int(top)), tile_size_int)
-			left = col * tile_size.x
-			top = row * tile_size.y
-			tile[IDX_SRC] = Rect2(Vector2(int(left), int(top)), tile_size_int)
-			tiles.append(tile)
-
-
-func Load(path):
-	# Ignore input until load is complete
-	moves_enabled = false
-
-	var inp = File.new()
-	inp.open(path, File.READ)
-
-	# Read file format version
-	var v = inp.get_16()
-	if v != FILE_VERSION:
-		emit_signal("load_failed", path, WHY.BAD_VERSION)
-		inp.close()
-		return
-
-	# Load TilesSize
-	var x = inp.get_float()
-	var y = inp.get_float()
-
-	# Load UseImage
-	var useImage = inp.get_8()
-
-	# Load image path
-	var imagePath = inp.get_pascal_string()
-
-	# Load tiles order
-	var numTiles = inp.get_32()
-	var order = []
-	for _i in range(numTiles):
-		order.append(inp.get_32())
-
-	# Read blank tiles index
-	var e = inp.get_32()
-	var eid = inp.get_32()
-
-	# Read moves so far
-	var m = inp.get_64()
+	# Read show numbers.
+	tmp = inp.get_8()
+	var _show_numbers = tmp != 0
 
 	# Done loading data
 	inp.close()
 
-	# Set globals
-	Globals.TilesSize = Vector2(x, y)
-	Globals.TilesImagePath = imagePath
-	Globals.TilesUseImage = (useImage != 0)
-	if Globals.TilesUseImage and Globals.TilesImagePath != "":
-		Globals.TilesImage = Image.new()
-		var _unused = Globals.TilesImage.load(Globals.TilesImagePath)
-
-	# Set local parameters
-	columns = int(Globals.TilesSize.x)
-	columns0 = columns - 1
-	rows = int(Globals.TilesSize.y)
-	rows0 = rows - 1
-	num_tiles = columns * rows
-	num_tiles0 = num_tiles - 1
-	tiles_order = order
-	moves = m
-	empty = e
-	empty_id = eid
+	if use_image:
+		self.image_path = _image_path
+	else:
+		self.image_path = ""
+	self.columns = co
+	self.rows = ro
+	_tiles_order = order
+	_moves = m
+	_empty = e
+	_empty_id = eid
+	self.show_numbers = _show_numbers
+	_moved_signal += 1
 
 	# Reset tiles
 	call_deferred("recalc_tiles")
 	call_deferred("calc_movables")
-	#recalc_tiles()
 
 	# All ready
-	moves_enabled = true
+	_ready_to_run = true
+	_moves_enabled = true
+	_tiles_ready = false
 	call_deferred("update")
-	#update()
 
 
-func Save(path):
-	var out = File.new()
-	out.open(path, File.WRITE)
+func move_down() -> void:
+	var new_empty: int = _tiles_order[_move_down_index]
+	_tiles_order[_move_down_index] = _empty_id
+	_tiles_order[_empty] = new_empty
+	_empty = _move_down_index
+	_moves += 1
+	_moved_signal += 1
+	calc_movables()
+	update()
+
+
+func move_left() -> void:
+	var new_empty: int = _tiles_order[_move_left_index]
+	_tiles_order[_move_left_index] = _empty_id
+	_tiles_order[_empty] = new_empty
+	_empty = _move_left_index
+	_moves += 1
+	_moved_signal += 1
+	calc_movables()
+	update()
+
+
+func move_right() -> void:
+	var new_empty: int = _tiles_order[_move_right_index]
+	_tiles_order[_move_right_index] = _empty_id
+	_tiles_order[_empty] = new_empty
+	_empty = _move_right_index
+	_moves += 1
+	_moved_signal += 1
+	calc_movables()
+	update()
+
+
+func move_up() -> void:
+	var new_empty: int = _tiles_order[_move_up_index]
+	_tiles_order[_move_up_index] = _empty_id
+	_tiles_order[_empty] = new_empty
+	_empty = _move_up_index
+	_moves += 1
+	_moved_signal += 1
+	calc_movables()
+	update()
+
+	
+func recalc_tiles() -> void:
+	if not _ready_to_run:
+		return
+
+	assert(self.columns >= 3 and self.columns <= 99)
+	assert(self.rows >= 3 and self.rows <= 99)
+
+	# Stop processing that relies on tiles being set.
+	_tiles_ready = false
+
+	# Reload and resize if size changed
+	if self._use_image:
+		if _image == null or rect_size.x != _image.get_width() or rect_size.y != _image.get_height():
+			_image = Image.new()
+			var _x = _image.load(self.image_path)
+			# warning-ignore:narrowing_conversion
+			# warning-ignore:narrowing_conversion
+			_image.resize(rect_size.x, rect_size.y)
+		_tiles_texture = ImageTexture.new()
+		_tiles_texture.create_from_image(_image)
+
+	# Determine width and height of tiles from our size.
+	_tile_size = Vector2((rect_size.x - (_columns0 * self.spacing.x)) / self.columns,
+							(rect_size.y - (_rows0 * self.spacing.y)) / self.rows)
+	if _tile_size.x < 0 or _tile_size.y < 0:
+		return
+
+	# Calculate the bounding boxes for each tile for both display and image
+	var tile_size: Vector2 = Vector2(_tile_size.x, _tile_size.y)
+	_tiles = []
+	for _i in range(_num_tiles):
+		_tiles.append([])
+	var tile: Array
+	for row in range(self.rows):
+		for col in range(self.columns):
+			tile = [Rect2(), Rect2()]
+			tile[IDX_DEST] = Rect2(Vector2((col * _tile_size.x) + (col * self.spacing.x),
+					(row * _tile_size.y) + (row * self.spacing.y)), tile_size)
+			tile[IDX_SRC] = Rect2(Vector2(col * _tile_size.x, row * _tile_size.y),
+					tile_size)
+			_tiles[(row * self.columns) + col ] = tile
+	_tiles_ready = true
+	
+
+func reset_tiles() -> void:
+	# Initial blank tile is last tile.
+	_empty = _num_tiles0
+	_empty_id = _empty
+
+	# Need some random numbers.
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.randomize()
+
+	# Determine tile order.
+	_tiles_order = []
+	for _i in range(_num_tiles):
+		_tiles_order.append(9999)
+	var order: int
+	for i in range(_num_tiles):
+		if i == _empty:
+			_tiles_order[i] = _empty_id
+		else:
+			order = rng.randi_range(0, _num_tiles0 - 1)
+			if i > 0:
+				while order in _tiles_order:
+					order = rng.randi_range(0, _num_tiles0 - 1)
+			else:
+				if order == _empty:
+					while order == _empty:
+						order = rng.randi_range(0, _num_tiles0 - 1)
+			_tiles_order[i] = order
+
+	# Initialized, but queue movement and tiles calc.
+	_ready_to_run = true
+	_moves_enabled = true
+	call_deferred("recalc_tiles")
+	call_deferred("calc_movables")
+	
+
+func save(path: String) -> void:
+	if not _ready_to_run:
+		return
+
+	var sav: File = File.new()
+	var _x = sav.open(path, File.WRITE)
 
 	# Save file version
-	out.store_16(FILE_VERSION)
+	sav.store_16(FILE_VERSION)
 
 	# Save TilesSize
-	out.store_float(Globals.TilesSize.x)
-	out.store_float(Globals.TilesSize.y)
+	sav.store_8(self.columns)
+	sav.store_8(self.rows)
 
 	# Save UseImage state
-	if Globals.TilesUseImage:
-		out.store_8(1)
+	if self._use_image:
+		sav.store_8(1)
 	else:
-		out.store_8(0)
+		sav.store_8(0)
 
 	# Save image path
-	out.store_pascal_string(Globals.TilesImagePath)
+	sav.store_pascal_string(self.image_path)
 
 	# Save tiles order
-	assert(len(tiles_order) == len(tiles))
-	out.store_32(len(tiles_order))
-	for index in tiles_order:
-		out.store_32(index)
+	sav.store_16(_num_tiles)
+	for index in _tiles_order:
+		sav.store_16(index)
 
-	# Save index of empty
-	out.store_32(empty)
-	out.store_32(empty_id)
+	# Save index of empty.
+	sav.store_16(_empty)
+	sav.store_16(_empty_id)
 
-	# Save number of moves so far
-	out.store_64(moves)
+	# Save number of moves so far.
+	sav.store_32(_moves)
+
+	# Save show numbers.
+	if self.show_numbers:
+		sav.store_8(1)
+	else:
+		sav.store_8(0)
 
 	# All done
-	out.close()
+	sav.close()
+
+	
+func start() -> void:
+	reset_tiles()
+

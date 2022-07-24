@@ -1,13 +1,16 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Game.gd" type="Script" id=1]
 [ext_resource path="res://TilesControl.gd" type="Script" id=2]
-[ext_resource path="res://win_font.tres" type="DynamicFont" id=3]
+[ext_resource path="res://NotoSansUI_Regular.woff2" type="DynamicFontData" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+font_data = ExtResource( 3 )
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-rect_min_size = Vector2( 240, 240 )
+rect_min_size = Vector2( 640, 480 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 1 )
@@ -18,95 +21,111 @@ anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+[node name="GameBoard" type="VBoxContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 233.0
-margin_bottom = 233.0
+margin_right = 1273.0
+margin_bottom = 713.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HFlowContainer" type="HFlowContainer" parent="PanelContainer/VBoxContainer"]
-margin_right = 226.0
-margin_bottom = 72.0
+[node name="HFlowContainer" type="HFlowContainer" parent="PanelContainer/GameBoard"]
+margin_right = 1266.0
+margin_bottom = 40.0
 size_flags_horizontal = 3
 
-[node name="Load" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+[node name="Load" type="Button" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_top = 10.0
 margin_right = 42.0
-margin_bottom = 20.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
+margin_bottom = 30.0
+size_flags_vertical = 4
 text = "Load"
 
-[node name="Save" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+[node name="Save" type="Button" parent="PanelContainer/GameBoard/HFlowContainer"]
 margin_left = 46.0
+margin_top = 10.0
 margin_right = 87.0
-margin_bottom = 20.0
-size_flags_vertical = 0
+margin_bottom = 30.0
+size_flags_vertical = 4
 text = "Save"
 
-[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/GameBoard/HFlowContainer"]
 margin_left = 91.0
-margin_right = 94.0
-margin_bottom = 20.0
+margin_right = 95.0
+margin_bottom = 40.0
 
-[node name="Abort" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 98.0
-margin_right = 138.0
-margin_bottom = 20.0
-size_flags_vertical = 0
+[node name="Abort" type="Button" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 99.0
+margin_top = 10.0
+margin_right = 139.0
+margin_bottom = 30.0
+size_flags_vertical = 4
 text = "Quit"
 
-[node name="Quit" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_top = 24.0
-margin_right = 114.0
-margin_bottom = 44.0
-size_flags_vertical = 0
-text = "Quit to Desktop"
+[node name="Quit" type="Button" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 143.0
+margin_top = 10.0
+margin_right = 216.0
+margin_bottom = 30.0
+size_flags_vertical = 4
+text = "Exit Kakel"
 
-[node name="HSeparator2" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 118.0
-margin_top = 24.0
-margin_right = 121.0
-margin_bottom = 44.0
+[node name="VSeparator2" type="VSeparator" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 220.0
+margin_right = 224.0
+margin_bottom = 40.0
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 125.0
-margin_top = 27.0
-margin_right = 167.0
-margin_bottom = 41.0
+[node name="Label" type="Label" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 228.0
+margin_top = 13.0
+margin_right = 270.0
+margin_bottom = 27.0
 text = "Moves"
 
-[node name="Moves" type="LineEdit" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_top = 48.0
-margin_right = 58.0
-margin_bottom = 72.0
+[node name="Moves" type="LineEdit" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 274.0
+margin_top = 8.0
+margin_right = 332.0
+margin_bottom = 32.0
+size_flags_vertical = 4
 text = "0"
 align = 1
 editable = false
 context_menu_enabled = false
 virtual_keyboard_enabled = false
 
-[node name="HSeparator3" type="HSeparator" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 62.0
-margin_top = 48.0
-margin_right = 65.0
-margin_bottom = 72.0
+[node name="VSeparator3" type="VSeparator" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 336.0
+margin_right = 340.0
+margin_bottom = 40.0
 
-[node name="Hint" type="Button" parent="PanelContainer/VBoxContainer/HFlowContainer"]
-margin_left = 69.0
-margin_top = 48.0
-margin_right = 108.0
-margin_bottom = 72.0
+[node name="ShowNumbers" type="CheckButton" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 344.0
+margin_right = 470.0
+margin_bottom = 40.0
+text = "Tile #'s"
+
+[node name="VSeparator4" type="VSeparator" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 474.0
+margin_right = 478.0
+margin_bottom = 40.0
+
+[node name="Hint" type="Button" parent="PanelContainer/GameBoard/HFlowContainer"]
+margin_left = 482.0
+margin_top = 10.0
+margin_right = 521.0
+margin_bottom = 30.0
+size_flags_vertical = 4
 text = "Hint"
 
-[node name="Tiles" type="Control" parent="PanelContainer/VBoxContainer"]
-margin_top = 76.0
-margin_right = 226.0
-margin_bottom = 226.0
+[node name="Tiles" type="Control" parent="PanelContainer/GameBoard"]
+margin_top = 44.0
+margin_right = 1266.0
+margin_bottom = 706.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 2 )
+number_font = SubResource( 1 )
 
 [node name="WinnerDialog" type="WindowDialog" parent="."]
 pause_mode = 2
@@ -126,16 +145,15 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Label" type="Label" parent="WinnerDialog/CenterContainer"]
-margin_left = 8.0
-margin_top = 30.0
-margin_right = 232.0
-margin_bottom = 89.0
-custom_fonts/font = ExtResource( 3 )
+margin_left = 68.0
+margin_top = 44.0
+margin_right = 171.0
+margin_bottom = 75.0
 text = "Congratulations!
 You won!"
 align = 1
 
-[node name="Close" type="Button" parent="WinnerDialog"]
+[node name="CloseWinner" type="Button" parent="WinnerDialog"]
 margin_left = 98.0
 margin_top = 207.0
 margin_right = 145.0
@@ -190,26 +208,18 @@ resizable = true
 mode_overrides_title = false
 filters = PoolStringArray( "*.kakel;Kakel Game" )
 
-[node name="AlertDialog" type="AcceptDialog" parent="."]
-margin_right = 83.0
-margin_bottom = 58.0
-
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Load" to="." method="_on_Load_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Save" to="." method="_on_Save_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Quit" to="." method="_on_Quit_pressed"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/HFlowContainer/Hint" to="." method="_on_Hint_pressed"]
-[connection signal="item_rect_changed" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_item_rect_changed"]
-[connection signal="moved" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_moved"]
-[connection signal="won" from="PanelContainer/VBoxContainer/Tiles" to="." method="_on_Tiles_won"]
-[connection signal="pressed" from="WinnerDialog/Close" to="." method="_on_Close_pressed"]
-[connection signal="item_rect_changed" from="HintDialog" to="." method="_on_HintDialog_item_rect_changed"]
-[connection signal="modal_closed" from="HintDialog" to="." method="_on_HintDialog_modal_closed"]
-[connection signal="popup_hide" from="HintDialog" to="." method="_on_HintDialog_popup_hide"]
-[connection signal="pressed" from="HintDialog/CloseHint" to="." method="_on_CloseHint_pressed"]
+[connection signal="pressed" from="PanelContainer/GameBoard/HFlowContainer/Load" to="." method="_on_Load_pressed"]
+[connection signal="pressed" from="PanelContainer/GameBoard/HFlowContainer/Save" to="." method="_on_Save_pressed"]
+[connection signal="pressed" from="PanelContainer/GameBoard/HFlowContainer/Abort" to="." method="_on_Abort_pressed"]
+[connection signal="pressed" from="PanelContainer/GameBoard/HFlowContainer/Quit" to="." method="_on_Quit_pressed"]
+[connection signal="pressed" from="PanelContainer/GameBoard/HFlowContainer/ShowNumbers" to="." method="_on_ShowNumbers_pressed"]
+[connection signal="pressed" from="PanelContainer/GameBoard/HFlowContainer/Hint" to="." method="_on_Hint_pressed"]
+[connection signal="item_rect_changed" from="PanelContainer/GameBoard/Tiles" to="." method="_on_Tiles_item_rect_changed"]
+[connection signal="moved" from="PanelContainer/GameBoard/Tiles" to="." method="_on_Tiles_moved"]
+[connection signal="resized" from="PanelContainer/GameBoard/Tiles" to="." method="_on_Tiles_resized"]
+[connection signal="won" from="PanelContainer/GameBoard/Tiles" to="." method="_on_Tiles_won"]
+[connection signal="pressed" from="WinnerDialog/CloseWinner" to="." method="_on_WinnerDialog_Close_pressed"]
+[connection signal="resized" from="HintDialog" to="." method="_on_HintDialog_resized"]
+[connection signal="pressed" from="HintDialog/CloseHint" to="." method="_on_HintDialog_Close_pressed"]
 [connection signal="file_selected" from="LoadDialog" to="." method="_on_LoadDialog_file_selected"]
-[connection signal="modal_closed" from="LoadDialog" to="." method="_on_LoadDialog_modal_closed"]
-[connection signal="popup_hide" from="LoadDialog" to="." method="_on_LoadDialog_popup_hide"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_SaveDialog_file_selected"]
-[connection signal="modal_closed" from="SaveDialog" to="." method="_on_SaveDialog_modal_closed"]
-[connection signal="popup_hide" from="SaveDialog" to="." method="_on_SaveDialog_popup_hide"]

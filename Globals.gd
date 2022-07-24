@@ -1,26 +1,51 @@
 extends Node
 
-# Color for tile edges
-var TilesColor: Color = Color(0, 0, 1, 1)
+# Number of columns in tiles.
+var TilesColumns: int = 4
 
-# Color for tile fonts
-var TilesFontColor: Color = Color(0, 1, 0, 1)
+# If true, use default image.
+var TilesDefaultImage: bool = true
 
-# Image used on tiles
-var TilesImage: Image = null
-var TilesImagePath: String = ""
+# Image to use for default image.
+var TilesImageDefault: String = "res://default_image.png"
 
-# Default image for tiles (used as TilesImage when not overridden)
-var TilesImageDefault: Image = ResourceLoader.load("res://default_image.png", "Image", false)
+# If `TilesDefaultImage` is false and TilesUseImag is true, this
+# contains the path of the image to use.
+var TilesImagePath: String
 
-# Size of the tile board
-var TilesSize: Vector2 = Vector2(4, 4)
+# When true, the main display will load the game in `TilesLoadPath` rather
+# than using TilesColumns/TilesRows/TilesImage/TilesDefaultImage, etc.
+var TilesLoading: bool = false
 
-# When false, draw rect for tiles instead of image
+# When TilesLoading is true, path to game file to load.
+var TilesLoadPath: String
+
+# Color used to draw tile numbers.
+var TilesNumberColor: Color = Color.white
+
+# Font used to draw tile numbers.
+var TilesNumberFont: Font
+
+# Color to draw tile outlines when TilesUseImage is false.
+var TilesOutlineColor: Color = Color.white
+
+# Number of rows in tiles.
+var TilesRows: int = 4
+
+# When true, show tile numbers on tiles.
+var TilesShowNumbers: bool = true
+
+# When true, use image for tiles.  Otherwise draw outlines with numbers.
 var TilesUseImage: bool = true
 
-# When true, game is loading rather than starting new so
-# TileControl should skip initialization as load will do
-# it after construction.
-var TilesLoading: bool = false
-var TilesLoadPath: String = ""
+
+# Load global preferences from file.
+func Load(path: String) -> void:
+	var inp: File = File.new()
+	inp.open(path, File.Read)
+
+
+# Save global preferences into file.
+func Save(path: String) -> void:
+	var outp: File = File.new()
+	outp.open(path, File.Write)

@@ -5,6 +5,7 @@
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+rect_min_size = Vector2( 640, 480 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 1 )
@@ -18,133 +19,195 @@ size_flags_vertical = 3
 [node name="CenterBox" type="CenterContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 233.0
-margin_bottom = 239.0
+margin_right = 1273.0
+margin_bottom = 713.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VerticalBox" type="VBoxContainer" parent="PanelContainer/CenterBox"]
-margin_left = 28.0
-margin_right = 198.0
-margin_bottom = 232.0
+margin_left = 407.0
+margin_top = 264.0
+margin_right = 859.0
+margin_bottom = 442.0
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterBox/VerticalBox"]
-margin_right = 170.0
-margin_bottom = 208.0
+margin_right = 452.0
+margin_bottom = 154.0
+custom_constants/hseparation = 50
+columns = 3
+
+[node name="Left" type="GridContainer" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
+margin_right = 177.0
+margin_bottom = 154.0
+custom_constants/vseparation = 5
+custom_constants/hseparation = 5
 columns = 2
 
-[node name="Label" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
+[node name="Label" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
 margin_top = 5.0
-margin_right = 90.0
+margin_right = 96.0
 margin_bottom = 19.0
 text = "Columns"
 
-[node name="Columns" type="SpinBox" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 94.0
-margin_right = 168.0
+[node name="Columns" type="SpinBox" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_left = 101.0
+margin_right = 175.0
 margin_bottom = 24.0
 size_flags_horizontal = 0
 min_value = 3.0
 max_value = 99.0
 value = 4.0
 rounded = true
-align = 2
+align = 1
 
-[node name="Label2" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_top = 33.0
-margin_right = 90.0
-margin_bottom = 47.0
+[node name="Label2" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_top = 34.0
+margin_right = 96.0
+margin_bottom = 48.0
 text = "Rows"
 
-[node name="Rows" type="SpinBox" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 94.0
-margin_top = 28.0
-margin_right = 168.0
-margin_bottom = 52.0
+[node name="Rows" type="SpinBox" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_left = 101.0
+margin_top = 29.0
+margin_right = 175.0
+margin_bottom = 53.0
 size_flags_horizontal = 0
 min_value = 3.0
 max_value = 99.0
 value = 4.0
 rounded = true
-align = 2
+align = 1
 
-[node name="Label4" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_top = 69.0
+[node name="Label3" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_top = 71.0
+margin_right = 96.0
+margin_bottom = 85.0
+text = "Show Numbers"
+
+[node name="ShowNumbers" type="CheckButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_left = 101.0
+margin_top = 58.0
+margin_right = 177.0
+margin_bottom = 98.0
+pressed = true
+
+[node name="Label4" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_top = 106.0
+margin_right = 96.0
+margin_bottom = 120.0
+text = "Outline Color"
+
+[node name="OutlineColor" type="ColorPickerButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_left = 101.0
+margin_top = 103.0
+margin_right = 177.0
+margin_bottom = 123.0
+
+[node name="Label5" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_top = 131.0
+margin_right = 96.0
+margin_bottom = 145.0
+text = "Numbers Color"
+
+[node name="NumberColor" type="ColorPickerButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Left"]
+margin_left = 101.0
+margin_top = 128.0
+margin_right = 177.0
+margin_bottom = 148.0
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
+margin_left = 227.0
+margin_right = 231.0
+margin_bottom = 154.0
+
+[node name="Right" type="GridContainer" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
+margin_left = 281.0
+margin_right = 452.0
+margin_bottom = 154.0
+custom_constants/vseparation = 5
+custom_constants/hseparation = 5
+columns = 2
+
+[node name="Label6" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Right"]
+margin_top = 13.0
 margin_right = 90.0
-margin_bottom = 83.0
+margin_bottom = 27.0
 text = "Use Image"
 
-[node name="UseImage" type="CheckButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 94.0
-margin_top = 56.0
-margin_right = 170.0
-margin_bottom = 96.0
+[node name="UseImage" type="CheckButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Right"]
+margin_left = 95.0
+margin_right = 171.0
+margin_bottom = 40.0
 pressed = true
 
-[node name="Label3" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_top = 113.0
+[node name="Label7" type="Label" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Right"]
+margin_top = 58.0
 margin_right = 90.0
-margin_bottom = 127.0
+margin_bottom = 72.0
 text = "Default Image"
 
-[node name="Default" type="CheckButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 94.0
-margin_top = 100.0
-margin_right = 170.0
-margin_bottom = 140.0
+[node name="Default" type="CheckButton" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Right"]
+margin_left = 95.0
+margin_top = 45.0
+margin_right = 171.0
+margin_bottom = 85.0
 pressed = true
 
-[node name="Tiles" type="TextureRect" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_top = 144.0
+[node name="Tiles" type="TextureRect" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Right"]
+margin_top = 90.0
 margin_right = 90.0
-margin_bottom = 208.0
+margin_bottom = 154.0
 rect_min_size = Vector2( 64, 64 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 expand = true
 stretch_mode = 6
 
-[node name="Browse" type="Button" parent="PanelContainer/CenterBox/VerticalBox/GridContainer"]
-margin_left = 94.0
-margin_top = 144.0
-margin_right = 153.0
-margin_bottom = 164.0
+[node name="Browse" type="Button" parent="PanelContainer/CenterBox/VerticalBox/GridContainer/Right"]
+margin_left = 95.0
+margin_top = 90.0
+margin_right = 154.0
+margin_bottom = 110.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 disabled = true
 text = "Browse"
 
-[node name="CommandsBox" type="HBoxContainer" parent="PanelContainer/CenterBox/VerticalBox"]
-margin_top = 212.0
-margin_right = 170.0
-margin_bottom = 232.0
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/CenterBox/VerticalBox"]
+margin_top = 158.0
+margin_right = 452.0
+margin_bottom = 178.0
+custom_constants/separation = 5
 alignment = 1
 
-[node name="Cancel" type="Button" parent="PanelContainer/CenterBox/VerticalBox/CommandsBox"]
-margin_left = 35.0
-margin_right = 89.0
+[node name="Cancel" type="Button" parent="PanelContainer/CenterBox/VerticalBox/HBoxContainer"]
+margin_left = 176.0
+margin_right = 230.0
 margin_bottom = 20.0
 text = "Cancel"
 
-[node name="Start" type="Button" parent="PanelContainer/CenterBox/VerticalBox/CommandsBox"]
-margin_left = 93.0
-margin_right = 134.0
+[node name="Start" type="Button" parent="PanelContainer/CenterBox/VerticalBox/HBoxContainer"]
+margin_left = 235.0
+margin_right = 276.0
 margin_bottom = 20.0
 text = "Start"
 
-[node name="OpenTileImage" type="FileDialog" parent="."]
+[node name="TilesImageDialog" type="FileDialog" parent="."]
+pause_mode = 2
 margin_right = 316.0
-margin_bottom = 149.0
-rect_min_size = Vector2( 300, 200 )
+margin_bottom = 200.0
+rect_min_size = Vector2( 400, 300 )
+popup_exclusive = true
 window_title = "Open Image"
 resizable = true
+mode_overrides_title = false
 mode = 0
 access = 2
 filters = PoolStringArray( "*.png,*.jpg,*.jpeg,*.bmp;Images" )
 
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/UseImage" to="." method="_on_UseImage_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Default" to="." method="_on_Default_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Browse" to="." method="_on_Browse_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Cancel" to="." method="_on_Cancel_pressed"]
-[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/CommandsBox/Start" to="." method="_on_Start_pressed"]
-[connection signal="file_selected" from="OpenTileImage" to="." method="_on_OpenTileImage_file_selected"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Right/UseImage" to="." method="_on_UseImage_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Right/Default" to="." method="_on_Default_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/GridContainer/Right/Browse" to="." method="_on_Browse_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/HBoxContainer/Cancel" to="." method="_on_Cancel_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterBox/VerticalBox/HBoxContainer/Start" to="." method="_on_Start_pressed"]
+[connection signal="file_selected" from="TilesImageDialog" to="." method="_on_TilesImageDialog_file_selected"]
