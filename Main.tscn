@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3 uid="uid://fwbjtmlm6omk"]
+
+[ext_resource type="Script" path="res://Main.gd" id="1_e6ei2"]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_e6ei2")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+offset_right = 1280.0
+offset_bottom = 720.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+offset_left = 566.0
+offset_top = 239.0
+offset_right = 713.0
+offset_bottom = 480.0
+
+[node name="Title" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_right = 147.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 48
+text = "KAKEL"
+
+[node name="New" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 74.0
+offset_right = 147.0
+offset_bottom = 127.0
+theme_override_font_sizes/font_size = 32
+text = "New"
+
+[node name="Load" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 131.0
+offset_right = 147.0
+offset_bottom = 184.0
+theme_override_font_sizes/font_size = 32
+text = "Load"
+
+[node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 188.0
+offset_right = 147.0
+offset_bottom = 241.0
+theme_override_font_sizes/font_size = 32
+text = "Quit"
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+title = "Open Game"
+size = Vector2i(480, 320)
+min_size = Vector2i(480, 320)
+ok_button_text = "Open"
+mode_overrides_title = false
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.kakel;Kakel Games")
+
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="_on_new_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="_on_load_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[connection signal="file_selected" from="LoadDialog" to="." method="_on_load_dialog_file_selected"]
