@@ -1,138 +1,163 @@
-#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0044, RCS1169, IDE0052
 
 using Godot;
 using System;
 
 public class NewGame : Control
 {
-	Button _browse;
-	SpinBox _columns;
-	Button _default;
+    Button _browse;
+    SpinBox _columns;
+    CheckButton _defaultImage;
     Globals _globals;
-	FileDialog _openTileImage;
-	SpinBox _rows;
-	TextureRect _tiles;
+    Image _image;
+    string _imagePath;
+    ImageTexture _imageTexture;
+    ColorPickerButton _numberColor;
+    ColorPickerButton _outlineColor;
+    SpinBox _rows;
+    CheckButton _showNumbers;
+    TextureRect _tilesImage;
+    FileDialog _tilesImageDialog;
+    bool _tilesImageDialogUsed;
     SceneTree _tree;
-	CheckButton _useImage;
-
-	string imagePath = "";
-	Image image = null;
-	ImageTexture imageTexture = null;
+    CheckButton _useImage;
 
     public override void _Ready()
     {
-		base._Ready();
-
-		_browse = GetNode<Button>("PanelContainer/CenterBox/VerticalBox/GridContainer/Browse");
-		_columns = GetNode<SpinBox>("PanelContainer/CenterBox/VerticalBox/GridContainer/Columns");
-		_default = GetNode<Button>("PanelContainer/CenterBox/VerticalBox/GridContainer/Default");
+        _browse = GetNode<Button>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/Browse");
+        _columns = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/Columns");
+        _defaultImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/DefaultImage");
         _globals = GetNode<Globals>("/root/Globals");
-		_openTileImage = GetNode<FileDialog>("OpenTileImage");
-		_rows = GetNode<SpinBox>("PanelContainer/CenterBox/VerticalBox/GridContainer/Rows");
-		_tiles = GetNode<TextureRect>("PanelContainer/CenterBox/VerticalBox/GridContainer/Tiles");
+        _numberColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/NumberColor");
+        _outlineColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/OutlineColor");
+        _rows = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/Rows");
+        _showNumbers = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/ShowNumbers");
+        _tilesImage = GetNode<TextureRect>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/TilesImage");
+        _tilesImageDialog = GetNode<FileDialog>("TileImageDialog");
+        _tilesImageDialogUsed = false;
         _tree = GetTree();
-		_useImage = GetNode<CheckButton>("PanelContainer/CenterBox/VerticalBox/GridContainer/UseImage");
+        _useImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/UseImage");
 
-		// Set up image usage controls
-		if (_globals.TilesUseImage)
-		{
-			_useImage.Pressed = true;
-		}
-		else
-		{
-			_useImage.Pressed = false;
-			_default.Disabled = true;
+        // Update variables from globals
+        _useImage.Pressed = _globals.TilesUseImage;
+        if (_globals.TilesDefaultImage)
+        {
+            _imagePath = _globals.TilesImageDefault;
+			_imageTexture = null;
+			_defaultImage.Pressed = true;
 			_browse.Disabled = true;
-		}
-
-		// Set up image
-		if (_globals.TilesImagePath.Length == 0)
-		{
-			imagePath = "";
-			image = _globals.TilesImageDefault.Duplicate() as Image;
-			imageTexture = null;
-			_default.Pressed = true;
-			_browse.Disabled = true;
-		}
-		else
-		{
-			imagePath = _globals.TilesImagePath;
-			image = _globals.TilesImage.Duplicate() as Image;
-			_default.Pressed = false;
+        }
+        else
+        {
+			_imagePath = _globals.TilesImagePath;
+			_defaultImage.Pressed = false;
 			_browse.Disabled = false;
-		}
+        }
+        _image = LoadImage(_imagePath);
+        _showNumbers.Pressed = _globals.TilesShowNumbers;
+		_columns.Value = _globals.TilesColumns;
+		_rows.Value = _globals.TilesRows;
+        _numberColor.Color = _globals.TilesNumberColor;
+        _outlineColor.Color = _globals.TilesOutlineColor;
 
 		// Resize image and set as texture
-		image.Resize((int) _tiles.RectSize.x, (int) _tiles.RectSize.y);
-		imageTexture = new ImageTexture();
-		imageTexture.CreateFromImage(image, 0);
-		_tiles.Texture = imageTexture;
-
-		// Initialize tile grid size
-		_columns.Value = _globals.TilesSize.x;
-		_rows.Value = _globals.TilesSize.y;
+        CallDeferred("UpdateImage");
     }
 
-    private void OnBrowsePressed()
+    private Image LoadImage(string path)
     {
-		switch(OS.GetName())
-		{
-		case "Windows":
-			OS.MinWindowSize = new Vector2(480, 320);
-			break;
-		default:
-			OS.MinWindowSize = new Vector2(240, 240);
-			break;
-		}
-
-		_openTileImage.PopupCentered();
+        if (path.Substr(0, 4) == "res:")
+        {
+            return ResourceLoader.Load<Image>(path, "Image", true);
+        }
+        else
+        {
+            Image i = new Image();
+            i.Load(path);
+            return i;
+        }
     }
 
-    private void OnCancelPressed()
+    void OnBrowsePressed()
+    {
+        if (_tilesImageDialogUsed)
+        {
+		    _tilesImageDialog.Popup_();
+        }
+        else
+        {
+            _tilesImageDialogUsed = true;
+		    _tilesImageDialog.PopupCentered();
+        }
+    }
+
+    void OnCancelPressed()
     {
 		_tree.ChangeScene("res://Main.tscn");
     }
 
-    private void OnDefaultPressed()
+    void OnDefaultImagePressed()
     {
-		_browse.Disabled = _default.Pressed;
+		_browse.Disabled = _defaultImage.Pressed;
+        if (_defaultImage.Pressed)
+        {
+            _imagePath = _globals.TilesImageDefault;
+            _image = LoadImage(_imagePath);
+            UpdateImage();
+        }
     }
 
-    private void OnOpenTileImageFileSelected(string path)
+    void OnStartPressed()
     {
-        imagePath = path;
-		image = new Image();
-		image.Load(path);
-		image.Resize((int) _tiles.RectSize.x, (int) _tiles.RectSize.y);
-		imageTexture = new ImageTexture();
-		imageTexture.CreateFromImage(image, 0);
-		_tiles.Texture = imageTexture;
-    }
-
-    private void OnStartPressed()
-    {
-		_globals.TilesSize = new Vector2((float) _columns.Value, (float) _rows.Value);
-		_globals.TilesUseImage = _useImage.Pressed;
+        _globals.TilesColumns = (int) _columns.Value;
+        _globals.TilesRows = (int) _rows.Value;
 		if (_useImage.Pressed)
 		{
-			if (_default.Pressed)
-			{
-				_globals.TilesImage = null;
-				_globals.TilesImagePath = "";
-			}
+            _globals.TilesUseImage = true;
+			if (_defaultImage.Pressed)
+            {
+                _globals.TilesDefaultImage = true;
+				_globals.TilesImagePath = _globals.TilesImageDefault;
+            }
 			else
-			{
-				_globals.TilesImagePath = imagePath;
-				_globals.TilesImage = new Image();
-				_globals.TilesImage.Load(_globals.TilesImagePath);
-			}
+            {
+                _globals.TilesDefaultImage = false;
+				_globals.TilesImagePath = _imagePath;
+            }
 		}
+        else
+        {
+            _globals.TilesUseImage = false;
+            _globals.TilesDefaultImage = true;
+            _globals.TilesImagePath = _globals.TilesImageDefault;
+        }
+        _globals.TilesNumberColor = _numberColor.Color;
+        _globals.TilesOutlineColor = _outlineColor.Color;
+        _globals.TilesShowNumbers = _showNumbers.Pressed;
 		_tree.ChangeScene("res://Game.tscn");
     }
 
-    private void OnUseImagePressed()
+    void OnTileImageDialogFileSelected(string path)
     {
-		_default.Disabled = !_useImage.Pressed;
-		_browse.Disabled = !_useImage.Pressed;
+        _imagePath = path;
+        _image = LoadImage(_imagePath);
+        UpdateImage();
+    }
+
+    void OnUseImagePressed()
+    {
+		_defaultImage.Disabled = !_useImage.Pressed;
+        if (!_useImage.Pressed)
+            _browse.Disabled = true;
+        else
+		    _browse.Disabled = _defaultImage.Pressed;
+    }
+
+    private void UpdateImage()
+    {
+        _image.Resize((int) _tilesImage.RectSize.x, (int) _tilesImage.RectSize.y);
+        _imageTexture = new ImageTexture();
+        _imageTexture.CreateFromImage(_image);
+        _tilesImage.Texture = _imageTexture;
     }
 }

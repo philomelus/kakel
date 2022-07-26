@@ -1,7 +1,12 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Main.cs" type="Script" id=1]
-[ext_resource path="res://title_font.tres" type="DynamicFont" id=2]
+[ext_resource path="res://NotoSansUI_Regular.woff2" type="DynamicFontData" id=2]
+[ext_resource path="res://main_menu_font.tres" type="DynamicFont" id=3]
+
+[sub_resource type="DynamicFont" id=1]
+size = 48
+font_data = ExtResource( 2 )
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -19,49 +24,52 @@ size_flags_vertical = 3
 [node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 233.0
-margin_bottom = 233.0
+margin_right = 1273.0
+margin_bottom = 713.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
-margin_left = 40.0
-margin_top = 49.0
-margin_right = 185.0
-margin_bottom = 176.0
+margin_left = 561.0
+margin_top = 237.0
+margin_right = 704.0
+margin_bottom = 469.0
 
 [node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer"]
-margin_right = 145.0
-margin_bottom = 55.0
+margin_right = 143.0
+margin_bottom = 67.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = SubResource( 1 )
 text = "KAKEL"
 
 [node name="New" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
-margin_top = 59.0
-margin_right = 145.0
-margin_bottom = 79.0
+margin_top = 71.0
+margin_right = 143.0
+margin_bottom = 122.0
 hint_tooltip = "Start a new game"
+custom_fonts/font = ExtResource( 3 )
 text = "New"
 
 [node name="Load" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
-margin_top = 83.0
-margin_right = 145.0
-margin_bottom = 103.0
+margin_top = 126.0
+margin_right = 143.0
+margin_bottom = 177.0
 hint_tooltip = "Load a previously interrupted game"
+custom_fonts/font = ExtResource( 3 )
 text = "Load"
 
 [node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
-margin_top = 107.0
-margin_right = 145.0
-margin_bottom = 127.0
+margin_top = 181.0
+margin_right = 143.0
+margin_bottom = 232.0
 hint_tooltip = "Exit the game"
+custom_fonts/font = ExtResource( 3 )
 text = "Quit"
 
-[node name="FileDialog" type="FileDialog" parent="."]
+[node name="LoadDialog" type="FileDialog" parent="."]
 pause_mode = 2
 margin_right = 316.0
 margin_bottom = 149.0
-rect_min_size = Vector2( 316, 169 )
+rect_min_size = Vector2( 480, 320 )
 popup_exclusive = true
 window_title = "Open a File"
 resizable = true
@@ -70,16 +78,7 @@ mode = 0
 access = 2
 filters = PoolStringArray( "*.kakel;Kakel Games" )
 
-[node name="AcceptDialog" type="AcceptDialog" parent="."]
-pause_mode = 2
-margin_right = 83.0
-margin_bottom = 58.0
-popup_exclusive = true
-
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="OnNewPressed"]
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="OnLoadPressed"]
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="OnQuitPressed"]
-[connection signal="file_selected" from="FileDialog" to="." method="OnFileDialogFileSelected"]
-[connection signal="modal_closed" from="FileDialog" to="." method="OnFileDialogModalClosed"]
-[connection signal="popup_hide" from="FileDialog" to="." method="OnFileDialogPopupHide"]
-[connection signal="confirmed" from="AcceptDialog" to="." method="OnAcceptDialogConfirmed"]
+[connection signal="file_selected" from="LoadDialog" to="." method="OnLoadDialogFileSelected"]

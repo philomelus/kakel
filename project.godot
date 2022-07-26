@@ -41,8 +41,10 @@ gdscript/warnings/unsafe_call_argument=true
 
 [display]
 
-window/size/width=240
-window/size/height=240
+window/size/width=1280
+window/size/height=720
+window/stretch/mode="2d"
+window/stretch/aspect="expand"
 
 [editor]
 
@@ -116,6 +118,7 @@ file_logging/enable_file_logging=true
 [mono]
 
 runtime/unhandled_exception_policy=1
+debugger_agent/wait_for_debugger=true
 project/auto_update_project=false
 
 [physics]
