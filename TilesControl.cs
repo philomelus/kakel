@@ -1,4 +1,4 @@
-#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0044, RCS1169, IDE0052
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0044, RCS1169, IDE0052, RCS1085
 
 using Godot;
 using System;
@@ -662,8 +662,8 @@ public class TilesControl : Control
 								(RectSize.y - (_rows0 * _spacing.y)) / _rows);
 		if (_tileSize.x <= 0 || _tileSize.y <= 0)
 		{
-			//throw new ArgumentOutOfRangeException(
-			//	    $"Tile size computed to invalid size: {_tileSize.x}, {_tileSize.y}");
+            // If this happens, its a fluke at startup and this will get called again
+            // which will be succesful.  In Godot 4+, this doesn't happen.
             return;
 		}
 

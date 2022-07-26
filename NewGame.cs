@@ -6,59 +6,37 @@ using System;
 public class NewGame : Control
 {
     Button _browse;
-    SpinBox _columns;
-    CheckButton _defaultImage;
     Globals _globals;
     Image _image;
     string _imagePath;
     ImageTexture _imageTexture;
-    ColorPickerButton _numberColor;
-    ColorPickerButton _outlineColor;
-    SpinBox _rows;
-    CheckButton _showNumbers;
     TextureRect _tilesImage;
     FileDialog _tilesImageDialog;
     bool _tilesImageDialogUsed;
     SceneTree _tree;
     CheckButton _useImage;
 
+    bool _changedImagePath;
+
     public override void _Ready()
     {
-        _browse = GetNode<Button>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/Browse");
-        _columns = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/Columns");
-        _defaultImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/DefaultImage");
+        _browse = GetNode<Button>("PanelContainer/CenterContainer/VBoxContainer/Browse");
+        _changedImagePath = false;
         _globals = GetNode<Globals>("/root/Globals");
-        _numberColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/NumberColor");
-        _outlineColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/OutlineColor");
-        _rows = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/Rows");
-        _showNumbers = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Left/ShowNumbers");
-        _tilesImage = GetNode<TextureRect>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/TilesImage");
+        _tilesImage = GetNode<TextureRect>("PanelContainer/CenterContainer/VBoxContainer/TilesImage");
         _tilesImageDialog = GetNode<FileDialog>("TileImageDialog");
         _tilesImageDialogUsed = false;
         _tree = GetTree();
-        _useImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Right/UseImage");
+        _useImage = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/HBoxContainer/UseImage");
 
         // Update variables from globals
         _useImage.Pressed = _globals.TilesUseImage;
+        _browse.Disabled = !_globals.TilesUseImage;
         if (_globals.TilesDefaultImage)
-        {
-            _imagePath = _globals.TilesImageDefault;
-			_imageTexture = null;
-			_defaultImage.Pressed = true;
-			_browse.Disabled = true;
-        }
+            _imagePath = _globals.Preferences.DefaultImage;
         else
-        {
-			_imagePath = _globals.TilesImagePath;
-			_defaultImage.Pressed = false;
-			_browse.Disabled = false;
-        }
+            _imagePath = _globals.Preferences.LastImage;
         _image = LoadImage(_imagePath);
-        _showNumbers.Pressed = _globals.TilesShowNumbers;
-		_columns.Value = _globals.TilesColumns;
-		_rows.Value = _globals.TilesRows;
-        _numberColor.Color = _globals.TilesNumberColor;
-        _outlineColor.Color = _globals.TilesOutlineColor;
 
 		// Resize image and set as texture
         CallDeferred("UpdateImage");
@@ -96,44 +74,22 @@ public class NewGame : Control
 		_tree.ChangeScene("res://Main.tscn");
     }
 
-    void OnDefaultImagePressed()
-    {
-		_browse.Disabled = _defaultImage.Pressed;
-        if (_defaultImage.Pressed)
-        {
-            _imagePath = _globals.TilesImageDefault;
-            _image = LoadImage(_imagePath);
-            UpdateImage();
-        }
-    }
-
     void OnStartPressed()
     {
-        _globals.TilesColumns = (int) _columns.Value;
-        _globals.TilesRows = (int) _rows.Value;
 		if (_useImage.Pressed)
 		{
             _globals.TilesUseImage = true;
-			if (_defaultImage.Pressed)
-            {
-                _globals.TilesDefaultImage = true;
-				_globals.TilesImagePath = _globals.TilesImageDefault;
-            }
-			else
+            if (_changedImagePath)
             {
                 _globals.TilesDefaultImage = false;
-				_globals.TilesImagePath = _imagePath;
+                _globals.Preferences.LastImage = _imagePath;
+                _globals.Preferences.Save(Preferences.P_PREFS);
             }
 		}
         else
         {
             _globals.TilesUseImage = false;
-            _globals.TilesDefaultImage = true;
-            _globals.TilesImagePath = _globals.TilesImageDefault;
         }
-        _globals.TilesNumberColor = _numberColor.Color;
-        _globals.TilesOutlineColor = _outlineColor.Color;
-        _globals.TilesShowNumbers = _showNumbers.Pressed;
 		_tree.ChangeScene("res://Game.tscn");
     }
 
@@ -141,16 +97,13 @@ public class NewGame : Control
     {
         _imagePath = path;
         _image = LoadImage(_imagePath);
+        _changedImagePath = true;
         UpdateImage();
     }
 
     void OnUseImagePressed()
     {
-		_defaultImage.Disabled = !_useImage.Pressed;
-        if (!_useImage.Pressed)
-            _browse.Disabled = true;
-        else
-		    _browse.Disabled = _defaultImage.Pressed;
+        _browse.Disabled = !_useImage.Pressed;
     }
 
     private void UpdateImage()

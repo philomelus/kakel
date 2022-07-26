@@ -62,10 +62,8 @@ public class Game : Control
         _winnerLabel = GetNode<Label>("WinnerDialog/Label");
 
         // If loading a game, no need to pass globals on
-        _tiles.NumberColor = _globals.TilesNumberColor;
-        if (_tiles.NumberFont == null)
-            _tiles.NumberFont = _globals.TilesNumberFont;
-        _tiles.OutlineColor = _globals.TilesOutlineColor;
+        _tiles.NumberColor = _globals.Preferences.NumberColor;
+        _tiles.OutlineColor = _globals.Preferences.OutlineColor;
         if (_globals.TilesLoading)
         {
             _globals.TilesLoading = false;
@@ -75,21 +73,21 @@ public class Game : Control
         else
         {
             // Pass on global settings to tiles control.
-            _tiles.Columns = _globals.TilesColumns;
-            _tiles.Rows = _globals.TilesRows;
+            _tiles.Columns = _globals.Preferences.Columns;
+            _tiles.Rows = _globals.Preferences.Rows;
             if (_globals.TilesUseImage)
             {
                 if (_globals.TilesDefaultImage)
-                    _tiles.ImagePath = _globals.TilesImageDefault;
+                    _tiles.ImagePath = _globals.Preferences.DefaultImage;
                 else
-                    _tiles.ImagePath = _globals.TilesImagePath;
+                    _tiles.ImagePath = _globals.Preferences.LastImage;
             }
             else
             {
                 _tiles.ImagePath = "";
             }
-            _tiles.ShowNumbers = _globals.TilesShowNumbers;
-            _showNumbers.Pressed = _globals.TilesShowNumbers;
+            _tiles.ShowNumbers = _globals.Preferences.ShowNumbers;
+            _showNumbers.Pressed = _globals.Preferences.ShowNumbers;
             _tiles.Start();
         }
     }
@@ -153,9 +151,9 @@ public class Game : Control
         {
             Image image;
             if (_globals.TilesDefaultImage)
-                image = LoadImage(_globals.TilesImageDefault);
+                image = LoadImage(_globals.Preferences.DefaultImage);
             else
-                image = LoadImage(_globals.TilesImagePath);
+                image = LoadImage(_globals.Preferences.LastImage);
             ImageTexture it = new ImageTexture();
             it.CreateFromImage(image);
             _hintTexture.Texture = it;

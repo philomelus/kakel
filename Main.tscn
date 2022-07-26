@@ -29,9 +29,9 @@ margin_bottom = 713.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
 margin_left = 561.0
-margin_top = 237.0
+margin_top = 209.0
 margin_right = 704.0
-margin_bottom = 469.0
+margin_bottom = 496.0
 
 [node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer"]
 margin_right = 143.0
@@ -57,10 +57,18 @@ hint_tooltip = "Load a previously interrupted game"
 custom_fonts/font = ExtResource( 3 )
 text = "Load"
 
-[node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+[node name="Prefs" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
 margin_top = 181.0
 margin_right = 143.0
 margin_bottom = 232.0
+hint_tooltip = "Load a previously interrupted game"
+custom_fonts/font = ExtResource( 3 )
+text = "Options"
+
+[node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+margin_top = 236.0
+margin_right = 143.0
+margin_bottom = 287.0
 hint_tooltip = "Exit the game"
 custom_fonts/font = ExtResource( 3 )
 text = "Quit"
@@ -80,5 +88,6 @@ filters = PoolStringArray( "*.kakel;Kakel Games" )
 
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/New" to="." method="OnNewPressed"]
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Load" to="." method="OnLoadPressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Prefs" to="." method="OnPrefsPressed"]
 [connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/Quit" to="." method="OnQuitPressed"]
 [connection signal="file_selected" from="LoadDialog" to="." method="OnLoadDialogFileSelected"]

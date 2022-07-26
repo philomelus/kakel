@@ -16,9 +16,14 @@ public class Main : Control
 		_loadDialog = GetNode<FileDialog>("LoadDialog");
 		_tree = GetTree();
 
-		// Initialize global default font if not overridden
-		if (_globals.TilesNumberFont == null)
-			_globals.TilesNumberFont = GetThemeDefaultFont();
+		// Load or initialize preferences
+		_globals.Preferences.Load(Preferences.P_PREFS);
+
+		// If an image has been loaded before, then default image is gone
+		_globals.TilesDefaultImage = string.IsNullOrEmpty(_globals.Preferences.LastImage);
+
+		// Queue call to auto start if desired
+		CallDeferred("CheckAutoStart");
 	}
 
 	public override void _UnhandledInput(InputEvent ev)
@@ -33,21 +38,29 @@ public class Main : Control
 			AcceptEvent();
 			NewGame();
 		}
+		else if (ev.IsActionPressed("load"))
+		{
+			AcceptEvent();
+			Load();
+		}
+		else if (ev.IsActionPressed("prefs"))
+		{
+			AcceptEvent();
+			Prefs();
+		}
 	}
 
-	private void NewGame()
+	private void CheckAutoStart()
 	{
-		_tree.ChangeScene("res://NewGame.tscn");
+		if (_globals.Preferences.AutoLoad)
+		{
+			File f = new File();
+			if (f.FileExists(_globals.Preferences.AutoPath))
+				LoadGame(_globals.Preferences.AutoPath);
+		}
 	}
 
-	private void OnLoadDialogFileSelected(string path)
-	{
-		_globals.TilesLoading = true;
-		_globals.TilesLoadPath = path;
-		_tree.ChangeScene("res://Game.tscn");
-	}
-
-	private void OnLoadPressed()
+	private void Load()
 	{
 		if (_loadDialogUsed)
 		{
@@ -60,14 +73,46 @@ public class Main : Control
 		}
 	}
 
+	private void LoadGame(string path)
+	{
+		_globals.TilesLoading = true;
+		_globals.TilesLoadPath = path;
+		_tree.ChangeScene("res://Game.tscn");
+	}
+
+	private void NewGame()
+	{
+		_tree.ChangeScene("res://NewGame.tscn");
+	}
+
+	private void OnLoadDialogFileSelected(string path)
+	{
+		LoadGame(path);
+	}
+
+	private void OnLoadPressed()
+	{
+		Load();
+	}
+
 	private void OnNewPressed()
 	{
 		NewGame();
 	}
 
+	private void OnPrefsPressed()
+	{
+		Prefs();
+	}
+
 	private void OnQuitPressed()
 	{
 		Quit();
+	}
+
+	private void Prefs()
+	{
+		_tree.ChangeScene("res://Prefs.tscn");
 	}
 
 	private void Quit()
