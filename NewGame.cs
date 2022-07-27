@@ -65,6 +65,8 @@ public class NewGame : Control
         else
         {
             _tilesImageDialogUsed = true;
+            if (_globals.Preferences.LastImage != null)
+                _tilesImageDialog.CurrentPath = _globals.Preferences.LastImage;
 		    _tilesImageDialog.PopupCentered();
         }
     }

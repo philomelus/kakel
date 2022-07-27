@@ -18,11 +18,13 @@ public class Preferences : Node
     private const string V_AUTOSAVE = "auto_save";
     private const string V_COLUMNS = "columns";
     private const string V_DEFAULTIMAGE = "default_image";
+    private const string V_LASTGAME = "last_game";
     private const string V_LASTIMAGE = "last_image";
     private const string V_NUMBERCOLOR = "number_color";
     private const string V_OUTLINECOLOR = "outline_color";
     private const string V_ROWS = "rows";
     private const string V_SHOWNUMBERS = "show_numbers";
+    private const string V_SHOWOUTLINES = "show_outlines";
 
     // Paths.
     public const string P_DEFAULTAUTOPATH = "user://auto.kakel";
@@ -36,10 +38,12 @@ public class Preferences : Node
     public bool AutoSave { get; set; }
     public int Columns { get; set; }
     public string DefaultImage { get; set; }
+    public string LastGame { get; set; }
     public string LastImage { get; set; }
     public Color NumberColor { get; set; }
     public Color OutlineColor { get; set; }
     public int Rows { get; set; }
+    public bool ShowOutlines { get; set; }
     public bool ShowNumbers { get; set; }
 
     // Preferences default values.
@@ -50,11 +54,13 @@ public class Preferences : Node
     private const bool default_AutoSave = true;
     private const int default_Columns = 4;
     private const string default_DefaultImage = P_DEFAULTIMAGE;
+    private const string default_LastGame = null;
     private const string default_LastImage = null;
     private Color default_NumberColor = Colors.LightGray;
     private Color default_OutlineColor = Colors.Gray;
     private const int default_Rows = 4;
     private const bool default_ShowNumbers = true;
+    private const bool default_ShowOutlines = false;
 
     public override void _Ready()
     {
@@ -67,10 +73,12 @@ public class Preferences : Node
         AutoSave = default_AutoSave;
         Columns = default_Columns;
         DefaultImage = default_DefaultImage;
+        LastGame = default_LastGame;
         LastImage = default_LastImage;
         NumberColor = default_NumberColor;
         OutlineColor = default_OutlineColor;
         Rows = default_Rows;
+        ShowOutlines = default_ShowOutlines;
         ShowNumbers = default_ShowNumbers;
     }
 
@@ -87,10 +95,12 @@ public class Preferences : Node
         AutoSave = (int) cf.GetValue(S_GLOBALS, V_AUTOSAVE, default_AutoSave ? 1 : 0) == 1;
         Columns = (int) cf.GetValue(S_GLOBALS, V_COLUMNS, default_Columns);
         DefaultImage = (string) cf.GetValue(S_GLOBALS, V_DEFAULTIMAGE, default_DefaultImage);
+        LastGame = (string) cf.GetValue(S_GLOBALS, V_LASTGAME, default_LastGame);
         LastImage = (string) cf.GetValue(S_GLOBALS, V_LASTIMAGE, default_LastImage);
         NumberColor = new Color((string) cf.GetValue(S_GLOBALS, V_NUMBERCOLOR, default_NumberColor.ToHtml(true)));
         OutlineColor = new Color((string) cf.GetValue(S_GLOBALS, V_OUTLINECOLOR, default_OutlineColor.ToHtml(true)));
         Rows = (int) cf.GetValue(S_GLOBALS, V_ROWS, default_Rows);
+        ShowOutlines = (int) cf.GetValue(S_GLOBALS, V_SHOWOUTLINES, default_ShowOutlines ? 1 : 0) == 1;
         ShowNumbers = (int) cf.GetValue(S_GLOBALS, V_SHOWNUMBERS, default_ShowNumbers ? 1 : 0) == 1;
     }
 
@@ -105,10 +115,12 @@ public class Preferences : Node
         cf.SetValue(S_GLOBALS, V_AUTOSAVE, AutoSave ? 1 : 0);
         cf.SetValue(S_GLOBALS, V_COLUMNS, (int) Columns);
         cf.SetValue(S_GLOBALS, V_DEFAULTIMAGE, DefaultImage);
+        cf.SetValue(S_GLOBALS, V_LASTGAME, LastGame);
         cf.SetValue(S_GLOBALS, V_LASTIMAGE, LastImage);
         cf.SetValue(S_GLOBALS, V_NUMBERCOLOR, NumberColor.ToHtml(true));
         cf.SetValue(S_GLOBALS, V_OUTLINECOLOR, OutlineColor.ToHtml(true));
         cf.SetValue(S_GLOBALS, V_ROWS, (int) Rows);
+        cf.SetValue(S_GLOBALS, V_SHOWOUTLINES, ShowOutlines ? 1 : 0);
         cf.SetValue(S_GLOBALS, V_SHOWNUMBERS, ShowNumbers ? 1 : 0);
         cf.Save(path);
     }

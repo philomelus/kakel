@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=7 format=2]
+[gd_resource type="Theme" load_steps=9 format=2]
 
 [ext_resource path="res://font_32.tres" type="DynamicFont" id=1]
 [ext_resource path="res://icon_GUI_spinbox_updown.svg" type="Texture" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://icon_GUI_toggle_on_disabled.svg" type="Texture" id=4]
 [ext_resource path="res://icon_GUI_toggle_on.svg" type="Texture" id=5]
 [ext_resource path="res://icon_GUI_toggle_off.svg" type="Texture" id=6]
+[ext_resource path="res://icon_GUI_unchecked.svg" type="Texture" id=7]
+[ext_resource path="res://icon_GUI_checked.svg" type="Texture" id=8]
 
 [resource]
 Button/fonts/font = ExtResource( 1 )
@@ -16,4 +18,8 @@ CheckButton/icons/on = ExtResource( 5 )
 CheckButton/icons/on_disabled = ExtResource( 4 )
 Label/fonts/font = ExtResource( 1 )
 LineEdit/fonts/font = ExtResource( 1 )
+MenuButton/fonts/font = ExtResource( 1 )
+PopupMenu/fonts/font = ExtResource( 1 )
+PopupMenu/icons/checked = ExtResource( 8 )
+PopupMenu/icons/unchecked = ExtResource( 7 )
 SpinBox/icons/updown = ExtResource( 2 )

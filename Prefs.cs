@@ -13,6 +13,7 @@ public class Prefs : Control
     private ColorPickerButton _numberColor;
     private SpinBox _rows;
     private CheckButton _showNumbers;
+    private CheckButton _showOutlines;
     private SceneTree _tree;
 
     public override void _Ready()
@@ -25,6 +26,7 @@ public class Prefs : Control
         _numberColor = GetNode<ColorPickerButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/NumberColor");
         _rows = GetNode<SpinBox>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/Rows");
         _showNumbers = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/ShowNumbers");
+        _showOutlines = GetNode<CheckButton>("PanelContainer/CenterContainer/VBoxContainer/GridContainer/ShowOutlines");
         _tree = GetTree();
 
         // Pass globals to controls
@@ -35,6 +37,7 @@ public class Prefs : Control
         _outlineColor.Color = _globals.Preferences.OutlineColor;
         _rows.Value = _globals.Preferences.Rows;
         _showNumbers.Pressed = _globals.Preferences.ShowNumbers;
+        _showOutlines.Pressed = _globals.Preferences.ShowOutlines;
     }
 
     public void OnCancelPressed()
@@ -79,6 +82,11 @@ public class Prefs : Control
         if (_globals.Preferences.ShowNumbers != _showNumbers.Pressed)
         {
             _globals.Preferences.ShowNumbers = _showNumbers.Pressed;
+            ++updates;
+        }
+        if (_globals.Preferences.ShowOutlines != _showOutlines.Pressed)
+        {
+            _globals.Preferences.ShowOutlines = _showOutlines.Pressed;
             ++updates;
         }
 

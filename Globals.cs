@@ -5,6 +5,9 @@ using System;
 
 public class Globals : Node
 {
+	// When true, the game was started from AutoPath because AutoLoad was true
+	public bool AutoStarted = false;
+
 	// Preferences that are saved/loaded
 	public Preferences Preferences { get; set; }
 

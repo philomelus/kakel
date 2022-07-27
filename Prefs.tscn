@@ -22,13 +22,13 @@ margin_bottom = 713.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
 margin_left = 421.0
-margin_top = 118.0
+margin_top = 89.0
 margin_right = 844.0
-margin_bottom = 588.0
+margin_bottom = 616.0
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
 margin_right = 423.0
-margin_bottom = 395.0
+margin_bottom = 452.0
 size_flags_horizontal = 5
 theme = ExtResource( 2 )
 columns = 2
@@ -69,11 +69,11 @@ align = 1
 margin_top = 122.0
 margin_right = 281.0
 margin_bottom = 167.0
-hint_tooltip = "When enabled, tile numbers are show in upper left of each tile."
+hint_tooltip = "When enabled, tiles are outlined."
 mouse_filter = 0
-text = "Show Numbers"
+text = "Show Outlines"
 
-[node name="ShowNumbers" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+[node name="ShowOutlines" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 margin_left = 310.0
 margin_top = 118.0
 margin_right = 398.0
@@ -95,38 +95,53 @@ margin_right = 423.0
 margin_bottom = 226.0
 
 [node name="Label5" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
-margin_top = 233.0
+margin_top = 234.0
 margin_right = 281.0
-margin_bottom = 278.0
-hint_tooltip = "Tile numbers are drawn in this color.."
+margin_bottom = 279.0
+hint_tooltip = "When enabled, tile numbers are shown in upper left of each tile."
+mouse_filter = 0
+text = "Show Numbers"
+
+[node name="ShowNumbers" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+margin_left = 310.0
+margin_top = 230.0
+margin_right = 398.0
+margin_bottom = 283.0
+size_flags_horizontal = 4
+
+[node name="Label6" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+margin_top = 290.0
+margin_right = 281.0
+margin_bottom = 335.0
+hint_tooltip = "Tile numbers are drawn in this color."
 mouse_filter = 0
 text = "Numbers Color"
 
 [node name="NumberColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 margin_left = 285.0
-margin_top = 230.0
+margin_top = 287.0
 margin_right = 423.0
-margin_bottom = 281.0
+margin_bottom = 338.0
 
-[node name="Label6" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
-margin_top = 289.0
+[node name="Label7" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+margin_top = 346.0
 margin_right = 281.0
-margin_bottom = 334.0
+margin_bottom = 391.0
 hint_tooltip = "If \"Exit Kakel\" button is used, automatically save the current game before exit."
 mouse_filter = 0
 text = "Auto Save on Exit"
 
 [node name="AutoSave" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 margin_left = 310.0
-margin_top = 285.0
+margin_top = 342.0
 margin_right = 398.0
-margin_bottom = 338.0
+margin_bottom = 395.0
 size_flags_horizontal = 4
 
-[node name="Label7" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
-margin_top = 346.0
+[node name="Label8" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+margin_top = 403.0
 margin_right = 281.0
-margin_bottom = 391.0
+margin_bottom = 448.0
 hint_tooltip = "If previous automatically saved game from exit
 exists, automatically load that game on launch."
 mouse_filter = 0
@@ -134,15 +149,15 @@ text = "Auto Load on Start"
 
 [node name="AutoLoad" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 margin_left = 310.0
-margin_top = 342.0
+margin_top = 399.0
 margin_right = 398.0
-margin_bottom = 395.0
+margin_bottom = 452.0
 size_flags_horizontal = 4
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
-margin_top = 399.0
+margin_top = 456.0
 margin_right = 423.0
-margin_bottom = 470.0
+margin_bottom = 527.0
 custom_constants/margin_top = 10
 custom_constants/margin_bottom = 10
 

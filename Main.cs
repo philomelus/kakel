@@ -54,14 +54,18 @@ public class Main : Control
 	{
 		if (_globals.Preferences.AutoLoad)
 		{
-			File f = new File();
-			if (f.FileExists(_globals.Preferences.AutoPath))
+			Directory d = new Directory();
+			if (d.FileExists(_globals.Preferences.AutoPath))
+			{
+				_globals.AutoStarted = true;
 				LoadGame(_globals.Preferences.AutoPath);
+			}
 		}
 	}
 
 	private void Load()
 	{
+		_globals.AutoStarted = false;
 		if (_loadDialogUsed)
 		{
 			_loadDialog.Popup_();
@@ -69,6 +73,8 @@ public class Main : Control
 		else
 		{
 			_loadDialogUsed = true;
+			if (_globals.Preferences.LastGame != null)
+				_loadDialog.CurrentPath = _globals.Preferences.LastGame;
 			_loadDialog.PopupCentered();
 		}
 	}
@@ -82,11 +88,18 @@ public class Main : Control
 
 	private void NewGame()
 	{
+		_globals.AutoStarted = false;
 		_tree.ChangeScene("res://NewGame.tscn");
 	}
 
 	private void OnLoadDialogFileSelected(string path)
 	{
+		// Save path if different than last loaded game
+        if (_globals.Preferences.LastGame != path)
+        {
+            _globals.Preferences.LastGame = path;
+            _globals.Preferences.Save(Preferences.P_PREFS);
+        }
 		LoadGame(path);
 	}
 

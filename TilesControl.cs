@@ -20,6 +20,10 @@ public class TilesControl : Control
 	private bool _movesEnabled;
 	public bool Movable {
 		get { return _movesEnabled; }
+		set {
+			if (_movesEnabled != value)
+				_movesEnabled = value;
+		}
 	}
 
 	// Columns in tiles.
@@ -104,6 +108,20 @@ public class TilesControl : Control
 			if (_showNumbers != value)
 			{
 				_showNumbers = value;
+				Update();
+			}
+		}
+	}
+
+	// Whn true, add outline to all tiles (incuding images).
+	private bool _showOutlines;
+	[Export]
+	public bool ShowOutlines {
+		get { return _showOutlines; }
+		set {
+			if (_showOutlines != value)
+			{
+				_showOutlines = value;
 				Update();
 			}
 		}
@@ -249,6 +267,21 @@ public class TilesControl : Control
                                 _tiles[index][IDX_DEST].Position.y + 10 + (extent.y / 2)),
                                 name, _numberColor);
                     }
+
+					if (_showOutlines)
+					{
+	                    Rect2[] tile = _tiles[index];
+	                    Rect2 area = tile[IDX_DEST];
+						Vector2 v = area.Position;
+						--v.x;
+						++v.y;
+						area.Position = v;
+						v = area.Size;
+						++v.x;
+						++v.y;
+						area.Size = v;
+	                    DrawRect(area, _outlineColor, false);
+					}
                 }
                 else
                 {
@@ -484,11 +517,18 @@ public class TilesControl : Control
 
     private bool CheckComplete()
     {
-		for(int index = 0; index < _numTiles; ++index)
+#if TEST_WIN
+		if (_moves < 10)	// For testing, this forces win after 10 moves
 		{
-			if (_tilesOrder[index] != index)
-				return false;
+#endif
+			for(int index = 0; index < _numTiles; ++index)
+			{
+				if (_tilesOrder[index] != index)
+					return false;
+			}
+#if TEST_WIN
 		}
+#endif
 		_movesEnabled = false;
 		EmitSignal("won");
 		return true;
