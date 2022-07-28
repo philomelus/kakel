@@ -1,51 +1,20 @@
 extends Node
 
-# Number of columns in tiles.
-var TilesColumns: int = 4
+# When true, the game was started from AutoPath because AutoLoad was true
+var auto_started: bool = false
+
+# Preferences that are saved/loade
+var preferences: Preferences = Preferences.new()
 
 # If true, use default image.
-var TilesDefaultImage: bool = true
+var tiles_default_image: bool = true
 
-# Image to use for default image.
-var TilesImageDefault: String = "res://default_image.png"
-
-# If `TilesDefaultImage` is false and TilesUseImag is true, this
-# contains the path of the image to use.
-var TilesImagePath: String
-
-# When true, the main display will load the game in `TilesLoadPath` rather
-# than using TilesColumns/TilesRows/TilesImage/TilesDefaultImage, etc.
-var TilesLoading: bool = false
+# When true, the game in `TilesLoadPath` is loaded and restarted
+var tiles_loading: bool = false
 
 # When TilesLoading is true, path to game file to load.
-var TilesLoadPath: String
-
-# Color used to draw tile numbers.
-var TilesNumberColor: Color = Color.white
-
-# Font used to draw tile numbers.
-var TilesNumberFont: Font
-
-# Color to draw tile outlines when TilesUseImage is false.
-var TilesOutlineColor: Color = Color.white
-
-# Number of rows in tiles.
-var TilesRows: int = 4
-
-# When true, show tile numbers on tiles.
-var TilesShowNumbers: bool = true
+var tiles_load_path: String
 
 # When true, use image for tiles.  Otherwise draw outlines with numbers.
-var TilesUseImage: bool = true
+var tiles_use_image: bool = true
 
-
-# Load global preferences from file.
-func Load(path: String) -> void:
-	var inp: File = File.new()
-	inp.open(path, File.Read)
-
-
-# Save global preferences into file.
-func Save(path: String) -> void:
-	var outp: File = File.new()
-	outp.open(path, File.Write)
