@@ -1,0 +1,182 @@
+[gd_scene load_steps=3 format=3 uid="uid://b5q60k1k5p6p4"]
+
+[ext_resource type="Script" path="res://Prefs.gd" id="1"]
+[ext_resource type="Theme" uid="uid://df4b75laaajo" path="res://prefs_theme.tres" id="2"]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("2")
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+offset_right = 1280.0
+offset_bottom = 720.0
+theme = ExtResource("2")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+offset_left = 419.0
+offset_top = 120.0
+offset_right = 860.0
+offset_bottom = 599.0
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_right = 441.0
+offset_bottom = 422.0
+size_flags_horizontal = 5
+theme = ExtResource("2")
+columns = 2
+
+[node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 2.0
+offset_right = 281.0
+offset_bottom = 50.0
+hint_tooltip = "Number of columns in tile grid."
+mouse_filter = 0
+text = "Columns"
+
+[node name="Columns" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_right = 441.0
+offset_bottom = 53.0
+theme = ExtResource("2")
+max_value = 10000.0
+alignment = 1
+
+[node name="Label2" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 59.0
+offset_right = 281.0
+offset_bottom = 107.0
+hint_tooltip = "Number of rows in tile grid."
+mouse_filter = 0
+text = "Rows"
+
+[node name="Rows" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 57.0
+offset_right = 441.0
+offset_bottom = 110.0
+max_value = 10000.0
+alignment = 1
+
+[node name="Label3" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 114.0
+offset_right = 281.0
+offset_bottom = 162.0
+hint_tooltip = "When enabled, tiles are outlined."
+mouse_filter = 0
+text = "Show Outlines"
+
+[node name="ShowOutlines" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 114.0
+offset_right = 407.0
+offset_bottom = 162.0
+size_flags_horizontal = 4
+
+[node name="Label4" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 166.0
+offset_right = 281.0
+offset_bottom = 214.0
+hint_tooltip = "Tile outlines are drawn in this color."
+mouse_filter = 0
+text = "Ouline Color"
+
+[node name="OutlineColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 166.0
+offset_right = 441.0
+offset_bottom = 214.0
+
+[node name="Label5" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 218.0
+offset_right = 281.0
+offset_bottom = 266.0
+hint_tooltip = "When enabled, tile numbers are shown in upper left of each tile."
+mouse_filter = 0
+text = "Show Numbers"
+
+[node name="ShowNumbers" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 218.0
+offset_right = 407.0
+offset_bottom = 266.0
+size_flags_horizontal = 4
+
+[node name="Label6" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 270.0
+offset_right = 281.0
+offset_bottom = 318.0
+hint_tooltip = "Tile numbers are drawn in this color."
+mouse_filter = 0
+text = "Numbers Color"
+
+[node name="NumberColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 270.0
+offset_right = 441.0
+offset_bottom = 318.0
+
+[node name="Label7" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 322.0
+offset_right = 281.0
+offset_bottom = 370.0
+hint_tooltip = "If \"Exit Kakel\" button is used, automatically save the current game before exit."
+mouse_filter = 0
+text = "Auto Save on Exit"
+
+[node name="AutoSave" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 322.0
+offset_right = 407.0
+offset_bottom = 370.0
+size_flags_horizontal = 4
+
+[node name="Label8" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 374.0
+offset_right = 281.0
+offset_bottom = 422.0
+hint_tooltip = "If previous automatically saved game from exit
+exists, automatically load that game on launch."
+mouse_filter = 0
+text = "Auto Load on Start"
+
+[node name="AutoLoad" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 374.0
+offset_right = 407.0
+offset_bottom = 422.0
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 426.0
+offset_right = 441.0
+offset_bottom = 479.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/CenterContainer/VBoxContainer/MarginContainer"]
+offset_right = 441.0
+offset_bottom = 53.0
+theme = ExtResource("2")
+alignment = 1
+
+[node name="Cancel" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+offset_left = 126.0
+offset_right = 233.0
+offset_bottom = 53.0
+text = "Cancel"
+
+[node name="Save" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+offset_left = 237.0
+offset_right = 315.0
+offset_bottom = 53.0
+text = "Save
+"
+
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/MarginContainer/HBoxContainer/Cancel" to="." method="_on_cancel_pressed"]
+[connection signal="pressed" from="PanelContainer/CenterContainer/VBoxContainer/MarginContainer/HBoxContainer/Save" to="." method="_on_save_pressed"]
