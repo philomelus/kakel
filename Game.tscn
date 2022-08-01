@@ -1,206 +1,228 @@
-[gd_scene load_steps=3 format=3 uid="uid://b1vnvl2upb2a6"]
+[gd_scene load_steps=6 format=3 uid="uid://cfdx4ekqjq4v7"]
 
-[ext_resource type="Script" path="res://Game.cs" id="1_7a3p1"]
-[ext_resource type="Script" path="res://TilesControl.cs" id="2_lpurb"]
+[ext_resource type="Script" path="res://Game.cs" id="1"]
+[ext_resource type="Script" path="res://TilesControl.cs" id="2"]
+[ext_resource type="FontFile" uid="uid://mne2v8nkndtd" path="res://NotoSansUI_Regular.woff2" id="3"]
+[ext_resource type="Theme" uid="uid://bmreftfdymlyi" path="res://prefs_theme.tres" id="4"]
+
+[sub_resource type="FontFile" id="2"]
+fallbacks = [ExtResource("3")]
+face_index = null
+embolden = null
+transform = null
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/16/0/kerning_overrides/16/0 = Vector2(0, 0)
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = ExtResource("1_7a3p1")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1")
 
 [node name="GameBoard" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="HFlowContainer" type="HFlowContainer" parent="GameBoard"]
+[node name="PanelContainer" type="PanelContainer" parent="GameBoard"]
 offset_right = 1280.0
-offset_bottom = 31.0
+offset_bottom = 53.0
+size_flags_horizontal = 3
+theme = ExtResource("4")
 
-[node name="Load" type="Button" parent="GameBoard/HFlowContainer"]
-offset_right = 46.0
-offset_bottom = 31.0
-text = "Load"
+[node name="HFlowContainer2" type="HFlowContainer" parent="GameBoard/PanelContainer"]
+offset_right = 1280.0
+offset_bottom = 53.0
 
-[node name="Save" type="Button" parent="GameBoard/HFlowContainer"]
-offset_left = 50.0
-offset_right = 94.0
-offset_bottom = 31.0
-text = "Save"
+[node name="HFlowContainer" type="HFlowContainer" parent="GameBoard/PanelContainer/HFlowContainer2"]
+offset_right = 1043.0
+offset_bottom = 53.0
+size_flags_horizontal = 3
 
-[node name="VSeparator" type="VSeparator" parent="GameBoard/HFlowContainer"]
-offset_left = 98.0
-offset_right = 102.0
-offset_bottom = 31.0
+[node name="Abort" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_right = 174.0
+offset_bottom = 53.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Quit Game"
 
-[node name="Abort" type="Button" parent="GameBoard/HFlowContainer"]
-offset_left = 106.0
-offset_right = 148.0
-offset_bottom = 31.0
-text = "Quit"
+[node name="VSeparator" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 178.0
+offset_right = 182.0
+offset_bottom = 53.0
 
-[node name="Quit" type="Button" parent="GameBoard/HFlowContainer"]
-offset_left = 152.0
-offset_right = 236.0
-offset_bottom = 31.0
+[node name="Quit" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 186.0
+offset_right = 344.0
+offset_bottom = 53.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
 text = "Exit Kakel"
 
-[node name="VSeparator2" type="VSeparator" parent="GameBoard/HFlowContainer"]
-offset_left = 240.0
-offset_right = 244.0
-offset_bottom = 31.0
+[node name="VSeparator2" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 348.0
+offset_right = 352.0
+offset_bottom = 53.0
 
-[node name="Label" type="Label" parent="GameBoard/HFlowContainer"]
-offset_left = 248.0
+[node name="Load" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 356.0
+offset_right = 440.0
+offset_bottom = 53.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Load"
+
+[node name="VSeparator3" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 444.0
+offset_right = 448.0
+offset_bottom = 53.0
+
+[node name="Save" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 452.0
+offset_right = 532.0
+offset_bottom = 53.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Save"
+
+[node name="VSeparator4" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 536.0
+offset_right = 540.0
+offset_bottom = 53.0
+
+[node name="Prefs" type="MenuButton" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 544.0
+offset_right = 675.0
+offset_bottom = 53.0
+text = "Options"
+item_count = 2
+popup/item_0/text = "Outlines"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+popup/item_1/text = "Numbers"
+popup/item_1/checkable = 1
+popup/item_1/checked = true
+popup/item_1/id = 1
+
+[node name="VSeparator5" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 679.0
+offset_right = 683.0
+offset_bottom = 53.0
+
+[node name="Hint" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 687.0
+offset_right = 761.0
+offset_bottom = 53.0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Hint"
+
+[node name="HFlowContainer3" type="GridContainer" parent="GameBoard/PanelContainer/HFlowContainer2"]
+offset_left = 1047.0
+offset_right = 1280.0
+offset_bottom = 53.0
+size_flags_horizontal = 8
+columns = 2
+
+[node name="Label" type="Label" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer3"]
 offset_top = 2.0
-offset_right = 303.0
-offset_bottom = 28.0
-text = "Moves:"
+offset_right = 101.0
+offset_bottom = 50.0
+text = "Moves"
 
-[node name="Moves" type="LineEdit" parent="GameBoard/HFlowContainer"]
-offset_left = 307.0
-offset_right = 374.0
-offset_bottom = 31.0
+[node name="Moves" type="LineEdit" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer3"]
+offset_left = 105.0
+offset_right = 233.0
+offset_bottom = 53.0
+size_flags_vertical = 5
 text = "0"
-placeholder_text = "0"
-alignment = 1
 editable = false
 context_menu_enabled = false
 virtual_keyboard_enabled = false
 shortcut_keys_enabled = false
 middle_mouse_paste_enabled = false
-deselect_on_focus_loss_enabled = false
-
-[node name="VSeparator3" type="VSeparator" parent="GameBoard/HFlowContainer"]
-offset_left = 378.0
-offset_right = 382.0
-offset_bottom = 31.0
-
-[node name="ShowNumbers" type="CheckButton" parent="GameBoard/HFlowContainer"]
-offset_left = 386.0
-offset_right = 488.0
-offset_bottom = 31.0
-text = "Tile #'s"
-
-[node name="VSeparator4" type="VSeparator" parent="GameBoard/HFlowContainer"]
-offset_left = 492.0
-offset_right = 496.0
-offset_bottom = 31.0
-
-[node name="Hint" type="Button" parent="GameBoard/HFlowContainer"]
-offset_left = 500.0
-offset_right = 541.0
-offset_bottom = 31.0
-text = "Hint
-"
 
 [node name="MarginContainer" type="MarginContainer" parent="GameBoard"]
-offset_top = 35.0
+offset_top = 57.0
 offset_right = 1280.0
 offset_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
 
 [node name="Tiles" type="Control" parent="GameBoard/MarginContainer"]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 1270.0
-offset_bottom = 675.0
+offset_right = 1280.0
+offset_bottom = 663.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("2_lpurb")
-ShowNumbers = true
+script = ExtResource("2")
+NumberFont = SubResource("2")
 
 [node name="WinnerDialog" type="Window" parent="."]
-disable_3d = true
-position = Vector2i(200, 200)
-size = Vector2i(240, 240)
 visible = false
-wrap_controls = true
-transient = true
-exclusive = true
-unresizable = true
-popup_window = true
-min_size = Vector2i(240, 240)
 
-[node name="Label" type="Label" parent="WinnerDialog"]
-offset_right = 132.0
-offset_bottom = 52.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
-text = "Congradulations!
-You won!"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="CenterContainer" type="CenterContainer" parent="WinnerDialog"]
+anchor_right = 0.5
+anchor_bottom = 0.5
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="WinnerDialog/CenterContainer"]
+offset_left = 255.0
+offset_top = 128.0
+offset_right = 384.0
+offset_bottom = 232.0
+text = "Congratulations!
+You won in
+123
+moves!"
 
 [node name="CloseWinner" type="Button" parent="WinnerDialog"]
-offset_right = 8.0
-offset_bottom = 8.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
 text = "Close"
 
 [node name="HintDialog" type="Window" parent="."]
-disable_3d = true
-size = Vector2i(320, 320)
 visible = false
-wrap_controls = true
-transient = true
-exclusive = true
-always_on_top = true
-popup_window = true
-min_size = Vector2i(320, 320)
 
 [node name="HintImage" type="TextureRect" parent="HintDialog"]
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 350.0
-offset_bottom = 319.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
-ignore_texture_size = true
-stretch_mode = 5
+stretch_mode = 6
 
 [node name="CloseHint" type="Button" parent="HintDialog"]
-offset_right = 50.0
-offset_bottom = 31.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 text = "Close"
 
 [node name="LoadDialog" type="FileDialog" parent="."]
-title = "Open a File"
+title = "Open Game"
 size = Vector2i(480, 320)
-popup_window = true
 min_size = Vector2i(480, 320)
 ok_button_text = "Open"
+mode_overrides_title = false
 file_mode = 0
 access = 2
 filters = PackedStringArray("*.kakel;Kakel Games")
 
 [node name="SaveDialog" type="FileDialog" parent="."]
-disable_3d = true
+title = "Save Game"
 size = Vector2i(480, 320)
-popup_window = true
 min_size = Vector2i(480, 320)
-ok_button_text = "Save"
+mode_overrides_title = false
 access = 2
 filters = PackedStringArray("*.kakel;Kakel Games")
 
-[connection signal="pressed" from="GameBoard/HFlowContainer/Load" to="." method="OnLoadPressed"]
-[connection signal="pressed" from="GameBoard/HFlowContainer/Save" to="." method="OnSavePressed"]
-[connection signal="pressed" from="GameBoard/HFlowContainer/Abort" to="." method="OnAbortPressed"]
-[connection signal="pressed" from="GameBoard/HFlowContainer/Quit" to="." method="OnQuitPressed"]
-[connection signal="pressed" from="GameBoard/HFlowContainer/ShowNumbers" to="." method="OnShowNumbersPressed"]
-[connection signal="pressed" from="GameBoard/HFlowContainer/Hint" to="." method="OnHintPressed"]
+[connection signal="pressed" from="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Abort" to="." method="OnAbortPressed"]
+[connection signal="pressed" from="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Quit" to="." method="OnQuitPressed"]
+[connection signal="pressed" from="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Load" to="." method="OnLoadPressed"]
+[connection signal="pressed" from="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Save" to="." method="OnSavePressed"]
+[connection signal="pressed" from="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Hint" to="." method="OnHintPressed"]
 [connection signal="item_rect_changed" from="GameBoard/MarginContainer/Tiles" to="." method="OnTilesItemRectChanged"]
 [connection signal="moved" from="GameBoard/MarginContainer/Tiles" to="." method="OnTilesMoved"]
 [connection signal="won" from="GameBoard/MarginContainer/Tiles" to="." method="OnTilesWon"]
 [connection signal="pressed" from="WinnerDialog/CloseWinner" to="." method="OnWinnerDialogClosePressed"]
-[connection signal="size_changed" from="HintDialog" to="." method="OnHintDialogSizeChanged"]
 [connection signal="pressed" from="HintDialog/CloseHint" to="." method="OnHintDialogClosePressed"]
 [connection signal="file_selected" from="LoadDialog" to="." method="OnLoadDialogFileSelected"]
 [connection signal="file_selected" from="SaveDialog" to="." method="OnSaveDialogFileSelected"]

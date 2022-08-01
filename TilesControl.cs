@@ -1,4 +1,4 @@
-#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0052, RCS1085
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0044, RCS1169, IDE0052, RCS1085
 
 using Godot;
 using System;
@@ -20,6 +20,10 @@ public partial class TilesControl : Control
 	private bool _movesEnabled;
 	public bool Movable {
 		get { return _movesEnabled; }
+		set {
+			if (_movesEnabled != value)
+				_movesEnabled = value;
+		}
 	}
 
 	// Columns in tiles.
@@ -64,7 +68,7 @@ public partial class TilesControl : Control
 	}
 
 	// Spacing between each tile.
-	private Vector2 _spacing = new(5, 5);
+	private Vector2 _spacing = new Vector2(5, 5);
 	[Export]
 	public Vector2 Spacing {
 		get { return _spacing; }
@@ -104,6 +108,20 @@ public partial class TilesControl : Control
 			if (_showNumbers != value)
 			{
 				_showNumbers = value;
+				Update();
+			}
+		}
+	}
+
+	// Whn true, add outline to all tiles (incuding images).
+	private bool _showOutlines;
+	[Export]
+	public bool ShowOutlines {
+		get { return _showOutlines; }
+		set {
+			if (_showOutlines != value)
+			{
+				_showOutlines = value;
 				Update();
 			}
 		}
@@ -229,42 +247,57 @@ public partial class TilesControl : Control
     {
         if (!_readyToRun || !_tilesReady)
             return;
- 		Vector2 extent;
-		int index = 0;
-		int tileIndex;
-		for (int i = 0; i < _numTiles; ++i)
-		{
-			tileIndex = _tilesOrder[i];
-			if (tileIndex != _emptyId)
-			{
-				if (UseImage)
-				{
-					DrawTextureRectRegion(_tilesTexture, _tiles[index][IDX_DEST],
-										  _tiles[_tilesOrder[index]][IDX_SRC]);
-					if (_showNumbers)
+        Vector2 extent;
+        int index = 0;
+        int tileIndex;
+        for (int i = 0; i < _numTiles; ++i)
+        {
+            tileIndex = _tilesOrder[i];
+            if (tileIndex != _emptyId)
+            {
+                if (UseImage)
+                {
+                    DrawTextureRectRegion(_tilesTexture, _tiles[index][IDX_DEST],
+                                            _tiles[_tilesOrder[index]][IDX_SRC]);
+                    if (_showNumbers)
+                    {
+                        string name = (tileIndex + 1).ToString();
+                        extent = _numberFont.GetStringSize(name);
+                        DrawString(_numberFont, new Vector2(_tiles[index][IDX_DEST].Position.x + 5,
+                                _tiles[index][IDX_DEST].Position.y + 10 + (extent.y / 2)),
+                                name, HorizontalAlignment.Left, -1, 24, _numberColor);
+                    }
+
+					if (_showOutlines)
 					{
-						string name = (tileIndex + 1).ToString();
-						extent = _numberFont.GetStringSize(name);
-						DrawString(_numberFont, new Vector2(_tiles[index][IDX_DEST].Position.x + 5,
-								_tiles[index][IDX_DEST].Position.y + 10 + (extent.y / 2)),
-								name, HorizontalAlignment.Left, -1, 24, _numberColor);
+	                    Rect2[] tile = _tiles[index];
+	                    Rect2 area = tile[IDX_DEST];
+						Vector2 v = area.Position;
+						--v.x;
+						++v.y;
+						area.Position = v;
+						v = area.Size;
+						++v.x;
+						++v.y;
+						area.Size = v;
+	                    DrawRect(area, _outlineColor, false);
 					}
-				}
-				else
-				{
-					Rect2[] tile = _tiles[index];
-					Rect2 area = tile[IDX_DEST];
-					string name = (tileIndex + 1).ToString();
-					extent = _numberFont.GetStringSize(name);
-					DrawRect(area, _outlineColor, false);
-					DrawString(_numberFont, new Vector2(area.Position.x + ((area.Size.x - extent.x) / 2),
-							area.Position.y + ((area.Size.y - extent.y) / 2) + extent.y),
-							name, HorizontalAlignment.Left, -1, 24, _numberColor);
-				}
-			}
-			++index;
-		}
-   }
+                }
+                else
+                {
+                    Rect2[] tile = _tiles[index];
+                    Rect2 area = tile[IDX_DEST];
+                    string name = (tileIndex + 1).ToString();
+                    extent = _numberFont.GetStringSize(name);
+                    DrawRect(area, _outlineColor, false);
+                    DrawString(_numberFont, new Vector2(area.Position.x + ((area.Size.x - extent.x) / 2),
+                            area.Position.y + ((area.Size.y - extent.y) / 2) + extent.y),
+                            name, HorizontalAlignment.Left, -1, 24, _numberColor);
+                }
+            }
+            ++index;
+        }
+    }
 
     public override void _Input(InputEvent ev)
     {
@@ -273,7 +306,7 @@ public partial class TilesControl : Control
             return;
 
 		// Only handle mouse clicks here
-		if (ev is not InputEventMouseButton)
+		if (!(ev is InputEventMouseButton))
 			return;
 		InputEventMouseButton iemb = ev as InputEventMouseButton;
 
@@ -370,6 +403,7 @@ public partial class TilesControl : Control
 
     public override void _Ready()
     {
+		base._Ready();
 		_tree = GetTree();
 
 		_readyToRun = false;
@@ -484,21 +518,28 @@ public partial class TilesControl : Control
 
     private bool CheckComplete()
     {
-		for(int index = 0; index < _numTiles; ++index)
+#if TEST_WIN
+		if (_moves < 10)	// For testing, this forces win after 10 moves
 		{
-			if (_tilesOrder[index] != index)
-				return false;
+#endif
+			for(int index = 0; index < _numTiles; ++index)
+			{
+				if (_tilesOrder[index] != index)
+					return false;
+			}
+#if TEST_WIN
 		}
+#endif
 		_movesEnabled = false;
 		EmitSignal("won");
 		return true;
     }
 
-    public void Load(string path)
+    public void LoadGame(string path)
     {
 		_movesEnabled = false;
 
-		File inp = new();
+		File inp = new File();
 		inp.Open(path, File.ModeFlags.Read);
 
 		// Read file format version.
@@ -569,20 +610,19 @@ public partial class TilesControl : Control
 		CallDeferred("update");
     }
 
-	private Image LoadImage(string path)
-	{
-		if (path.Substr(0, 4) == "res:")
-		{
-			return ResourceLoader.Load<Image>(path, "Image", ResourceLoader.CacheMode.Ignore);
-			//return GD.Load<Image>(path);
-		}
-		else
-		{
-			Image i = new();
-			i.Load(path);
-			return i;
-		}
-	}
+    private Image LoadImage(string path)
+    {
+        if (path.Substr(0, 4) == "res:")
+        {
+            return ResourceLoader.Load<Image>(path, "Image", ResourceLoader.CacheMode.Ignore);
+        }
+        else
+        {
+            Image i = new Image();
+            i.Load(path);
+            return i;
+        }
+    }
 
     private void MoveDown()
     {
@@ -661,12 +701,13 @@ public partial class TilesControl : Control
 								(Size.y - (_rows0 * _spacing.y)) / _rows);
 		if (_tileSize.x <= 0 || _tileSize.y <= 0)
 		{
-			throw new ArgumentOutOfRangeException(
-				$"Tile size computed to invalid size: {_tileSize.x}, {_tileSize.y}");
+            // If this happens, its a fluke at startup and this will get called again
+            // which will be succesful.  In Godot 4+, this doesn't happen.
+            return;
 		}
 
 		// Calculate the bounding boxes for each tile for both display and image
-		Vector2 tileSize = new((int) _tileSize.x, (int) _tileSize.y);
+		Vector2 tileSize = new Vector2((int) _tileSize.x, (int) _tileSize.y);
 		_tiles = new Rect2[_numTiles][];
 		Rect2[] tile;
 		for (int row = 0; row < _rows; ++row)
@@ -684,14 +725,14 @@ public partial class TilesControl : Control
         _tilesReady = true;
     }
 
-	private void ResetTiles()
-	{
+    private void ResetTiles()
+    {
 		// Initial blank tile is last tile.
 		_empty = _numTiles0;
 		_emptyId = _empty;
 
 		// Need some random numbers.
-		RandomNumberGenerator rng = new();
+		RandomNumberGenerator rng = new RandomNumberGenerator();
 		rng.Randomize();
 
 		// Determine tile order.
@@ -730,14 +771,14 @@ public partial class TilesControl : Control
 		_movesEnabled = true;
         CallDeferred("RecalcTiles");
         CallDeferred("CalcMovables");
-	}
+    }
 
-    public void Save(string path)
+    public void SaveGame(string path)
     {
         if (!_readyToRun)
             return;
 
-		File sav = new();
+		File sav = new File();
 		sav.Open(path, File.ModeFlags.Write);
 
 		// Save file version

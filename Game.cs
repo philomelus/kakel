@@ -1,4 +1,4 @@
-#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0052
+#pragma warning disable RCS1213, IDE0051, RCS1110, RCS1146, IDE0044, RCS1169, IDE0052
 
 using Godot;
 using System;
@@ -14,9 +14,9 @@ public partial class Game : Control
     FileDialog _loadDialog;
     bool _loadDialogUsed;
     LineEdit _moves;
+    MenuButton _prefs;
     FileDialog _saveDialog;
     bool _saveDialogUsed;
-    CheckButton _showNumbers;
     TilesControl _tiles;
     SceneTree _tree;
     Button _winnerClose;
@@ -29,7 +29,7 @@ public partial class Game : Control
 		if (ev.IsActionPressed("quit"))
 		{
 			AcceptEvent();
-			_tree.ChangeScene("res://Main.tscn");
+            Abort();
 			return;
 		}
 		if (ev.IsActionPressed("refresh"))
@@ -42,6 +42,7 @@ public partial class Game : Control
 
     public override void _Ready()
     {
+        base._Ready();
         _hintClose = GetNode<Button>("HintDialog/CloseHint");
         _hintDialog = GetNode<Window>("HintDialog");
         _hintDialogUsed = false;
@@ -50,46 +51,60 @@ public partial class Game : Control
         _globals = GetNode<Globals>("/root/Globals");
         _loadDialog = GetNode<FileDialog>("LoadDialog");
         _loadDialogUsed = false;
-        _moves = GetNode<LineEdit>("GameBoard/HFlowContainer/Moves");
+        _moves = GetNode<LineEdit>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer3/Moves");
+        _prefs = GetNode<MenuButton>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Prefs");
         _saveDialog = GetNode<FileDialog>("SaveDialog");
         _saveDialogUsed = false;
-        _showNumbers = GetNode<CheckButton>("GameBoard/HFlowContainer/ShowNumbers");
         _tiles = GetNode<TilesControl>("GameBoard/MarginContainer/Tiles");
         _tree = GetTree();
         _winnerClose = GetNode<Button>("WinnerDialog/CloseWinner");
         _winnerDialog = GetNode<Window>("WinnerDialog");
-        _winnerLabel = GetNode<Label>("WinnerDialog/Label");
+        _winnerLabel = GetNode<Label>("WinnerDialog/CenterContainer/Label");
 
-        // If loading a game, no need to pass globals on
-        _tiles.NumberColor = _globals.TilesNumberColor;
-        _tiles.NumberFont = _globals.TilesNumberFont;
-        _tiles.OutlineColor = _globals.TilesOutlineColor;
+        // Connct to popup menu item selection (no way to do this in editor)
+        PopupMenu pm = _prefs.GetPopup();
+        // TODO: pm.Connect("index_pressed", OnPrefsItemSelected);
+
+        // Update GUI for common settings
+        _tiles.NumberColor = _globals.Preferences.NumberColor;
+        _tiles.OutlineColor = _globals.Preferences.OutlineColor;
+        _tiles.ShowNumbers = _globals.Preferences.ShowNumbers;
+        pm.SetItemChecked(1, _globals.Preferences.ShowNumbers);
+        _tiles.ShowOutlines = _globals.Preferences.ShowOutlines;
+        pm.SetItemChecked(0, _globals.Preferences.ShowOutlines);
+
+        // Not all globals are used if loading a game.
         if (_globals.TilesLoading)
         {
             _globals.TilesLoading = false;
-            _tiles.Load(_globals.TilesLoadPath);
-            CallDeferred("SetShowNumbers");
+            _tiles.LoadGame(_globals.TilesLoadPath);
         }
         else
         {
-            // Pass on global settings to tiles control.
-            _tiles.Columns = _globals.TilesColumns;
-            _tiles.Rows = _globals.TilesRows;
+            _tiles.Columns = _globals.Preferences.Columns;
+            _tiles.Rows = _globals.Preferences.Rows;
             if (_globals.TilesUseImage)
             {
                 if (_globals.TilesDefaultImage)
-                    _tiles.ImagePath = _globals.TilesImageDefault;
+                    _tiles.ImagePath = _globals.Preferences.DefaultImage;
                 else
-                    _tiles.ImagePath = _globals.TilesImagePath;
+                    _tiles.ImagePath = _globals.Preferences.LastImage;
+                pm.SetItemDisabled(0, false);
+                pm.SetItemDisabled(1, false);
             }
             else
             {
                 _tiles.ImagePath = "";
+                pm.SetItemDisabled(0, true);
+                pm.SetItemDisabled(1, true);
             }
-            _tiles.ShowNumbers = _globals.TilesShowNumbers;
-            _showNumbers.ButtonPressed = _globals.TilesShowNumbers;
             _tiles.Start();
         }
+    }
+
+    private void Abort()
+    {
+        _tree.ChangeScene("res://Main.tscn");
     }
 
     void HideHint()
@@ -102,7 +117,7 @@ public partial class Game : Control
     {
         if (path.Substr(0, 4) == "res:")
         {
-            return GD.Load<Image>(path);
+            return ResourceLoader.Load<Image>(path, "Image", ResourceLoader.CacheMode.Ignore);
         }
         else
         {
@@ -114,7 +129,7 @@ public partial class Game : Control
 
     void OnAbortPressed()
     {
-        _tree.ChangeScene("res://Main.tscn");
+        Abort();
     }
 
     void OnHintDialogClosePressed()
@@ -122,13 +137,27 @@ public partial class Game : Control
         HideHint();
     }
 
+    void OnHintDialogPopupHide()
+    {
+        HideHint();
+    }
+
+    void OnHintDialogResized()
+    {
+        if (_hintDialog != null)
+            UpdateHintDialog();
+    }
+
+    void OnHintDialogItemRectChanged()
+    {
+        if (_hintDialog != null)
+            UpdateHintDialog();
+    }
+
     void OnHintDialogSizeChanged()
     {
-        Vector2 ws = _hintDialog.Size;
-        Vector2 cs = _hintClose.Size;
-        _hintTexture.Position = new Vector2(10, 10);
-        _hintTexture.Size = new Vector2(ws.x - 20, ws.y - 25 - cs.y);
-        _hintClose.Position = new Vector2((ws.x - cs.x) / 2, ws.y - cs.y - 10);
+        if (_hintDialog != null)
+            UpdateHintDialog();
     }
 
     void OnHintPressed()
@@ -138,9 +167,9 @@ public partial class Game : Control
         {
             Image image;
             if (_globals.TilesDefaultImage)
-                image = LoadImage(_globals.TilesImageDefault);
+                image = LoadImage(_globals.Preferences.DefaultImage);
             else
-                image = LoadImage(_globals.TilesImagePath);
+                image = LoadImage(_globals.Preferences.LastImage);
             _hintTexture.Texture = ImageTexture.CreateFromImage(image);
         }
         if (_hintDialogUsed)
@@ -156,11 +185,23 @@ public partial class Game : Control
 
     void OnLoadDialogFileSelected(string path)
     {
-        _tiles.Load(path);
+        if (_globals.Preferences.LastGame != path)
+        {
+            _globals.Preferences.LastGame = path;
+            _globals.Preferences.Save(Preferences.P_PREFS);
+        }
+        _tiles.LoadGame(path);
+        _tiles.Movable = true;
+    }
+
+    void OnLoadDialogPopupHide()
+    {
+        _tiles.Movable = true;
     }
 
     void OnLoadPressed()
     {
+        _tiles.Movable = false;
         if (_loadDialogUsed)
         {
             _loadDialog.Popup();
@@ -168,22 +209,53 @@ public partial class Game : Control
         else
         {
             _loadDialogUsed = true;
+			if (_globals.Preferences.LastGame != null)
+				_loadDialog.CurrentPath = _globals.Preferences.LastGame;
             _loadDialog.PopupCentered();
+        }
+    }
+
+    void OnPrefsItemSelected(int index)
+    {
+        PopupMenu pm = _prefs.GetPopup();
+        pm.ToggleItemChecked(index);
+        bool on = pm.IsItemChecked(index);
+        switch (index)
+        {
+        case 0: // Outlines
+            _tiles.ShowOutlines = on;
+            break;
+
+        case 1: // Numbers
+            _tiles.ShowNumbers = on;
+            break;
         }
     }
 
     void OnQuitPressed()
     {
+        // Save game if desired.
+        if (_globals.Preferences.AutoSave)
+            _tiles.SaveGame(_globals.Preferences.AutoPath);
+
+        // Get outta here.
         _tree.Quit();
     }
 
     void OnSaveDialogFileSelected(string path)
     {
-        _tiles.Save(path);
+        _tiles.SaveGame(path);
+        _tiles.Movable = true;
+    }
+
+    void OnSaveDialogPopupHide()
+    {
+        _tiles.Movable = true;
     }
 
     void OnSavePressed()
     {
+        _tiles.Movable = false;
         if (_saveDialogUsed)
         {
             _saveDialog.Popup();
@@ -193,11 +265,6 @@ public partial class Game : Control
             _saveDialogUsed = true;
             _saveDialog.PopupCentered();
         }
-    }
-
-    void OnShowNumbersPressed()
-    {
-        _tiles.ShowNumbers = _showNumbers.ButtonPressed;
     }
 
     void OnTilesItemRectChanged()
@@ -213,21 +280,39 @@ public partial class Game : Control
 
     void OnTilesWon()
     {
+        // Update message.
+        _winnerLabel.Text = $"Congratulations!\nYou won in\n{_moves.Text}\nmoves!";
+
+        // Size everything correctly.
         _winnerLabel.Position = new Vector2(10, 10);
         _winnerLabel.Size = new Vector2(_winnerDialog.Size.x - 20,
                 _winnerDialog.Size.y - 30 - _winnerClose.Size.y);
         _winnerClose.Position = new Vector2((_winnerDialog.Size.x - _winnerClose.Size.x) / 2,
                 _winnerDialog.Size.y - 10 - _winnerClose.Size.y);
+
+        // If game was auto started, then remove auto save if desired
+        if (_globals.AutoStarted && _globals.Preferences.AutoRemoveOnWin)
+        {
+            Directory d = new Directory();
+            if (d.FileExists(_globals.Preferences.AutoPath))
+                d.Remove(_globals.Preferences.AutoPath);
+        }
+
+        // Notify user.
         _winnerDialog.PopupCentered();
     }
 
     void OnWinnerDialogClosePressed()
     {
-        _tree.ChangeScene("res://Main.tscn");
+        Abort();
     }
 
-    void SetShowNumbers()
+    void UpdateHintDialog()
     {
-        _showNumbers.ButtonPressed = _tiles.ShowNumbers;
+        Vector2 ws = _hintDialog.Size;
+        Vector2 cs = _hintClose.Size;
+        _hintTexture.Position = new Vector2(10, 10);
+        _hintTexture.Size = new Vector2(ws.x - 20, ws.y - 25 - cs.y);
+        _hintClose.Position = new Vector2((ws.x - cs.x) / 2, ws.y - cs.y - 10);
     }
 }
