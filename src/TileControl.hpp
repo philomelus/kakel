@@ -1,13 +1,13 @@
-#ifndef GDEXAMPLE_H
-#define GDEXAMPLE_H
+#ifndef TILE_CONTROL_HPP
+#define TILE_CONTROL_HPP
 
 #include <Godot.hpp>
 #include <Sprite.hpp>
 
 namespace godot {
 
-class GDExample : public Sprite {
-    GODOT_CLASS(GDExample, Sprite)
+class TileControl : public Sprite {
+    GODOT_CLASS(TileControl, Sprite)
 
 private:
     float time_passed;
@@ -18,10 +18,10 @@ private:
 public:
     static void _register_methods();
 
-    GDExample();
-    ~GDExample();
+    TileControl();
+    ~TileControl();
 
-    void _init(); // our initializer called by Godot
+    void _init();
 
     void _process(float delta);
 

@@ -1,28 +1,26 @@
-#include "gdexample.h"
+#include "TileControl.hpp"
 
 using namespace godot;
 
-void GDExample::_register_methods()
+void TileControl::_register_methods()
 {
-    register_method("_process", &GDExample::_process);
-    register_property<GDExample, float>("amplitude", &GDExample::amplitude, 10.0);
-    register_property<GDExample, float>("speed", &GDExample::set_speed, &GDExample::get_speed, 1.0);
-	register_signal<GDExample>((char*) "position_changed", "node", GODOT_VARIANT_TYPE_OBJECT,
+    register_method("_process", &TileControl::_process);
+    register_property<TileControl, float>("amplitude", &TileControl::amplitude, 10.0);
+    register_property<TileControl, float>("speed", &TileControl::set_speed, &TileControl::get_speed, 1.0);
+	register_signal<TileControl>((char*) "position_changed", "node", GODOT_VARIANT_TYPE_OBJECT,
 							   "new_pos", GODOT_VARIANT_TYPE_VECTOR2);
 }
 
-GDExample::GDExample()
+TileControl::TileControl()
 {
 }
 
-GDExample::~GDExample()
+TileControl::~TileControl()
 {
-    // add your cleanup here
 }
 
-void GDExample::_init()
+void TileControl::_init()
 {
-    // initialize any variables here
     time_passed = 0.0;
     amplitude = 10.0;
     speed = 1.0;
@@ -31,7 +29,7 @@ void GDExample::_init()
 	//some_other_node->connect("the_signal", this, "my_method");
 }
 
-void GDExample::_process(float delta)
+void TileControl::_process(float delta)
 {
     time_passed += speed * delta;
 
@@ -49,12 +47,12 @@ void GDExample::_process(float delta)
     }
 }
 
-void GDExample::set_speed(float p_speed)
+void TileControl::set_speed(float p_speed)
 {
 	speed = p_speed;
 }
 
-float GDExample::get_speed()
+float TileControl::get_speed()
 {
 	return speed;
 }
