@@ -13,9 +13,9 @@
 
 namespace kakel
 {
-	class TileControl : public godot::Control
+	class TilesControl : public godot::Control
 	{
-		GODOT_CLASS(TileControl, godot::Control)
+		GODOT_CLASS(TilesControl, godot::Control)
 
 	public:	
 		// When true, a tile can be moved down.
@@ -36,7 +36,7 @@ namespace kakel
 
 		// Path to image for tiles.
 		godot::String image_path_get() const;
-		void image_path_set(godot::Ref<godot::String> const newVal);
+		void image_path_set(godot::String newVal);
 
 		// When true, user movements are allowed.
 		bool movable_get() const;
@@ -67,41 +67,49 @@ namespace kakel
 		void rows_set(int newVal);
 
 		// Distance between tiles in pixels.
-		godot::Ref<godot::Vector2> spacing_get() const;
-		void spacing_set(godot::Ref<godot::Vector2> newVal);
+		godot::Vector2 spacing_get() const;
+		void spacing_set(godot::Vector2 newVal);
 
 		// Total number of tiles in tiles.
 		int tiles_count_get() const;
 
+	private:
+		void can_move_down_set(bool);
+		void can_move_left_set(bool);
+		void can_move_right_set(bool);
+		void can_move_up_set(bool);
+		void tiles_count_set(int);
+		
 	public:
-		TileControl();
-		~TileControl();
+		TilesControl();
+		~TilesControl();
 
 		void _draw();
 		void _init();
 		void _input(const godot::Ref<godot::InputEvent> ev);
 		void _physics_process(const float delta);
-		void _process(const float delta);
 		void _ready();
 		void _unhandled_input(const godot::Ref<godot::InputEvent> ev);
-		void _unhandled_key_input(const godot::Ref<godot::InputEventKey> ev);
 		
 		static void _register_methods();
 
 		// Load a game from file.
-		void LoadGame(godot::Ref<godot::String> path);
+		void LoadGame(godot::String path);
 
 		// Recalculate the tiles.  Should be called after containing window is
 		// resized, to adapt the tile image to new size.
 		void RecalcTiles();
 
 		// Save current game to file.
-		void SaveGame(godot::Ref<godot::String> path);
+		void SaveGame(godot::String path);
 
+		// User inter-action isn't allowed before this is called.
+		void Start();
+		
 	private:
-		TileControl* _impl;
-		TileControl(const TileControl&);
-		TileControl& operator=(const TileControl&);
+		TilesControl* _impl;
+		TilesControl(const TilesControl&);
+		TilesControl& operator=(const TilesControl&);
 	};
 }
 #endif
