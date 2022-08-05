@@ -38,7 +38,7 @@ namespace {
 		{
 		}
 	
-		void _process(const float delta)
+		void process(const float delta)
 		{
 		}
 	
@@ -76,7 +76,7 @@ namespace kakel
 
 	Preferences::~Preferences()
 	{
-		PreferencesImpl* tmp = _impl;
+		PreferencesImpl* tmp = self(_impl);
 		_impl = nullptr;
 		godot::api->godot_free(_impl);
 	}
