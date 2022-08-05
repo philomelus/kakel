@@ -713,11 +713,10 @@ namespace {
 			}
 		}
 	};
+	
+	inline TilesControlImpl* self(kakel::TilesControl* obj) { return reinterpret_cast<TilesControlImpl*>(obj); }
 }
 
-// register_property<TilesControl, float>("amplitude", &TilesControl::amplitude, 10.0);
-// register_property<TilesControl, float>("speed", &TilesControl::set_speed, &TilesControl::get_speed, 1.0);
-// emit_signal("position_changed", this, new_position);
 
 namespace kakel
 {
@@ -764,74 +763,64 @@ namespace kakel
 
 	TilesControl::~TilesControl()
 	{
-		// TODO: Is this how I am supposed to do this?
 		godot::api->godot_free(_impl);
 		_impl = nullptr;
 	}
 
 	void TilesControl::_draw()
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->draw();
+		self(_impl)->draw();
 	}
 	
 	void TilesControl::_init()
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->_columns = 4;
-		self->_columns0 = 3;
-		self->_imagePath = String();
-		self->_lastSignal = 0.0;
-		self->_lastWinner = 0.0;
-		self->_movedSignal = 0;
-		self->_moves = 0;
-		self->_movesEnabled = false;
-		self->_numTiles = 16;
-		self->_numTiles0 = 15;
-		self->_numbersColor = Color(0.8, 0.8, 0.8, 1);
-		self->_numbersVisible;
-		self->_outlinesColor = Color(0, 0, 0, 1);
-		self->_outlinesVisible;
-		self->_readyToRun = false;
-		self->_rows = 4;
-		self->_rows0 = 3;
-		self->_spacing = Vector2(5, 5);
-		self->_tilesOrder = nullptr;
-		self->_tilesReady = false;
-		self->_tileSize = Vector2();
-		self->_tree = get_tree();
-		
-		//some_other_node->connect("the_signal", this, "my_method");
+		self(_impl)->_columns = 4;
+		self(_impl)->_columns0 = 3;
+		self(_impl)->_imagePath = String();
+		self(_impl)->_lastSignal = 0.0;
+		self(_impl)->_lastWinner = 0.0;
+		self(_impl)->_movedSignal = 0;
+		self(_impl)->_moves = 0;
+		self(_impl)->_movesEnabled = false;
+		self(_impl)->_numTiles = 16;
+		self(_impl)->_numTiles0 = 15;
+		self(_impl)->_numbersColor = Color(0.8, 0.8, 0.8, 1);
+		self(_impl)->_numbersVisible;
+		self(_impl)->_outlinesColor = Color(0, 0, 0, 1);
+		self(_impl)->_outlinesVisible;
+		self(_impl)->_readyToRun = false;
+		self(_impl)->_rows = 4;
+		self(_impl)->_rows0 = 3;
+		self(_impl)->_spacing = Vector2(5, 5);
+		self(_impl)->_tilesOrder = nullptr;
+		self(_impl)->_tilesReady = false;
+		self(_impl)->_tileSize = Vector2();
+		self(_impl)->_tree = get_tree();
 	}
 
 	void TilesControl::_input(const godot::Ref<godot::InputEvent> ev)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->input(ev);
+		self(_impl)->input(ev);
 	}
 	
 	void TilesControl::_physics_process(const float delta)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->physics_process(delta);
+		self(_impl)->physics_process(delta);
 	}
 	
 	void TilesControl::_ready()
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->ready();
+		self(_impl)->ready();
 	}
 	
 	void TilesControl::_unhandled_input(const godot::Ref<godot::InputEvent> ev)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->unhandled_input(ev);
+		self(_impl)->unhandled_input(ev);
 	}
 	
 	bool TilesControl::can_move_down_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_canMoveDown;
+		return self(_impl)->_canMoveDown;
 	}
 	
 	void TilesControl::can_move_down_set(bool newVal)
@@ -841,8 +830,7 @@ namespace kakel
 	
 	bool TilesControl::can_move_left_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_canMoveLeft;
+		return self(_impl)->_canMoveLeft;
 	}
 	
 	void TilesControl::can_move_left_set(bool newVal)
@@ -852,8 +840,7 @@ namespace kakel
 	
 	bool TilesControl::can_move_right_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_canMoveRight;
+		return self(_impl)->_canMoveRight;
 	}
 	
 	void TilesControl::can_move_right_set(bool newVal)
@@ -863,8 +850,7 @@ namespace kakel
 	
 	bool TilesControl::can_move_up_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_canMoveUp;
+		return self(_impl)->_canMoveUp;
 	}
 	
 	void TilesControl::can_move_up_set(bool newVal)
@@ -874,197 +860,174 @@ namespace kakel
 	
 	int TilesControl::columns_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_columns;
+		return self(_impl)->_columns;
 	}
 	
 	void TilesControl::columns_set(int newVal)
 	{
 		ERR_FAIL_COND(newVal < 3 || newVal > 99);
 
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_columns != newVal)
+		if (self(_impl)->_columns != newVal)
 		{
-			self->_columns = newVal;
-			self->_columns0 = newVal - 1;
-			self->_numTiles = newVal * self->_rows;
-			self->_numTiles0 = self->_numTiles - 1;
-			self->_tilesReady = false;
+			self(_impl)->_columns = newVal;
+			self(_impl)->_columns0 = newVal - 1;
+			self(_impl)->_numTiles = newVal * self(_impl)->_rows;
+			self(_impl)->_numTiles0 = self(_impl)->_numTiles - 1;
+			self(_impl)->_tilesReady = false;
 		}
 	}
 	
 	String TilesControl::image_path_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_imagePath;
+		return self(_impl)->_imagePath;
 	}
 	
 	void TilesControl::image_path_set(String newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_imagePath != newVal)
+		if (self(_impl)->_imagePath != newVal)
 		{
-			self->_imagePath = newVal;
+			self(_impl)->_imagePath = newVal;
 			if (newVal.length() > 0)
-				self->load_image(self->_imagePath);
+				self(_impl)->load_image(self(_impl)->_imagePath);
 		}
 	}
 	
 	void TilesControl::LoadGame(String path)
 	{
+		return self(_impl)->load_game(path);
 	}
 
 	bool TilesControl::movable_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_movesEnabled;
+		return self(_impl)->_movesEnabled;
 	}
 	
 	void TilesControl::movable_set(bool newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_movesEnabled != newVal)
-			self->_movesEnabled = newVal;
+		if (self(_impl)->_movesEnabled != newVal)
+			self(_impl)->_movesEnabled = newVal;
 	}
 	
 	Ref<Font> TilesControl::numbers_font_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_numbersFont;
+		return self(_impl)->_numbersFont;
 	}
 	
 	void TilesControl::numbers_font_set(Ref<Font> newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->_numbersFont = newVal;
-		if (self->_numbersVisible)
+		self(_impl)->_numbersFont = newVal;
+		if (self(_impl)->_numbersVisible)
 			update();
 	}
 	
 	Color TilesControl::numbers_color_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_numbersColor;
+		return self(_impl)->_numbersColor;
 	}
 	
 	void TilesControl::numbers_color_set(Color newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_numbersColor != newVal)
+		if (self(_impl)->_numbersColor != newVal)
 		{
-			self->_numbersColor = newVal;
-			if (self->_numbersVisible)
+			self(_impl)->_numbersColor = newVal;
+			if (self(_impl)->_numbersVisible)
 				update();
 		}
 	}
 	
 	bool TilesControl::numbers_visible_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_numbersVisible;
+		return self(_impl)->_numbersVisible;
 	}
 	
 	void TilesControl::numbers_visible_set(bool newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_numbersVisible != newVal)
+		if (self(_impl)->_numbersVisible != newVal)
 		{
-			self->_numbersVisible = newVal;
+			self(_impl)->_numbersVisible = newVal;
 			update();
 		}
 	}
 	
 	Color TilesControl::outlines_color_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_outlinesColor;
+		return self(_impl)->_outlinesColor;
 	}
 	
 	void TilesControl::outlines_color_set(Color newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_outlinesColor != newVal)
+		if (self(_impl)->_outlinesColor != newVal)
 		{
-			self->_outlinesColor = newVal;
-			if (self->_outlinesVisible)
+			self(_impl)->_outlinesColor = newVal;
+			if (self(_impl)->_outlinesVisible)
 				update();
 		}
 	}
 	
 	bool TilesControl::outlines_visible_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_outlinesVisible;
+		return self(_impl)->_outlinesVisible;
 	}
 	
 	void TilesControl::outlines_visible_set(bool newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_outlinesVisible != newVal)
+		if (self(_impl)->_outlinesVisible != newVal)
 		{
-			self->_outlinesVisible = newVal;
+			self(_impl)->_outlinesVisible = newVal;
 			update();
 		}
 	}
 	
 	void TilesControl::RecalcTiles()
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->recalc_tiles();
+		self(_impl)->recalc_tiles();
 	}
 
 	int TilesControl::rows_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_rows;
+		return self(_impl)->_rows;
 	}
 	
 	void TilesControl::rows_set(int newVal)
 	{
 		ERR_FAIL_COND(newVal < 3 || newVal > 99);
 		
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_rows != newVal)
+		if (self(_impl)->_rows != newVal)
 		{
-			self->_rows = newVal;
-			self->_rows0 = newVal - 1;
-			self->_numTiles = newVal * self->_columns;
-			self->_numTiles0 = self->_numTiles - 1;
-			self->_tilesReady = false;
+			self(_impl)->_rows = newVal;
+			self(_impl)->_rows0 = newVal - 1;
+			self(_impl)->_numTiles = newVal * self(_impl)->_columns;
+			self(_impl)->_numTiles0 = self(_impl)->_numTiles - 1;
+			self(_impl)->_tilesReady = false;
 		}
 	}
 	
 	void TilesControl::SaveGame(String path)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->save_game(path);
+		self(_impl)->save_game(path);
 	}
 
 	Vector2 TilesControl::spacing_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_spacing;
+		return self(_impl)->_spacing;
 	}
 
 	void TilesControl::spacing_set(Vector2 newVal)
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		if (self->_spacing != newVal)
+		if (self(_impl)->_spacing != newVal)
 		{
-			self->_spacing = newVal;
+			self(_impl)->_spacing = newVal;
 		}
 	}
 
 	void TilesControl::Start()
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		self->reset_tiles();
+		self(_impl)->reset_tiles();
 	}
 	
 	int TilesControl::tiles_count_get() const
 	{
-		TilesControlImpl* self = Object::cast_to<TilesControlImpl>(_impl);
-		return self->_numTiles;
+		return self(_impl)->_numTiles;
 	}
 
 	void TilesControl::tiles_count_set(int newVal)
