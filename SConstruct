@@ -69,6 +69,5 @@ env.Append(LIBPATH=[cpp_bindings_path + 'bin'])
 env.Append(LIBS=[cpp_library])
 
 # Build
-for d in ('NewGame', 'Game', 'Preferences', 'Prefs', 'Main', 'TilesControl'):
-    Default(env.SharedLibrary('bin/' + d, Glob(d + '/*.cpp')))
+Default(env.SharedLibrary('bin/kakel', Glob('src/*.cpp')))
 
