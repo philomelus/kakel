@@ -7,9 +7,9 @@ reloadable=true
 
 [entry]
 
-X11.64="res://bin/x11/kakel.so"
-Windows.64="res://bin/win64/kakel.dll"
-OSX.64="res://bin/osx/kakel.dylib"
+X11.64="res://bin/x11/Prefs.so"
+Windows.64="res://bin/win64/Prefs.dll"
+OSX.64="res://bin/osx/Prefs.dylib"
 
 [dependencies]
 
