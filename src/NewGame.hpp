@@ -2,33 +2,65 @@
 #define NEWGAME_HPP_INCLUDED
 
 #include <Godot.hpp>
-#include <InputEvent.hpp>
+#include <Button.hpp>
+#include <CenterContainer.hpp>
+#include <CheckButton.hpp>
+#include <FileDialog.hpp>
+#include <HBoxContainer.hpp>
+#include <Image.hpp>
+#include <ImageTexture.hpp>
+#include <Label.hpp>
+#include <MarginContainer.hpp>
 #include <PanelContainer.hpp>
+#include <SceneTree.hpp>
+#include <TextureRect.hpp>
+#include <VBoxContainer.hpp>
+#include "Globals.hpp"
 
-namespace kakel
+namespace godot
 {
-	class NewGame : public godot::PanelContainer
+	class NewGame : public PanelContainer
 	{
-		GODOT_CLASS(NewGame, godot::PanelContainer)
+		GODOT_CLASS(NewGame, PanelContainer)
 
+	private:
+		Button* _browse;
+		Button* _cancel;
+		CenterContainer* _centerContainer;
+		bool _changedImagePath;
+		Globals* _globals;
+		HBoxContainer* _hboxContainer;
+		HBoxContainer* _hboxContainer2;
+		Ref<Image> _image;
+		String _imagePath;
+		ImageTexture* _imageTexture;
+		MarginContainer* _marginContainer;
+		Button* _start;
+		FileDialog* _tilesImageDialog;
+		bool _tilesImageDialogUsed;
+		TextureRect* _tilesImage;
+		SceneTree* _tree;
+		CheckButton* _useImage;
+		Label* _useImageLabel;
+		VBoxContainer* _vboxContainer;
+		
 	public:
 		NewGame();
 		~NewGame();
 
-		void _draw();
 		void _init();
-		void _input(const godot::Ref<godot::InputEvent> ev);
-		void _physics_process(const float delta);
-		void _process(const float delta);
 		void _ready();
-		void _unhandled_input(const godot::Ref<godot::InputEvent> ev);
 		
 		static void _register_methods();
 
-	private:
-		NewGame* _impl;
-		NewGame(const NewGame&);
-		NewGame& operator=(const NewGame&);
+	protected:
+		Ref<Image> load_image(const String path);
+		void on_browse_pressed();
+		void on_cancel_pressed();
+		void on_start_pressed();
+		void on_tilesImageDialog_fileSelected(const String path);
+		void on_useImage_pressed();
+		void update_image();
 	};
 }
 #endif	// NEWGAME_HPP_INCLUDED
