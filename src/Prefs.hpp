@@ -2,33 +2,65 @@
 #define PREFS_HPP_INCLUDED
 
 #include <Godot.hpp>
-#include <InputEvent.hpp>
+#include <CenterContainer.hpp>
+#include <CheckButton.hpp>
+#include <ColorPickerButton.hpp>
+#include <HBoxContainer.hpp>
+#include <GridContainer.hpp>
+#include <Label.hpp>
+#include <MarginContainer.hpp>
 #include <PanelContainer.hpp>
+#include <SpinBox.hpp>
+#include <VBoxContainer.hpp>
+#include "Globals.hpp"
 
-namespace kakel
+namespace godot
 {
 	class Prefs : public godot::PanelContainer
 	{
-		GODOT_CLASS(Prefs, godot::PanelContainer)
+		GODOT_CLASS(Prefs, PanelContainer)
 
+	private:
+		CheckButton* _autoLoad;
+		Label* _autoLoadLabel;
+		CheckButton* _autoSave;
+		Label* _autoSaveLabel;
+		Button *_cancel;
+		CenterContainer* _centerContainer;
+		SpinBox* _columns;
+		Label* _columnsLabel;
+		Globals* _globals;
+		GridContainer* _gridContainer;
+		HBoxContainer* _hboxContainer;
+		MarginContainer* _marginContainer;
+		ColorPickerButton* _numbersColor;
+		Label* _numbersColorLabel;
+		CheckButton* _numbersVisible;
+		Label* _numbersVisibleLabel;
+		ColorPickerButton* _outlinesColor;
+		Label* _outlinesColorLabel;
+		CheckButton* _outlinesVisible;
+		Label* _outlinesVisibleLabel;
+		SpinBox* _rows;
+		Label* _rowsLabel;
+		Button* _save;
+		SceneTree* _tree;
+		VBoxContainer* _vboxContainer;
+		
 	public:
 		Prefs();
 		~Prefs();
 
-		void _draw();
 		void _init();
-		void _input(const godot::Ref<godot::InputEvent> ev);
-		void _physics_process(const float delta);
-		void _process(const float delta);
 		void _ready();
-		void _unhandled_input(const godot::Ref<godot::InputEvent> ev);
+		void _uninit();
 		
 		static void _register_methods();
 
-	private:
-		Prefs* _impl;
-		Prefs(const Prefs&);
-		Prefs& operator=(const Prefs&);
+	protected:
+		void on_cancel_pressed();
+		void on_save_pressed();
+		void quit();
 	};
 }
 #endif	// PREFS_HPP_INCLUDED

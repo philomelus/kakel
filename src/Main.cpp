@@ -77,10 +77,6 @@ namespace godot
 			
 		// Add v box container
 		_centerContainer->add_child(_vboxContainer);
-		_vboxContainer->set_margin(GlobalConstants::MARGIN_LEFT, 561);
-		_vboxContainer->set_margin(GlobalConstants::MARGIN_RIGHT, 704);
-		_vboxContainer->set_margin(GlobalConstants::MARGIN_TOP, 209);
-		_vboxContainer->set_margin(GlobalConstants::MARGIN_BOTTOM, 496);
 
 		// Add label
 		_vboxContainer->add_child(_label);
@@ -89,50 +85,34 @@ namespace godot
 		_label->set_align(Label::Align::ALIGN_CENTER);
 		_label->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_label->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_label->set_margin(GlobalConstants::MARGIN_RIGHT, 143);
-		_label->set_margin(GlobalConstants::MARGIN_BOTTOM, 67);
 			
 		// Add new button
 		_vboxContainer->add_child(_start);
 		_start->set_theme(theme);
-		_start->set_margin(GlobalConstants::MARGIN_TOP, 71);
-		_start->set_margin(GlobalConstants::MARGIN_RIGHT, 143);
-		_start->set_margin(GlobalConstants::MARGIN_BOTTOM, 122);
 		_start->set_tooltip("Start a new game.");
 		_start->set_text("New");
 			
 		// Add load button
 		_vboxContainer->add_child(_load);
 		_load->set_theme(theme);
-		_load->set_margin(GlobalConstants::MARGIN_TOP, 126);
-		_load->set_margin(GlobalConstants::MARGIN_RIGHT, 143);
-		_load->set_margin(GlobalConstants::MARGIN_BOTTOM, 177);
 		_load->set_tooltip("Load a previously saved game.");
 		_load->set_text("Load");
 			
 		// Add preferences button
 		_vboxContainer->add_child(_prefs);
 		_prefs->set_theme(theme);
-		_prefs->set_margin(GlobalConstants::MARGIN_TOP, 181);
-		_prefs->set_margin(GlobalConstants::MARGIN_RIGHT, 143);
-		_prefs->set_margin(GlobalConstants::MARGIN_BOTTOM, 232);
 		_prefs->set_tooltip("Change game settings.");
 		_prefs->set_text("Options");
 			
 		// Add quit button
 		_vboxContainer->add_child(_quit);
 		_quit->set_theme(theme);
-		_quit->set_margin(GlobalConstants::MARGIN_TOP, 236);
-		_quit->set_margin(GlobalConstants::MARGIN_RIGHT, 143);
-		_quit->set_margin(GlobalConstants::MARGIN_BOTTOM, 287);
 		_quit->set_tooltip("Exit the game.");
 		_quit->set_text("Quit");
 			
 		// Add load dialog
 		add_child(_loadDialog);
 		_loadDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
-		_loadDialog->set_margin(GlobalConstants::MARGIN_RIGHT, 316);
-		_loadDialog->set_margin(GlobalConstants::MARGIN_BOTTOM, 149);
 		_loadDialog->set_custom_minimum_size(Vector2(480, 320));
 		_loadDialog->set_exclusive(true);
 		_loadDialog->set_title("Open A Game");

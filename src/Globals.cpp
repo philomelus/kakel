@@ -46,8 +46,11 @@ namespace godot
 
 		// Load preferences if exists
 		auto_free<Directory> d(Directory::_new());
-		if (d->file_exists(_preferences->auto_load_get()))
-			_preferences->load(_preferences->auto_load_get());
+		if (d->file_exists(_preferences->P_PREFS))
+		{
+			godot::Godot::print("Loading preferences from storage.");
+			_preferences->load(_preferences->P_PREFS);
+		}
 		
 		// Load theme
 		if (d->file_exists(_preferences->default_theme_get()))

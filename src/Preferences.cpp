@@ -23,11 +23,11 @@ namespace
     static const char* V_LASTGAME = "last_game";
     static const char* V_LASTIMAGE = "last_image";
     static const char* V_NUMBERCOLOR = "number_color";
+    static const char* V_NUMBERSVISIBLE = "numbers_visible";
     static const char* V_OUTLINECOLOR = "outline_color";
+    static const char* V_OUTLINESVISIBLE = "outlines_visible";
     static const char* V_ROWS = "rows";
-    static const char* V_SHOWNUMBERS = "show_numbers";
-    static const char* V_SHOWOUTLINES = "show_outlines";
-
+	
     // Paths.
     static const char* P_DEFAULTAUTOPATH = "user://auto.kakel";
 	static const char* P_DEFAULTTHEME = "res://theme.tres";
@@ -229,10 +229,10 @@ namespace godot
         _lastGame = cf->get_value(S_GLOBALS, V_LASTGAME, default_lastGame);
         _lastImage = cf->get_value(S_GLOBALS, V_LASTIMAGE, default_lastImage);
         _numbersColor = Color(cf->get_value(S_GLOBALS, V_NUMBERCOLOR, default_numbersColor.to_html(true)));
-        tmp = cf->get_value(S_GLOBALS, V_SHOWNUMBERS, default_numbersVisible ? 1 : 0);
+        tmp = cf->get_value(S_GLOBALS, V_NUMBERSVISIBLE, default_numbersVisible ? 1 : 0);
 		_numbersVisible = tmp == 1;
         _outlinesColor = Color(cf->get_value(S_GLOBALS, V_OUTLINECOLOR, default_outlinesColor.to_html(true)));
-        tmp = cf->get_value(S_GLOBALS, V_SHOWOUTLINES, default_outlinesVisible ? 1 : 0);
+        tmp = cf->get_value(S_GLOBALS, V_OUTLINESVISIBLE, default_outlinesVisible ? 1 : 0);
 		_outlinesVisible = tmp == 1;
         _rows = cf->get_value(S_GLOBALS, V_ROWS, default_rows);
 	}
@@ -306,10 +306,10 @@ namespace godot
         cf->set_value(S_GLOBALS, V_LASTGAME, _lastGame);
         cf->set_value(S_GLOBALS, V_LASTIMAGE, _lastImage);
         cf->set_value(S_GLOBALS, V_NUMBERCOLOR, _numbersColor.to_html(true));
+        cf->set_value(S_GLOBALS, V_NUMBERSVISIBLE, _numbersVisible ? 1 : 0);
         cf->set_value(S_GLOBALS, V_OUTLINECOLOR, _outlinesColor.to_html(true));
+        cf->set_value(S_GLOBALS, V_OUTLINESVISIBLE, _outlinesVisible ? 1 : 0);
         cf->set_value(S_GLOBALS, V_ROWS, _rows);
-        cf->set_value(S_GLOBALS, V_SHOWOUTLINES, _outlinesVisible ? 1 : 0);
-        cf->set_value(S_GLOBALS, V_SHOWNUMBERS, _numbersVisible ? 1 : 0);
         cf->save(path);
 	}
 }
