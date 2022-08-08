@@ -1,5 +1,6 @@
 #include "Preferences.hpp"
 #include <ConfigFile.hpp>
+#include "auto_free.hpp"
 
 using namespace godot;
 
@@ -17,6 +18,7 @@ namespace
     static const char* V_AUTOREMOVEONWIN = "auto_remove_on_win";
     static const char* V_AUTOSAVE = "auto_save";
     static const char* V_COLUMNS = "columns";
+    static const char* V_DEFAULTTHEME = "default_theme";
     static const char* V_DEFAULTIMAGE = "default_image";
     static const char* V_LASTGAME = "last_game";
     static const char* V_LASTIMAGE = "last_image";
@@ -28,8 +30,8 @@ namespace
 
     // Paths.
     static const char* P_DEFAULTAUTOPATH = "user://auto.kakel";
+	static const char* P_DEFAULTTHEME = "res://theme.tres";
     static const char* P_DEFAULTIMAGE = "res://default_image.png";
-    static const char* P_PREFS = "user://prefs.cfg";
 
 	// Defaults
 	static const bool default_autoLoad = true;
@@ -37,6 +39,7 @@ namespace
 	static const bool default_autoRemoveOnWin = true;
 	static const bool default_autoSave = true;
 	static const int default_columns = 4;
+	static const char* default_defaultTheme = P_DEFAULTTHEME;
 	static const char* default_defaultImage = P_DEFAULTIMAGE;
 	static const char* default_lastGame = "";
 	static const char* default_lastImage = "";
@@ -45,22 +48,13 @@ namespace
 	static const Color default_outlinesColor = Color(0.5, 0.5, 0.5, 1);
 	static const bool default_outlinesVisible = false;
 	static const int default_rows = 4;
-
-	// Guaranteed memory release
-	template <typename T>
-	class auto_free
-	{
-	public:
-		auto_free(T* v) { _v = v; }
-		~auto_free() { godot::api->godot_free(_v); }
-		T* operator->() { return _v; }
-	private:
-		T* _v;
-	};
 }
+
 
 namespace godot
 {
+    const char* Preferences::P_PREFS = "user://prefs.cfg";
+	
 	void Preferences::_register_methods()
 	{
 		// API
@@ -74,6 +68,7 @@ namespace godot
 		register_property<Preferences, bool>("auto_remove_on_win", &Preferences::auto_remove_on_win_set, &Preferences::auto_remove_on_win_get, default_autoRemoveOnWin);
 		register_property<Preferences, bool>("auto_save", &Preferences::auto_save_set, &Preferences::auto_save_get, default_autoSave);
 		register_property<Preferences, int>("columns", &Preferences::columns_set, &Preferences::columns_get, default_columns);
+		register_property<Preferences, String>("default_theme", &Preferences::default_theme_set, &Preferences::default_theme_get, default_defaultTheme);
 		register_property<Preferences, String>("default_image", &Preferences::default_image_set, &Preferences::default_image_get, default_defaultImage);
 		register_property<Preferences, String>("last_game", &Preferences::last_game_set, &Preferences::last_game_get, default_lastGame);
 		register_property<Preferences, String>("last_image", &Preferences::last_image_set, &Preferences::last_image_get, default_lastImage);
@@ -95,6 +90,20 @@ namespace godot
 	void Preferences::_init()
 	{
 		godot::Godot::print(String("Preferences::_init called"));
+		_autoLoad = default_autoLoad;
+		_autoPath = default_autoPath;
+		_autoRemoveOnWin = default_autoRemoveOnWin;
+		_autoSave = default_autoSave;
+		_columns = default_columns;
+		_defaultTheme = default_defaultTheme;
+		_defaultImage = default_defaultImage;
+		_lastGame = default_lastGame;
+		_lastImage = default_lastImage;
+		_numbersColor = default_numbersColor;
+		_numbersVisible = default_numbersVisible;
+		_outlinesColor = default_outlinesColor;
+		_outlinesVisible = default_outlinesVisible;
+		_rows = default_rows;
 	}
 
 	void Preferences::_ready()
@@ -157,6 +166,17 @@ namespace godot
 			_columns = newVal;
 	}
 	
+	String Preferences::default_theme_get() const
+	{
+		return _defaultTheme;
+	}
+	
+	void Preferences::default_theme_set(const String newVal)
+	{
+		if (_defaultTheme != newVal)
+			_defaultTheme = newVal;
+	}
+	
 	String Preferences::default_image_get() const
 	{
 		return _defaultImage;
@@ -204,6 +224,7 @@ namespace godot
         tmp = cf->get_value(S_GLOBALS, V_AUTOSAVE, default_autoSave ? 1 : 0);
 		_autoSave = tmp == 1;
         _columns = cf->get_value(S_GLOBALS, V_COLUMNS, default_columns);
+        _defaultTheme = cf->get_value(S_GLOBALS, V_DEFAULTTHEME, default_defaultTheme);
         _defaultImage = cf->get_value(S_GLOBALS, V_DEFAULTIMAGE, default_defaultImage);
         _lastGame = cf->get_value(S_GLOBALS, V_LASTGAME, default_lastGame);
         _lastImage = cf->get_value(S_GLOBALS, V_LASTIMAGE, default_lastImage);
@@ -273,13 +294,14 @@ namespace godot
 	
 	void Preferences::save(const String path)
 	{
-        ConfigFile* cf = ConfigFile::_new();
+        auto_free<ConfigFile> cf(ConfigFile::_new());
         cf->set_value(S_GLOBALS, V_VERSION, PREFS_VERSION);
         cf->set_value(S_GLOBALS, V_AUTOLOAD, _autoLoad ? 1 : 0);
         cf->set_value(S_GLOBALS, V_AUTOPATH, _autoPath);
         cf->set_value(S_GLOBALS, V_AUTOREMOVEONWIN, _autoRemoveOnWin ? 1 : 0);
         cf->set_value(S_GLOBALS, V_AUTOSAVE, _autoSave ? 1 : 0);
         cf->set_value(S_GLOBALS, V_COLUMNS, _columns);
+        cf->set_value(S_GLOBALS, V_DEFAULTTHEME, _defaultTheme);
         cf->set_value(S_GLOBALS, V_DEFAULTIMAGE, _defaultImage);
         cf->set_value(S_GLOBALS, V_LASTGAME, _lastGame);
         cf->set_value(S_GLOBALS, V_LASTIMAGE, _lastImage);

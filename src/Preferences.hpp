@@ -11,6 +11,9 @@ namespace godot
 	{
 		GODOT_CLASS(Preferences, Resource)
 
+	public:
+		static const char* P_PREFS;
+		
 	private:
 		bool _autoLoad;
 		String _autoPath;
@@ -18,6 +21,7 @@ namespace godot
 		bool _autoSave;
 		int _columns;
 		String _defaultImage;
+		String _defaultTheme;
 		String _lastGame;
 		String _lastImage;
 		Color _numbersColor;
@@ -53,6 +57,9 @@ namespace godot
 		int columns_get() const;
 		void columns_set(int newVal);
 		
+		String default_theme_get() const;
+		void default_theme_set(const String newVal);
+
 		String default_image_get() const;
 		void default_image_set(const String newVal);
 		

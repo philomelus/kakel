@@ -6,3 +6,4 @@
 resource_name = "Globals"
 class_name = "Globals"
 library = ExtResource( 1 )
+script_class_name = "Globals"

@@ -24,10 +24,10 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle)
     godot::Godot::nativescript_init(handle);
 
     // godot::register_class<godot::Game>();
-    // godot::register_class<godot::Globals>();
+    godot::register_class<godot::Globals>();
     godot::register_class<godot::Main>();
     // godot::register_class<godot::NewGame>();
-    // godot::register_class<godot::Preferences>();
+    godot::register_class<godot::Preferences>();
     // godot::register_class<godot::Prefs>();
     // godot::register_class<godot::TilesControl>();
 	godot::register_class<godot::GDExample>();

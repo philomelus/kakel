@@ -1,5 +1,8 @@
 #include "Globals.hpp"
 #include <ConfigFile.hpp>
+#include <Directory.hpp>
+#include <ResourceLoader.hpp>
+#include "auto_free.hpp"
 
 using namespace godot;
 
@@ -29,15 +32,26 @@ namespace godot
 	Globals::Globals()
 		: _preferences(Preferences::_new())
 	{
+		godot::Godot::print("Globals::Globals called");
 	}
 
 	Globals::~Globals()
 	{
+		godot::Godot::print("Globals::~Globals called");
 	}
 
 	void Globals::_init()
 	{
-		godot::Godot::print(String("Globals::_init called"));
+		godot::Godot::print("Globals::_init called");
+
+		// Load preferences if exists
+		auto_free<Directory> d(Directory::_new());
+		if (d->file_exists(_preferences->auto_load_get()))
+			_preferences->load(_preferences->auto_load_get());
+		
+		// Load theme
+		if (d->file_exists(_preferences->default_theme_get()))
+			_theme = ResourceLoader::get_singleton()->load(_preferences->default_theme_get(), "Theme");
 	}
 
 	bool Globals::auto_started_get() const
@@ -59,6 +73,16 @@ namespace godot
 	void Globals::preferences_set(Ref<Preferences> newVal)
 	{
 		CRASH_NOW();
+	}
+	
+	Ref<Theme> Globals::theme_get()
+	{
+		return _theme;
+	}
+	
+	void Globals::theme_set(Ref<Theme> newVal)
+	{
+		_theme = newVal;
 	}
 	
 	bool Globals::tiles_default_image_get() const
