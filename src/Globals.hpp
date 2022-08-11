@@ -4,7 +4,6 @@
 #include <Godot.hpp>
 #include <Node.hpp>
 #include <Theme.hpp>
-#include "Preferences.hpp"
 
 namespace godot
 {
@@ -15,9 +14,6 @@ namespace godot
 	private:
 		// When true, the game was started from AutoPath because AutoLoad was true
 		bool _autoStarted;
-
-		// Preferences that are saved/loaded
-		Ref<Preferences> _preferences;
 
 		// Theme for all UI
 		Ref<Theme> _theme;
@@ -31,9 +27,6 @@ namespace godot
 		// When TilesLoading is true, path to game file to load.
 		String _tilesLoadPath;
 		
-		// When true, use image for tiles.  Otherwise draw outlines with numbers.
-		bool _tilesUseImage;
-		
 	public:
 		Globals();
 		~Globals();
@@ -43,27 +36,19 @@ namespace godot
 		static void _register_methods();
 
 		bool auto_started_get() const;
-		void auto_started_set(bool newVal);
-
-		Ref<Preferences> preferences_get();
+		void auto_started_set(const bool newVal);
 
 		Ref<Theme> theme_get();
 		void theme_set(Ref<Theme> newVal);
 		
 		bool tiles_default_image_get() const;
-		void tiles_default_image_set(bool newVal);
+		void tiles_default_image_set(const bool newVal);
 
 		bool tiles_loading_get() const;
-		void tiles_loading_set(bool newVal);
+		void tiles_loading_set(const bool newVal);
 
 		String tiles_load_path_get();
-		void tiles_load_path_set(String newVal);
-
-		bool tiles_use_image_get() const;
-		void tiles_use_image_set(bool newVal);
-
-	private:
-		void preferences_set(Ref<Preferences> newVal);
+		void tiles_load_path_set(const String newVal);
 	};
 }
 

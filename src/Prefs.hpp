@@ -13,6 +13,7 @@
 #include <SpinBox.hpp>
 #include <VBoxContainer.hpp>
 #include "Globals.hpp"
+#include "Preferences.hpp"
 
 namespace godot
 {
@@ -41,6 +42,7 @@ namespace godot
 		Label* _outlinesColorLabel;
 		CheckButton* _outlinesVisible;
 		Label* _outlinesVisibleLabel;
+		Preferences* _preferences;
 		SpinBox* _rows;
 		Label* _rowsLabel;
 		Button* _save;

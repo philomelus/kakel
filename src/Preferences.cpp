@@ -1,6 +1,8 @@
 #include "Preferences.hpp"
 #include <ConfigFile.hpp>
+#include <Directory.hpp>
 #include "auto_free.hpp"
+#include "function.hpp"
 
 using namespace godot;
 
@@ -18,8 +20,8 @@ namespace
     static const char* V_AUTOREMOVEONWIN = "auto_remove_on_win";
     static const char* V_AUTOSAVE = "auto_save";
     static const char* V_COLUMNS = "columns";
-    static const char* V_DEFAULTTHEME = "default_theme";
     static const char* V_DEFAULTIMAGE = "default_image";
+    static const char* V_DEFAULTTHEME = "default_theme";
     static const char* V_LASTGAME = "last_game";
     static const char* V_LASTIMAGE = "last_image";
     static const char* V_NUMBERCOLOR = "number_color";
@@ -27,6 +29,7 @@ namespace
     static const char* V_OUTLINECOLOR = "outline_color";
     static const char* V_OUTLINESVISIBLE = "outlines_visible";
     static const char* V_ROWS = "rows";
+	static const char* V_USEIMAGE = "use_image";
 	
     // Paths.
     static const char* P_DEFAULTAUTOPATH = "user://auto.kakel";
@@ -39,8 +42,8 @@ namespace
 	static const bool default_autoRemoveOnWin = true;
 	static const bool default_autoSave = true;
 	static const int default_columns = 4;
-	static const char* default_defaultTheme = P_DEFAULTTHEME;
 	static const char* default_defaultImage = P_DEFAULTIMAGE;
+	static const char* default_defaultTheme = P_DEFAULTTHEME;
 	static const char* default_lastGame = "";
 	static const char* default_lastImage = "";
 	static const Color default_numbersColor = Color(0.8, 0.8, 0.8, 1);
@@ -48,6 +51,7 @@ namespace
 	static const Color default_outlinesColor = Color(0.5, 0.5, 0.5, 1);
 	static const bool default_outlinesVisible = false;
 	static const int default_rows = 4;
+	static const bool default_useImage = true;
 }
 
 
@@ -57,6 +61,8 @@ namespace godot
 	
 	void Preferences::_register_methods()
 	{
+		FUNC_("Preferences::_register_methods");
+		
 		// API
 		register_method("_ready", &Preferences::_ready);
 		register_method("load", &Preferences::load);
@@ -77,19 +83,23 @@ namespace godot
 		register_property<Preferences, Color>("outlines_color", &Preferences::outlines_color_set, &Preferences::outlines_color_get, default_outlinesColor);
 		register_property<Preferences, bool>("outlines_visible", &Preferences::outlines_visible_set, &Preferences::outlines_visible_get, default_outlinesVisible);
 		register_property<Preferences, int>("rows", &Preferences::rows_set, &Preferences::rows_get, default_rows);
+		register_property<Preferences, bool>("use_image", &Preferences::use_image_set, &Preferences::use_image_get, default_useImage);
 	}
 
 	Preferences::Preferences()
 	{
+		FUNC_("Preferences::Preferences");
 	}
 
 	Preferences::~Preferences()
 	{
+		FUNC_("Preferences::~Preferences");
 	}
 
 	void Preferences::_init()
 	{
-		godot::Godot::print(String("Preferences::_init called"));
+		FUNC_("Preferences::_init");
+		
 		_autoLoad = default_autoLoad;
 		_autoPath = default_autoPath;
 		_autoRemoveOnWin = default_autoRemoveOnWin;
@@ -104,11 +114,20 @@ namespace godot
 		_outlinesColor = default_outlinesColor;
 		_outlinesVisible = default_outlinesVisible;
 		_rows = default_rows;
+		_useImage = default_useImage;
+		
+		// Load preferences if exists
+		Ref<Directory> d(Directory::_new());
+		if (d->file_exists(P_PREFS))
+		{
+			Godot::print("Preferences::_init: Loading preferences from \"{0}\"", P_PREFS);
+			load(P_PREFS);
+		}
 	}
 
 	void Preferences::_ready()
 	{
-		godot::Godot::print(String("Preferences::_ready called"));
+		FUNC_("Preferences::_ready");
 	}
 			
 	bool Preferences::auto_load_get() const
@@ -212,6 +231,8 @@ namespace godot
 	
 	void Preferences::load(const String path)
 	{
+		FUNC_("Preferences::load");
+		
 		auto_free<ConfigFile> cf(ConfigFile::_new());
         cf->load(path);
         int tmp = (int) cf->get_value(S_GLOBALS, V_VERSION, PREFS_VERSION);
@@ -242,7 +263,7 @@ namespace godot
 		return _numbersColor;
 	}
 	
-	void Preferences::numbers_color_set(Color newVal)
+	void Preferences::numbers_color_set(const Color newVal)
 	{
 		if (_numbersColor != newVal)
 			_numbersColor = newVal;
@@ -253,7 +274,7 @@ namespace godot
 		return _numbersVisible;
 	}
 	
-	void Preferences::numbers_visible_set(bool newVal)
+	void Preferences::numbers_visible_set(const bool newVal)
 	{
 		if (_numbersVisible != newVal)
 			_numbersVisible = newVal;
@@ -264,7 +285,7 @@ namespace godot
 		return _outlinesColor;
 	}
 	
-	void Preferences::outlines_color_set(Color newVal)
+	void Preferences::outlines_color_set(const Color newVal)
 	{
 		if (_outlinesColor != newVal)
 			_outlinesColor = newVal;
@@ -275,7 +296,7 @@ namespace godot
 		return _outlinesVisible;
 	}
 	
-	void Preferences::outlines_visible_set(bool newVal)
+	void Preferences::outlines_visible_set(const bool newVal)
 	{
 		if (_outlinesVisible != newVal)
 			_outlinesVisible = newVal;
@@ -286,14 +307,27 @@ namespace godot
 		return _rows;
 	}
 	
-	void Preferences::rows_set(int newVal)
+	void Preferences::rows_set(const int newVal)
 	{
 		if (_rows != newVal)
 			_rows = newVal;
 	}
+
+	bool Preferences::use_image_get() const
+	{
+		return _useImage;
+	}
+
+	void Preferences::use_image_set(const bool newVal)
+	{
+		if (_useImage != newVal)
+			_useImage = newVal;
+	}
 	
 	void Preferences::save(const String path)
 	{
+		FUNC_("Preferences::save");
+		
         auto_free<ConfigFile> cf(ConfigFile::_new());
         cf->set_value(S_GLOBALS, V_VERSION, PREFS_VERSION);
         cf->set_value(S_GLOBALS, V_AUTOLOAD, _autoLoad ? 1 : 0);

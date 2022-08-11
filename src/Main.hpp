@@ -5,11 +5,13 @@
 #include <Button.hpp>
 #include <CenterContainer.hpp>
 #include <FileDialog.hpp>
+#include <InputEvent.hpp>
 #include <Label.hpp>
 #include <PanelContainer.hpp>
 #include <SceneTree.hpp>
 #include <VBoxContainer.hpp>
 #include "Globals.hpp"
+#include "Preferences.hpp"
 
 namespace godot
 {
@@ -24,7 +26,8 @@ namespace godot
 		Button* _load;
 		FileDialog* _loadDialog;
 		bool _loadDialogUsed;
-		Button* _prefs;
+		Button* _options;
+		Preferences* _preferences;
 		Button* _quit;
 		Button* _start;
 		SceneTree* _tree;
@@ -40,18 +43,17 @@ namespace godot
 		void _ready();
 		void _unhandled_input(Ref<InputEvent> ev);
 		
-		void on_load_pressed();
-		void on_loadDialog_fileSelected(const String path);
-		void on_new_pressed();
-		void on_prefs_pressed();
-		void on_quit_pressed();
-
 	protected:
 		void check_auto_start();
 		void load();
 		void load_game(const String path);
 		void new_game();
-		void prefs();
+		void on_load_pressed();
+		void on_loadDialog_fileSelected(const String path);
+		void on_new_pressed();
+		void on_options_pressed();
+		void on_quit_pressed();
+		void options();
 		void quit();
 	};
 }

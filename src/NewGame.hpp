@@ -16,6 +16,7 @@
 #include <TextureRect.hpp>
 #include <VBoxContainer.hpp>
 #include "Globals.hpp"
+#include "Preferences.hpp"
 
 namespace godot
 {
@@ -35,6 +36,7 @@ namespace godot
 		String _imagePath;
 		ImageTexture* _imageTexture;
 		MarginContainer* _marginContainer;
+		Preferences* _preferences;
 		Button* _start;
 		FileDialog* _tilesImageDialog;
 		bool _tilesImageDialogUsed;
