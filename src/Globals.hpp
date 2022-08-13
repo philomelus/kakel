@@ -1,15 +1,14 @@
 #ifndef GLOBALS_HPP_INCLUDED
 #define GLOBALS_HPP_INCLUDED
 
-#include <Godot.hpp>
-#include <Node.hpp>
-#include <Theme.hpp>
+#include <godot_cpp/classes/node.hpp>
+#include <godot_cpp/classes/theme.hpp>
 
 namespace godot
 {
 	class Globals : public Node
 	{
-		GODOT_CLASS(Globals, Node)
+		GDCLASS(Globals, Node);
 
 	private:
 		// When true, the game was started from AutoPath because AutoLoad was true
@@ -26,14 +25,15 @@ namespace godot
 		
 		// When TilesLoading is true, path to game file to load.
 		String _tilesLoadPath;
-		
+
+	protected:
+		static void _bind_methods();
+
 	public:
 		Globals();
 		~Globals();
 
 		void _init();
-
-		static void _register_methods();
 
 		bool auto_started_get() const;
 		void auto_started_set(const bool newVal);

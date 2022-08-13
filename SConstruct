@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 
 # User modifiable settings
-godot_headers_path = "godot-cpp/godot-headers/"
-cpp_bindings_path = "godot-cpp/"
-cpp_library = "libgodot-cpp"
+godot_cpp_path = "godot-cpp"
+godot_cpp_library = "libgodot-cpp"
 
 # >>> Change nothing below here <<<
 
 env = DefaultEnvironment()
 opts = Variables([], ARGUMENTS)
-opts.Add(EnumVariable('bits', "Bit architecture on platform", '', ['', '32', '64']))
 opts.Add(EnumVariable('platform', "Compilation platform", '', ['', 'windows', 'x11', 'linux']))
 opts.Add(EnumVariable('target', "Compilation target", '', ['', 'debug', 'release', 'release_debug']))
 opts.Add(BoolVariable('use_mingw', 'Use MINGW_W64 on Windows or Linux', False))
@@ -17,9 +15,6 @@ opts.Add(BoolVariable('verbose', 'Enable verbose output for the compilation', Fa
 opts.Update(env)
 
 # Make sure required options provided
-if env['bits'] == '':
-    print("No bits specififed: bits={32,64}")
-    quit();
 if env['platform'] == '':
     print("No platform specififed: platform={windows,x11,linux}")
     quit();
@@ -28,8 +23,12 @@ if env['target'] == '':
     quit();
 
 # Setup for desired environment
+out = 'bin/kakel'
+out_ext = ''
 if env['platform'] == 'windows':
-    cpp_library += '.windows'
+    godot_cpp_library += '.windows'
+    out += '.windows'
+    out_ext = '.dll'
     if env['use_mingw']:
         env.Tool('mingw')
         env.Append(CCFLAGS=['-std=c++17', '-Wwrite-strings'])
@@ -49,33 +48,34 @@ if env['platform'] == 'windows':
             env.Append(CPPDEFINES=['NDEBUG'])
             env.Append(CCFLAGS=['-O2', '-MD'])
 elif env['platform'] in ('x11', 'linux'):
-    cpp_library += '.linux'
+    godot_cpp_library += '.linux'
+    out += '.linux'
+    out_ext = '.so'
     print("LINUX/X11 support not implemented in SConstruct!")
     quit()
 
 # Update actual name of godot library
 if env['target'] == 'debug':
-    cpp_library += '.debug'
+    godot_cpp_library += '.debug.x86_64'
+    out += '.debug.x86_64'
 else:
-    cpp_library += '.release'
-cpp_library += '.' + env['bits']
+    godot_cpp_library += '.release.x86_64'
+    out += '.release.x86_64'
 
 # Add locations of godot_cpp and godot_headers
-env.Append(CPPPATH=[godot_headers_path,
-                    cpp_bindings_path + 'include',
-                    cpp_bindings_path + 'include/core',
-                    cpp_bindings_path + 'include/gen'])
-env.Append(LIBPATH=[cpp_bindings_path + 'bin'])
-env.Append(LIBS=[cpp_library])
+env.Append(CPPPATH=(godot_cpp_path + '/godot-headers',
+                    godot_cpp_path + '/include',
+                    godot_cpp_path + '/gen/include',))
+env.Append(LIBPATH=(godot_cpp_path + '/bin',))
+env.Append(LIBS=(godot_cpp_library,))
 
 # Build
-env.SharedLibrary('bin/kakel', ('src/Game.cpp',
-                                'src/gdexample.cpp',
-                                'src/gdlibrary.cpp',
-                                'src/Globals.cpp',
-                                'src/Main.cpp',
-                                'src/NewGame.cpp',
-                                'src/Preferences.cpp',
-                                'src/Prefs.cpp',
-                                'src/TilesControl.cpp'))
+env.SharedLibrary(out + out_ext, ('src/Game.cpp',
+                                  'src/register.cpp',
+                                  'src/KakelPreferences.cpp',
+                                  'src/KakelGlobals.cpp',
+                                  'src/Main.cpp',
+                                  'src/NewGame.cpp',
+                                  'src/Prefs.cpp',
+                                  'src/TilesControl.cpp'))
 

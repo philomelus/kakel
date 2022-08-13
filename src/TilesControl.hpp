@@ -1,22 +1,21 @@
 #ifndef TILE_CONTROL_HPP
 #define TILE_CONTROL_HPP
 
-#include <Godot.hpp>
-#include <Color.hpp>
-#include <Control.hpp>
-#include <Font.hpp>
-#include <ImageTexture.hpp>
-#include <InputEvent.hpp>
-#include <InputEventKey.hpp>
-#include <Rect2.hpp>
-#include <String.hpp>
-#include <Vector2.hpp>
+#include <godot_cpp/classes/control.hpp>
+#include <godot_cpp/classes/font.hpp>
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/input_event.hpp>
+#include <godot_cpp/classes/input_event_key.hpp>
+#include <godot_cpp/variant/color.hpp>
+#include <godot_cpp/variant/rect2.hpp>
+#include <godot_cpp/variant/string.hpp>
+#include <godot_cpp/variant/vector2.hpp>
 
 namespace godot
 {
 	class TilesControl : public Control
 	{
-		GODOT_CLASS(TilesControl, Control)
+		GDCLASS(TilesControl, Control);
 
 	public:	
 		static const int FILE_VERSION;
@@ -109,10 +108,10 @@ namespace godot
 		int _rows0;
 		Vector2 _spacing;
 		Vector2 _tileSize;		// Pixels of tiles
-		int* _tilesOrder;
+		PackedInt32Array _tilesOrder;
 		bool _tilesReady = false;
-		Rect2* _tilesRectScreen;  // Rect2 of tiles in window/display
-		Rect2* _tilesRectTexture; // Rect2 of tiles from tiles image
+		Array _tilesRectScreen;  // Rect2 of tiles in window/display
+		Array _tilesRectTexture; // Rect2 of tiles from tiles image
 		Ref<ImageTexture> _tilesTexture;
 		SceneTree* _tree;
 
@@ -122,7 +121,10 @@ namespace godot
 		void can_move_right_set(bool);
 		void can_move_up_set(bool);
 		void tiles_count_set(int);
-		
+
+	protected:
+		static void _bind_methods();
+
 	public:
 		TilesControl();
 		~TilesControl();
@@ -134,8 +136,6 @@ namespace godot
 		void _ready();
 		void _unhandled_input(const Ref<InputEvent> ev);
 		
-		static void _register_methods();
-
 		// Load a game from file.
 		void load_game(const String path);
 

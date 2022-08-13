@@ -1,14 +1,13 @@
 #ifndef PREFERENCES_HPP_INCLUDED
 #define PREFERENCES_HPP_INCLUDED
 
-#include <Godot.hpp>
-#include <Node.hpp>
+#include <godot_cpp/classes/node.hpp>
 
 namespace godot
 {
 	class Preferences : public Node
 	{
-		GODOT_CLASS(Preferences, Node)
+		GDCLASS(Preferences, Node);
 
 	public:
 		static const char* P_PREFS;
@@ -29,19 +28,19 @@ namespace godot
 		bool _outlinesVisible;
 		int _rows;
 		bool _useImage;
-		
+
+	protected:
+		static void _bind_methods();
+
 	public:
 		Preferences();
 		~Preferences();
 
-		void _init();
-		void _ready();
+		void _ready() override;
 
 		void load(const String path);
 		void save(const String path);
 		
-		static void _register_methods();
-
 		bool auto_load_get() const;
 		void auto_load_set(const bool newVal);
 		

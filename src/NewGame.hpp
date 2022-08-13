@@ -1,20 +1,19 @@
 #ifndef NEWGAME_HPP_INCLUDED
 #define NEWGAME_HPP_INCLUDED
 
-#include <Godot.hpp>
-#include <Button.hpp>
-#include <CenterContainer.hpp>
-#include <CheckButton.hpp>
-#include <FileDialog.hpp>
-#include <HBoxContainer.hpp>
-#include <Image.hpp>
-#include <ImageTexture.hpp>
-#include <Label.hpp>
-#include <MarginContainer.hpp>
-#include <PanelContainer.hpp>
-#include <SceneTree.hpp>
-#include <TextureRect.hpp>
-#include <VBoxContainer.hpp>
+#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/center_container.hpp>
+#include <godot_cpp/classes/check_button.hpp>
+#include <godot_cpp/classes/file_dialog.hpp>
+#include <godot_cpp/classes/h_box_container.hpp>
+#include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/image_texture.hpp>
+#include <godot_cpp/classes/label.hpp>
+#include <godot_cpp/classes/margin_container.hpp>
+#include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/texture_rect.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
 #include "Globals.hpp"
 #include "Preferences.hpp"
 
@@ -22,7 +21,7 @@ namespace godot
 {
 	class NewGame : public PanelContainer
 	{
-		GODOT_CLASS(NewGame, PanelContainer)
+		GDCLASS(NewGame, PanelContainer);
 
 	private:
 		Button* _browse;
@@ -45,16 +44,17 @@ namespace godot
 		CheckButton* _useImage;
 		Label* _useImageLabel;
 		VBoxContainer* _vboxContainer;
+
+	protected:
+		static void _bind_methods();
 		
 	public:
 		NewGame();
 		~NewGame();
 
 		void _init();
-		void _ready();
+		void _ready() override;
 		
-		static void _register_methods();
-
 	protected:
 		Ref<Image> load_image(const String path);
 		void on_browse_pressed();

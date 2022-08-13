@@ -1,24 +1,23 @@
 #ifndef GAME_HPP_INCLUDED
 #define GAME_HPP_INCLUDED
 
-#include <Godot.hpp>
-#include <Button.hpp>
-#include <Control.hpp>
-#include <FileDialog.hpp>
-#include <GridContainer.hpp>
-#include <HFlowContainer.hpp>
-#include <Image.hpp>
-#include <InputEvent.hpp>
-#include <Label.hpp>
-#include <LineEdit.hpp>
-#include <MarginContainer.hpp>
-#include <MenuButton.hpp>
-#include <PanelContainer.hpp>
-#include <SceneTree.hpp>
-#include <TextureRect.hpp>
-#include <VBoxContainer.hpp>
-#include <VSeparator.hpp>
-#include <WindowDialog.hpp>
+#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/control.hpp>
+#include <godot_cpp/classes/file_dialog.hpp>
+#include <godot_cpp/classes/grid_container.hpp>
+#include <godot_cpp/classes/h_flow_container.hpp>
+#include <godot_cpp/classes/image.hpp>
+#include <godot_cpp/classes/input_event.hpp>
+#include <godot_cpp/classes/label.hpp>
+#include <godot_cpp/classes/line_edit.hpp>
+#include <godot_cpp/classes/margin_container.hpp>
+#include <godot_cpp/classes/menu_button.hpp>
+#include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/texture_rect.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
+#include <godot_cpp/classes/v_separator.hpp>
+#include <godot_cpp/classes/window.hpp>
 #include "Globals.hpp"
 #include "Preferences.hpp"
 #include "TilesControl.hpp"
@@ -27,7 +26,7 @@ namespace godot
 {
 	class Game : public Control
 	{
-		GODOT_CLASS(Game, Control)
+		GDCLASS(Game, Control);
 		
 	private:
 		Button* _abort;
@@ -38,7 +37,7 @@ namespace godot
 		HFlowContainer* _hflowContainer2;
 		Button* _hint;
 		Button* _hintClose;
-		WindowDialog* _hintDialog;
+		Window* _hintDialog;
 		bool _hintDialogUsed;
 		TextureRect* _hintImage;
 		Button* _load;
@@ -62,19 +61,20 @@ namespace godot
 		VSeparator* _vseparator4;
 		VSeparator* _vseparator5;
 		Button* _winnerClose;
-		WindowDialog* _winnerDialog;
+		Window* _winnerDialog;
 		Label* _winnerLabel;
-		
+
+	protected:
+		static void _bind_methods();
+
 	public:
 		Game();
 		~Game();
 
 		void _init();
-		void _input(const godot::Ref<godot::InputEvent> ev);
-		void _ready();
+		void _input(const godot::Ref<godot::InputEvent>& ev) override;
+		void _ready() override;
 		
-		static void _register_methods();
-
 	protected:
 		void abort();
 		void hide_hint();

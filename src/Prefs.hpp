@@ -1,17 +1,16 @@
 #ifndef PREFS_HPP_INCLUDED
 #define PREFS_HPP_INCLUDED
 
-#include <Godot.hpp>
-#include <CenterContainer.hpp>
-#include <CheckButton.hpp>
-#include <ColorPickerButton.hpp>
-#include <HBoxContainer.hpp>
-#include <GridContainer.hpp>
-#include <Label.hpp>
-#include <MarginContainer.hpp>
-#include <PanelContainer.hpp>
-#include <SpinBox.hpp>
-#include <VBoxContainer.hpp>
+#include <godot_cpp/classes/center_container.hpp>
+#include <godot_cpp/classes/check_button.hpp>
+#include <godot_cpp/classes/color_picker_button.hpp>
+#include <godot_cpp/classes/h_box_container.hpp>
+#include <godot_cpp/classes/grid_container.hpp>
+#include <godot_cpp/classes/label.hpp>
+#include <godot_cpp/classes/margin_container.hpp>
+#include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/spin_box.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
 #include "Globals.hpp"
 #include "Preferences.hpp"
 
@@ -19,7 +18,7 @@ namespace godot
 {
 	class Prefs : public godot::PanelContainer
 	{
-		GODOT_CLASS(Prefs, PanelContainer)
+		GDCLASS(Prefs, PanelContainer);
 
 	private:
 		CheckButton* _autoLoad;
@@ -48,17 +47,17 @@ namespace godot
 		Button* _save;
 		SceneTree* _tree;
 		VBoxContainer* _vboxContainer;
-		
+
+	protected:
+		static void _bind_methods();
+
 	public:
 		Prefs();
 		~Prefs();
 
 		void _init();
-		void _ready();
-		void _uninit();
+		void _ready() override;
 		
-		static void _register_methods();
-
 	protected:
 		void on_cancel_pressed();
 		void on_save_pressed();

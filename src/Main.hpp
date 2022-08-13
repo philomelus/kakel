@@ -1,15 +1,14 @@
 #ifndef MAIN_HPP_INCLUDED
 #define MAIN_HPP_INCLUDED
 
-#include <Godot.hpp>
-#include <Button.hpp>
-#include <CenterContainer.hpp>
-#include <FileDialog.hpp>
-#include <InputEvent.hpp>
-#include <Label.hpp>
-#include <PanelContainer.hpp>
-#include <SceneTree.hpp>
-#include <VBoxContainer.hpp>
+#include <godot_cpp/classes/button.hpp>
+#include <godot_cpp/classes/center_container.hpp>
+#include <godot_cpp/classes/file_dialog.hpp>
+#include <godot_cpp/classes/input_event.hpp>
+#include <godot_cpp/classes/label.hpp>
+#include <godot_cpp/classes/panel_container.hpp>
+#include <godot_cpp/classes/scene_tree.hpp>
+#include <godot_cpp/classes/v_box_container.hpp>
 #include "Globals.hpp"
 #include "Preferences.hpp"
 
@@ -17,7 +16,7 @@ namespace godot
 {
 	class Main : public PanelContainer
 	{
-		GODOT_CLASS(Main, PanelContainer)
+		GDCLASS(Main, PanelContainer);
 
 	private:
 		CenterContainer* _centerContainer;
@@ -33,16 +32,16 @@ namespace godot
 		SceneTree* _tree;
 		VBoxContainer* _vboxContainer;
 
-	public:
-		static void _register_methods();
+	protected:
+		static void _bind_methods();
 
+	public:
 		Main();
 		~Main();
 
-		void _init();
-		void _ready();
-		void _unhandled_input(Ref<InputEvent> ev);
-		
+		void _ready() override;
+		void _unhandled_input(const Ref<InputEvent> &event) override;
+			
 	protected:
 		void check_auto_start();
 		void load();

@@ -1,18 +1,6 @@
-[general]
+[configuration]
+entry_symbol = "kakel_init"
 
-singleton=false
-load_once=true
-symbol_prefix="godot_"
-reloadable=true
-
-[entry]
-
-X11.64="res://bin/x11/kakel.so"
-Windows.64="res://bin/kakel.dll"
-OSX.64="res://bin/osx/kakel.dylib"
-
-[dependencies]
-
-X11.64=[  ]
-Windows.64=[  ]
-OSX.64=[  ]
+[libraries]
+windows.debug.x86_64 = "res://bin/kakel.windows.debug.x86_64.dll"
+windows.release.x86_64 = "res://bin/kakel.windows.release.x86_64.dll"

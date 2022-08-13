@@ -1,40 +1,38 @@
 #include "Game.hpp"
-#include <Directory.hpp>
-#include <DynamicFont.hpp>
-#include <GlobalConstants.hpp>
-#include <PopupMenu.hpp>
-#include <ResourceLoader.hpp>
+#include <godot_cpp/classes/directory.hpp>
+#include <godot_cpp/classes/font.hpp>
+#include <godot_cpp/classes/global_constants.hpp>
+#include <godot_cpp/classes/popup_menu.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
 #include "function.hpp"
 
 using namespace godot;
 
 namespace godot
 {
-	void Game::_register_methods()
+	void Game::_bind_methods()
 	{
-		FUNC_("Game::_register_methods");
+		FUNC_("Game::_bind_methods");
 		
 		// API
-		register_method("_input", &Game::_input);
-		register_method("_ready", &Game::_ready);
-		register_method("on_abort_pressed", &Game::on_abort_pressed);
-		register_method("on_hintDialog_close_pressed", &Game::on_hintDialog_close_pressed);
-		register_method("on_hintDialog_popupHide", &Game::on_hintDialog_popupHide);
-		register_method("on_hintDialog_resized", &Game::on_hintDialog_resized);
-		register_method("on_hint_pressed", &Game::on_hint_pressed);
-		register_method("on_loadDialog_fileSelected", &Game::on_loadDialog_fileSelected);
-		register_method("on_loadDialog_popupHide", &Game::on_loadDialog_popupHide);
-		register_method("on_load_pressed", &Game::on_load_pressed);
-		register_method("on_options_itemSelected", &Game::on_options_itemSelected);
-		register_method("on_quit_pressed", &Game::on_quit_pressed);
-		register_method("on_saveDialog_fileSelected", &Game::on_saveDialog_fileSelected);
-		register_method("on_saveDialog_popupHide", &Game::on_saveDialog_popupHide);
-		register_method("on_save_pressed", &Game::on_save_pressed);
-		register_method("on_tiles_itemRectChanged", &Game::on_tiles_itemRectChanged);
-		register_method("on_tiles_loaded", &Game::on_tiles_loaded);
-		register_method("on_tiles_moved", &Game::on_tiles_moved);
-		register_method("on_tiles_won", &Game::on_tiles_won);
-		register_method("on_winnerDialog_close_pressed", &Game::on_winnerDialog_close_pressed);
+		ClassDB::bind_method(D_METHOD("on_abort_pressed"), &Game::on_abort_pressed);
+		ClassDB::bind_method(D_METHOD("on_hintDialog_close_pressed"), &Game::on_hintDialog_close_pressed);
+		ClassDB::bind_method(D_METHOD("on_hintDialog_popupHide"), &Game::on_hintDialog_popupHide);
+		ClassDB::bind_method(D_METHOD("on_hintDialog_resized"), &Game::on_hintDialog_resized);
+		ClassDB::bind_method(D_METHOD("on_hint_pressed"), &Game::on_hint_pressed);
+		ClassDB::bind_method(D_METHOD("on_loadDialog_fileSelected"), &Game::on_loadDialog_fileSelected);
+		ClassDB::bind_method(D_METHOD("on_loadDialog_popupHide"), &Game::on_loadDialog_popupHide);
+		ClassDB::bind_method(D_METHOD("on_load_pressed"), &Game::on_load_pressed);
+		ClassDB::bind_method(D_METHOD("on_options_itemSelected"), &Game::on_options_itemSelected);
+		ClassDB::bind_method(D_METHOD("on_quit_pressed"), &Game::on_quit_pressed);
+		ClassDB::bind_method(D_METHOD("on_saveDialog_fileSelected"), &Game::on_saveDialog_fileSelected);
+		ClassDB::bind_method(D_METHOD("on_saveDialog_popupHide"), &Game::on_saveDialog_popupHide);
+		ClassDB::bind_method(D_METHOD("on_save_pressed"), &Game::on_save_pressed);
+		ClassDB::bind_method(D_METHOD("on_tiles_itemRectChanged"), &Game::on_tiles_itemRectChanged);
+		ClassDB::bind_method(D_METHOD("on_tiles_loaded"), &Game::on_tiles_loaded);
+		ClassDB::bind_method(D_METHOD("on_tiles_moved"), &Game::on_tiles_moved);
+		ClassDB::bind_method(D_METHOD("on_tiles_won"), &Game::on_tiles_won);
+		ClassDB::bind_method(D_METHOD("on_winnerDialog_close_pressed"), &Game::on_winnerDialog_close_pressed);
 	}
 
 	Game::Game()
@@ -54,37 +52,37 @@ namespace godot
 	{
 		FUNC_("Game::_init");
 		
-		_abort = Button::_new();
-		_gameBoard = VBoxContainer::_new();
-		_gridContainer = GridContainer::_new();
-		_hflowContainer = HFlowContainer::_new();
-		_hflowContainer2 = HFlowContainer::_new();
-		_hint = Button::_new();
-		_hintClose = Button::_new();
-		_hintDialog = WindowDialog::_new();
-		_hintImage = TextureRect::_new();
-		_load = Button::_new();
-		_loadDialog = FileDialog::_new();
-		_marginContainer = MarginContainer::_new();
-		_moves = LineEdit::_new();
-		_movesLabel = Label::_new();
-		_panelContainer = PanelContainer::_new();
-		_options = MenuButton::_new();
-		_quit = Button::_new();
-		_save = Button::_new();
-		_saveDialog = FileDialog::_new();
-		_tiles = TilesControl::_new();
-		_vseparator = VSeparator::_new();
-		_vseparator2 = VSeparator::_new();
-		_vseparator3 = VSeparator::_new();
-		_vseparator4 = VSeparator::_new();
-		_vseparator5 = VSeparator::_new();
-		_winnerClose = Button::_new();
-		_winnerDialog = WindowDialog::_new();
-		_winnerLabel = Label::_new();
+		_abort = memnew(Button);
+		_gameBoard = memnew(VBoxContainer);
+		_gridContainer = memnew(GridContainer);
+		_hflowContainer = memnew(HFlowContainer);
+		_hflowContainer2 = memnew(HFlowContainer);
+		_hint = memnew(Button);
+		_hintClose = memnew(Button);
+		_hintDialog = memnew(Window);
+		_hintImage = memnew(TextureRect);
+		_load = memnew(Button);
+		_loadDialog = memnew(FileDialog);
+		_marginContainer = memnew(MarginContainer);
+		_moves = memnew(LineEdit);
+		_movesLabel = memnew(Label);
+		_panelContainer = memnew(PanelContainer);
+		_options = memnew(MenuButton);
+		_quit = memnew(Button);
+		_save = memnew(Button);
+		_saveDialog = memnew(FileDialog);
+		_tiles = memnew(TilesControl);
+		_vseparator = memnew(VSeparator);
+		_vseparator2 = memnew(VSeparator);
+		_vseparator3 = memnew(VSeparator);
+		_vseparator4 = memnew(VSeparator);
+		_vseparator5 = memnew(VSeparator);
+		_winnerClose = memnew(Button);
+		_winnerDialog = memnew(Window);
+		_winnerLabel = memnew(Label);
 	}
 
-	void Game::_input(const Ref<InputEvent> ev)
+	void Game::_input(const Ref<InputEvent>& ev)
 	{
 		FUNCQ_("Game::_input");
 		if (ev->is_action_pressed("quit"))
@@ -105,8 +103,8 @@ namespace godot
 	{
 		FUNC_("Game::_ready");
 		
-		_globals = get_node<Globals>("/root/Globals");
-		_preferences = get_node<Preferences>("/root/Preferences");
+		_globals = get_node<Globals>("/root/Common");
+		_preferences = get_node<Preferences>("/root/Options");
 		_tree = get_tree();
 
 		ERR_FAIL_COND(_globals == nullptr);
@@ -116,17 +114,16 @@ namespace godot
 
 		ERR_FAIL_COND(theme == nullptr);
 
-		Ref<DynamicFont> font = ResourceLoader::get_singleton()->load("res://font_24.tres", "DynamicFont");
+// TODO:
+//		Ref<DynamicFont> font = ResourceLoader::get_singleton()->load("res://font_24.tres", "DynamicFont");
 		
 		// Our settings
-		set_anchor(GlobalConstants::MARGIN_RIGHT, 1, false, false);
-		set_anchor(GlobalConstants::MARGIN_BOTTOM, 1, false, false);
+		set_anchor(Side::SIDE_RIGHT, 1, false, false);
+		set_anchor(Side::SIDE_BOTTOM, 1, false, false);
 		set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 
 		// Add v box control to hold everything
-		_gameBoard->set_margin(GlobalConstants::MARGIN_RIGHT, 1280);
-		_gameBoard->set_margin(GlobalConstants::MARGIN_BOTTOM, 720);
 		_gameBoard->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_gameBoard->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		add_child(_gameBoard);
@@ -210,7 +207,7 @@ namespace godot
 		_moves->set_text("0");
 		_moves->set_v_size_flags(Control::SizeFlags::SIZE_FILL
 								 + Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_moves->set_align(LineEdit::Align::ALIGN_CENTER);
+		_moves->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
 		_moves->set_editable(false);
 		_moves->set_context_menu_enabled(false);
 		_moves->set_virtual_keyboard_enabled(false);
@@ -219,33 +216,27 @@ namespace godot
 		_gridContainer->add_child(_moves);
 		
 		// Add margin around tiles
-		_marginContainer->set_margin(GlobalConstants::MARGIN_TOP, 73);
-		_marginContainer->set_margin(GlobalConstants::MARGIN_RIGHT, 1280);
-		_marginContainer->set_margin(GlobalConstants::MARGIN_BOTTOM, 720);
 		_marginContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_marginContainer->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_gameBoard->add_child(_marginContainer);
 
 		// Add tiles
-		_tiles->set_margin(GlobalConstants::MARGIN_LEFT, 10);
-		_tiles->set_margin(GlobalConstants::MARGIN_TOP, 10);
-		_tiles->set_margin(GlobalConstants::MARGIN_RIGHT, 1270);
-		_tiles->set_margin(GlobalConstants::MARGIN_BOTTOM, 637);
 		_tiles->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_tiles->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_tiles->numbers_font_set(font);
+// TODO:
+//		_tiles->numbers_font_set(font);
 		_marginContainer->add_child(_tiles);
 
 		// Add winner dialog
-		_winnerDialog->set_custom_minimum_size(Vector2(320, 320));
+		_winnerDialog->set_min_size(Vector2(320, 320));
 		_winnerDialog->set_exclusive(true);
 		_winnerDialog->set_title("Winner!");
 		add_child(_winnerDialog);
 
 		// Add the label to the dialog
 		_winnerLabel->set_theme(theme);
-		_winnerLabel->set_align(Label::Align::ALIGN_CENTER);
-		_winnerLabel->set_valign(Label::VAlign::VALIGN_CENTER);
+		_winnerLabel->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
+		_winnerLabel->set_vertical_alignment(VerticalAlignment::VERTICAL_ALIGNMENT_CENTER);
 		_winnerLabel->set_h_size_flags(0);
 		_winnerLabel->set_v_size_flags(0);
 		_winnerDialog->add_child(_winnerLabel);
@@ -256,14 +247,13 @@ namespace godot
 		_winnerDialog->add_child(_winnerClose);
 
 		// Add hint dialog
-		_hintDialog->set_custom_minimum_size(Vector2(480, 320));
-		_hintDialog->set_resizable(true);
+		_hintDialog->set_min_size(Vector2(480, 320));
 		_hintDialog->set_exclusive(true);
 		_hintDialog->set_title("Hint");
 		add_child(_hintDialog);
 
 		// Add hint image to dialog
-		_hintImage->set_expand(true);
+		_hintImage->set_ignore_texture_size(true);
 		_hintImage->set_stretch_mode(TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED);
 		_hintDialog->add_child(_hintImage);
 
@@ -274,50 +264,48 @@ namespace godot
 		_hintDialog->add_child(_hintClose);
 
 		// Add load game dialog
-		_loadDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
-		_loadDialog->set_custom_minimum_size(Vector2(480, 320));
+		_loadDialog->set_process_mode(Node::ProcessMode::PROCESS_MODE_PAUSABLE);
+		_loadDialog->set_min_size(Vector2(480, 320));
 		_loadDialog->set_exclusive(true);
 		_loadDialog->set_title("Open A Game");
-		_loadDialog->set_resizable(true);
 		_loadDialog->set_mode_overrides_title(false);
-		_loadDialog->set_mode(FileDialog::Mode::MODE_OPEN_FILE);
+		_loadDialog->set_file_mode(FileDialog::FileMode::FILE_MODE_OPEN_FILE);
 		_loadDialog->set_access(FileDialog::Access::ACCESS_FILESYSTEM);
-		PoolStringArray filters;
+		PackedStringArray filters;
 		filters.append("*.kakel;Kakel Games");
 		_loadDialog->set_filters(filters);
 		add_child(_loadDialog);
 
 		// Add save game dialog
-		_saveDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
-		_saveDialog->set_custom_minimum_size(Vector2(480, 320));
+		_saveDialog->set_process_mode(Node::ProcessMode::PROCESS_MODE_PAUSABLE);
+		_saveDialog->set_min_size(Vector2(480, 320));
 		_saveDialog->set_exclusive(true);
 		_saveDialog->set_title("Save Game");
-		_saveDialog->set_resizable(true);
 		_saveDialog->set_mode_overrides_title(false);
-		_saveDialog->set_mode(FileDialog::Mode::MODE_SAVE_FILE);
+		_saveDialog->set_file_mode(FileDialog::FileMode::FILE_MODE_SAVE_FILE);
 		_saveDialog->set_access(FileDialog::Access::ACCESS_FILESYSTEM);
 		_saveDialog->set_filters(filters);
 		add_child(_saveDialog);
 
 		// Connect signals
-		_abort->connect("pressed", this, "on_abort_pressed");
-		_hint->connect("pressed", this, "on_hint_pressed");
-		_hintClose->connect("pressed", this, "on_hintDialog_close_pressed");
-		_hintDialog->connect("popup_hide", this, "on_hintDialog_popupHide");
-		_hintDialog->connect("resized", this, "on_hintDialog_resized");
-		_load->connect("pressed", this, "on_load_pressed");
-		_loadDialog->connect("file_selected", this, "on_loadDialog_fileSelected");
-		_loadDialog->connect("popup_hide", this, "on_loadDialog_popupHide");
-		_quit->connect("pressed", this, "on_quit_pressed");
-		_save->connect("pressed", this, "on_save_pressed");
-		_saveDialog->connect("file_selected", this, "on_saveDialog_fileSelected");
-		_saveDialog->connect("popup_hide", this, "on_saveDialog_popupHide");
-		_tiles->connect("item_rect_changed", this, "on_tiles_itemRectChanged");
-		_tiles->connect("loaded", this, "on_tiles_loaded");
-		_tiles->connect("moved", this, "on_tiles_moved");
-		_tiles->connect("won", this, "on_tiles_won");
-		_winnerClose->connect("pressed", this, "on_winnerDialog_close_pressed");
-        pm->connect("index_pressed", this, "on_options_itemSelected");
+		_abort->connect("pressed", Callable(this, "on_abort_pressed"));
+		_hint->connect("pressed", Callable(this, "on_hint_pressed"));
+		_hintClose->connect("pressed", Callable(this, "on_hintDialog_close_pressed"));
+		_hintDialog->connect("popup_hide", Callable(this, "on_hintDialog_popupHide"));
+		_hintDialog->connect("resized", Callable(this, "on_hintDialog_resized"));
+		_load->connect("pressed", Callable(this, "on_load_pressed"));
+		_loadDialog->connect("file_selected", Callable(this, "on_loadDialog_fileSelected"));
+		_loadDialog->connect("popup_hide", Callable(this, "on_loadDialog_popupHide"));
+		_quit->connect("pressed", Callable(this, "on_quit_pressed"));
+		_save->connect("pressed", Callable(this, "on_save_pressed"));
+		_saveDialog->connect("file_selected", Callable(this, "on_saveDialog_fileSelected"));
+		_saveDialog->connect("popup_hide", Callable(this, "on_saveDialog_popupHide"));
+		_tiles->connect("item_rect_changed", Callable(this, "on_tiles_itemRectChanged"));
+		_tiles->connect("loaded", Callable(this, "on_tiles_loaded"));
+		_tiles->connect("moved", Callable(this, "on_tiles_moved"));
+		_tiles->connect("won", Callable(this, "on_tiles_won"));
+		_winnerClose->connect("pressed", Callable(this, "on_winnerDialog_close_pressed"));
+		pm->connect("index_pressed", Callable(this, "on_options_itemSelected"));
 
         // Update GUI for common settings
         _tiles->numbers_color_set(_preferences->numbers_color_get());
@@ -334,7 +322,7 @@ namespace godot
         {
             _globals->tiles_loading_set(false);
             const String tilesLoadPath = _globals->tiles_load_path_get();
-			Godot::print("Game::_ready: Loading game from \"{0}\"", tilesLoadPath);
+			UtilityFunctions::print("Game::_ready: Loading game from \"{0}\"", tilesLoadPath);
             _tiles->load_game(tilesLoadPath);
         }
         else
@@ -349,14 +337,14 @@ namespace godot
                     _tiles->image_path_set(_preferences->last_image_get());
                 pm->set_item_disabled(0, false);
                 pm->set_item_disabled(1, false);
-				Godot::print("Game::_ready: tiles using image");
+				UtilityFunctions::print("Game::_ready: tiles using image");
             }
             else
             {
                 _tiles->image_path_set("");
                 pm->set_item_disabled(0, true);
                 pm->set_item_disabled(1, true);
-				Godot::print("Game::_ready: tiles not using image");
+				UtilityFunctions::print("Game::_ready: tiles not using image");
             }
             _tiles->start();
         }
@@ -379,10 +367,10 @@ namespace godot
 	{
 		FUNC_("Game::load_image");
 		if (path.substr(0, 4) == "res:")
-			return ResourceLoader::get_singleton()->load(path, "Image", true);
+			return ResourceLoader::get_singleton()->load(path, "Image", ResourceLoader::CacheMode::CACHE_MODE_IGNORE);
 		else
 		{
-			Ref<Image> i = Image::_new();
+			Ref<Image> i = Ref(memnew(Image));
 			i->load(path);
 			return i;
 		}
@@ -423,7 +411,7 @@ namespace godot
                 image = load_image(_preferences->default_image_get());
             else
                 image = load_image(_preferences->last_image_get());
-            Ref<ImageTexture> it(ImageTexture::_new());
+            Ref<ImageTexture> it = Ref(memnew(ImageTexture));
             it->create_from_image(image);
             _hintImage->set_texture(it);
         }
@@ -574,7 +562,7 @@ namespace godot
         // If game was auto started, then remove auto save if desired
         if (_globals->auto_started_get() && _preferences->auto_remove_on_win_get())
         {
-            Ref<Directory> d(Directory::_new());
+            Ref<Directory> d = memnew(Directory);
 			const String autoPath = _preferences->auto_path_get();
             if (d->file_exists(autoPath))
                 d->remove(autoPath);
@@ -582,8 +570,8 @@ namespace godot
 
         // Notify user.
         _winnerDialog->popup_centered();
-		Godot::print("_winnerDialog: p {0} s {1}", _winnerDialog->get_position(), _winnerDialog->get_size());
-		Godot::print("_winnerLabel: p {0} s {1}", _winnerLabel->get_position(), _winnerLabel->get_size());
+		UtilityFunctions::print("_winnerDialog: p {0} s {1}", _winnerDialog->get_position(), _winnerDialog->get_size());
+		UtilityFunctions::print("_winnerLabel: p {0} s {1}", _winnerLabel->get_position(), _winnerLabel->get_size());
 	}
 	
 	void Game::on_winnerDialog_close_pressed()
