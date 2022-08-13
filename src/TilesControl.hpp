@@ -85,6 +85,7 @@ namespace godot
 		int _columns0;
 		int _empty;
 		int _emptyId;
+		bool _gameComplete;
 		Ref<Image> _image;
 		String _imagePath;
 		float _lastSignal;

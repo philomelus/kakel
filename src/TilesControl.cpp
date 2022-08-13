@@ -8,6 +8,8 @@
 #include "auto_free.hpp"
 #include "function.hpp"
 
+// #define TEST_WON 1
+
 using namespace godot;
 
 namespace godot
@@ -49,11 +51,14 @@ namespace godot
 		register_property<TilesControl, int>("tiles_count", &TilesControl::tiles_count_set, &TilesControl::tiles_count_get, 16);
 
 		// Signals
+		register_signal<TilesControl>((char*) "loaded");
 		register_signal<TilesControl>((char*) "moved", "count", GODOT_VARIANT_TYPE_INT);
+		register_signal<TilesControl>((char*) "saved");
 		register_signal<TilesControl>((char*) "won");
 	}
 
 	TilesControl::TilesControl() :
+		_gameComplete(false),
 		_tilesOrder(nullptr),
 		_tilesRectScreen(nullptr),
 		_tilesRectTexture(nullptr)
@@ -151,13 +156,13 @@ namespace godot
 
 		_columns = 4;
 		_columns0 = 3;
+		_gameComplete = false;
 		_imagePath = String();
 		_lastSignal = 0.0;
 		_lastWinner = 0.0;
 		_movedSignal = 0;
 		_moves = 0;
 		_movesEnabled = false;
-		Godot::print("TilesControl::_init: _movesEnabled = false");
 		_numTiles = 16;
 		_numTiles0 = 15;
 		_numbersColor = Color(0.8, 0.8, 0.8, 1);
@@ -165,13 +170,11 @@ namespace godot
 		_outlinesColor = Color(0, 0, 0, 1);
 		_outlinesVisible;
 		_readyToRun = false;
-		Godot::print("TilesControl::_init: _readyToRun = false");
 		_rows = 4;
 		_rows0 = 3;
 		_spacing = Vector2(5, 5);
 		_tilesOrder = nullptr;
 		_tilesReady = false;
-		Godot::print("TilesControl::_init: _tilesReady = false");
 		_tileSize = Vector2();
 	}
 
@@ -285,9 +288,7 @@ namespace godot
 		_tree = get_tree();
 		
 		_readyToRun = false;
-		Godot::print("TilesControl::_ready: _readyToRun = false");
 		_movesEnabled = false;
-		Godot::print("TilesControl::_ready: _movesEnabled = false");
 	}
 	
 	void TilesControl::_unhandled_input(const Ref<InputEvent> ev)
@@ -403,12 +404,24 @@ namespace godot
 	bool TilesControl::check_complete()
 	{
 		FUNCQ_("TilesControl::check_complete");
+
+		// Only signal winner once
+		if (_gameComplete)
+			return true;
 		
-		for(int index = 0; index < _numTiles; ++index)
+#ifdef TEST_WON
+		if (_moves < 10)
 		{
-			if (_tilesOrder[index] != index)
-				return false;
+#endif
+			for(int index = 0; index < _numTiles; ++index)
+			{
+				if (_tilesOrder[index] != index)
+					return false;
+			}
+#ifdef TEST_WON
 		}
+#endif
+		_gameComplete = true;
 		_movesEnabled = false;
 		emit_signal("won");
 		return true;
@@ -485,6 +498,8 @@ namespace godot
 			_imagePath = newVal;
 			if (newVal.length() > 0)
 				_image = Ref(load_image(_imagePath));
+			else if (_image.is_valid())
+				_image.unref();
 		}
 	}
 	
@@ -493,7 +508,6 @@ namespace godot
 		FUNC_("TilesControl::load_game");
 		
 		_movesEnabled = false;
-		Godot::print("TilesControl::load_game: _movesEnabled = false");
 
 		Ref<File> inp(File::_new());
 		Error err = inp->open(path, File::ModeFlags::READ);
@@ -527,11 +541,12 @@ namespace godot
 		int m = inp->get_32();
 
 		bool numbersVisible_ = inp->get_8() != 0;
-
+		bool outlinesVisible_ = inp->get_8() != 0;
+		
 		// Done loading data
 		inp->close();
 
-		if (useImage())
+		if (useImage_)
 		{
 			_imagePath = imagePath_;
 			_image = Ref(load_image(_imagePath));
@@ -547,19 +562,20 @@ namespace godot
 		_empty = e;
 		_emptyId = eid;
 		_numbersVisible = numbersVisible_;
+		_outlinesVisible = outlinesVisible_;
 		++_movedSignal;
 
+		// Let owner know a game was loaded
+		emit_signal("loaded");
+		
 		// Reset tiles
 		call_deferred("recalc_tiles");
 		call_deferred("calc_movables");
 
 		// All ready
 		_readyToRun = true;
-		Godot::print("TilesControl::load_game: _readyToRun = true");
 		_movesEnabled = true;
-		Godot::print("TilesControl::load_game: _movesEnabled = true");
 		_tilesReady = false;
-		Godot::print("TilesControl::load_game: _tilesReady = false");
 		call_deferred("update");
 	}
 
@@ -730,13 +746,12 @@ namespace godot
 
 		// Stop processing that relies on tiles being set.
 		_tilesReady = false;
-		Godot::print("TilesControl::recalc_tiles: _tilesReady = false");
 
 		// Reload and resize image if size changed
 		Vector2 size = get_size();
 		// In godot 3.x, this can be called before screen/window/canvas is set correctly,
 		// so just bail.  It will get called again with the correct settings implemented.
-		if (size.x < 0 || size.y < 0)
+		if (size.x <= 0 || size.y <= 0)
 		{
 			Godot::print("TilesControl::recalc_tiles:  invalid size = {0}", size);
 			return;
@@ -789,7 +804,6 @@ namespace godot
 			}
 		}
 		_tilesReady = true;
-		Godot::print("TilesControl::recalc_tiles: _tilesReady = true");
 	}
 		
 	void TilesControl::reset_tiles()
@@ -852,9 +866,7 @@ namespace godot
 
 		// Initialized, but queue movement and tiles calc.
 		_readyToRun = true;
-		Godot::print("TilesControl::reset_tiles: _readyToRun = true");
 		_movesEnabled = true;
-		Godot::print("TilesControl::reset_tiles: _movesEnabled = true");
 		call_deferred("recalc_tiles");
 		call_deferred("calc_movables");
 	}
@@ -913,11 +925,15 @@ namespace godot
 		// Save number of moves so far.
 		sav->store_32(_moves);
 
-		// Save show numbers.
+		// Visible outlines and number
 		sav->store_8(_numbersVisible ? 1 : 0);
+		sav->store_8(_outlinesVisible ? 1 : 0);
 	   
 		// All done
 		sav->close();
+
+		// Let owner know a game was saved
+		emit_signal("saved");
 	}
 
 	Vector2 TilesControl::spacing_get() const

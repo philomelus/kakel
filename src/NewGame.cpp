@@ -218,7 +218,7 @@ namespace godot
 		}
         else
         {
-			if (!_preferences->use_image_get())
+			if (_preferences->use_image_get())
 			{
 				_preferences->use_image_set(false);
                 _preferences->save(_preferences->P_PREFS);
@@ -251,6 +251,9 @@ namespace godot
 		ERR_FAIL_COND(_image == nullptr);
 		
 		Vector2 size = _tilesImage->get_size();
+		
+		ERR_FAIL_COND(size.x <= 0 && size.y <= 0);
+		
 		_image->resize(size.x, size.y);
 		_imageTexture = ImageTexture::_new();
 		_imageTexture->create_from_image(_image);

@@ -3,7 +3,6 @@
 
 #include <Godot.hpp>
 #include <Button.hpp>
-#include <CenterContainer.hpp>
 #include <Control.hpp>
 #include <FileDialog.hpp>
 #include <GridContainer.hpp>
@@ -62,7 +61,6 @@ namespace godot
 		VSeparator* _vseparator3;
 		VSeparator* _vseparator4;
 		VSeparator* _vseparator5;
-		CenterContainer* _winnerCenterContainer;
 		Button* _winnerClose;
 		WindowDialog* _winnerDialog;
 		Label* _winnerLabel;
@@ -82,11 +80,9 @@ namespace godot
 		void hide_hint();
 		Ref<Image> load_image(const String path);
 		void on_abort_pressed();
-		void on_hintDialog_closed_pressed();
+		void on_hintDialog_close_pressed();
 		void on_hintDialog_popupHide();
 		void on_hintDialog_resized();
-		void on_hintDialog_itemRectChanged();
-		void on_hintDialog_sizeChanged();
 		void on_hint_pressed();
 		void on_loadDialog_fileSelected(const String path);
 		void on_loadDialog_popupHide();
@@ -97,6 +93,7 @@ namespace godot
 		void on_saveDialog_popupHide();
 		void on_save_pressed();
 		void on_tiles_itemRectChanged();
+		void on_tiles_loaded();
 		void on_tiles_moved(int count);
 		void on_tiles_won();
 		void on_winnerDialog_close_pressed();
