@@ -1,8 +1,0 @@
-[gd_resource type="NativeScript" load_steps=2 format=2]
-
-[ext_resource path="res://bin/kakel.gdnlib" type="GDNativeLibrary" id=1]
-
-[resource]
-resource_name = "Preferences"
-class_name = "Preferences"
-library = ExtResource( 1 )
