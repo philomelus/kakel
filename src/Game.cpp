@@ -96,8 +96,8 @@ void Game::_ready()
 {
 	FUNC_("Game::_ready");
 		
-	_globals = get_node<KakelGlobals>("/root/Globals");
-	_preferences = get_node<KakelPreferences>("/root/Preferences");
+	_globals = get_node<AppGlobals>("/root/Globals");
+	_preferences = get_node<AppPreferences>("/root/Preferences");
 	_tree = get_tree();
 
 	ERR_FAIL_COND(_globals == nullptr);

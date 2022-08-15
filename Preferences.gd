@@ -1,1 +1,1 @@
-extends KakelPreferences
+extends AppPreferences

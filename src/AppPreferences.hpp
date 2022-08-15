@@ -5,9 +5,9 @@
 
 namespace godot
 {
-	class KakelPreferences : public Node
+	class AppPreferences : public Node
 	{
-		GDCLASS(KakelPreferences, Node);
+		GDCLASS(AppPreferences, Node);
 
 	public:
 		static const char* P_PREFS;
@@ -34,8 +34,8 @@ namespace godot
 		static void _bind_methods();
 
 	public:
-		KakelPreferences();
-		~KakelPreferences();
+		AppPreferences();
+		~AppPreferences();
 
 		void _ready() override;
 

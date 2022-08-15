@@ -14,8 +14,8 @@
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/texture_rect.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
-#include "KakelGlobals.hpp"
-#include "KakelPreferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 
 namespace godot
 {
@@ -28,14 +28,14 @@ namespace godot
 		Button* _cancel;
 		CenterContainer* _centerContainer;
 		bool _changedImagePath;
-		KakelGlobals* _globals;
+		AppGlobals* _globals;
 		HBoxContainer* _hboxContainer;
 		HBoxContainer* _hboxContainer2;
 		Ref<Image> _image;
 		String _imagePath;
 		Ref<ImageTexture> _imageTexture;
 		MarginContainer* _marginContainer;
-		KakelPreferences* _preferences;
+		AppPreferences* _preferences;
 		Button* _start;
 		FileDialog* _tilesImageDialog;
 		bool _tilesImageDialogUsed;

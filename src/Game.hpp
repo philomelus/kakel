@@ -18,8 +18,8 @@
 #include <godot_cpp/classes/v_box_container.hpp>
 #include <godot_cpp/classes/v_separator.hpp>
 #include <godot_cpp/classes/window.hpp>
-#include "KakelGlobals.hpp"
-#include "KakelPreferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 #include "TilesControl.hpp"
 
 namespace godot
@@ -31,7 +31,7 @@ namespace godot
 	private:
 		Button* _abort;
 		VBoxContainer* _gameBoard;
-		KakelGlobals* _globals;
+		AppGlobals* _globals;
 		GridContainer* _gridContainer;
 		HFlowContainer* _hflowContainer;
 		HFlowContainer* _hflowContainer2;
@@ -48,7 +48,7 @@ namespace godot
 		Label* _movesLabel;
 		MenuButton* _options;
 		PanelContainer* _panelContainer;
-		KakelPreferences* _preferences;
+		AppPreferences* _preferences;
 		Button* _quit;
 		Button* _save;
 		FileDialog* _saveDialog;

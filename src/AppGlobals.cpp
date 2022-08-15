@@ -1,4 +1,4 @@
-#include "KakelGlobals.hpp"
+#include "AppGlobals.hpp"
 #include <godot_cpp/classes/config_file.hpp>
 #include <godot_cpp/classes/directory.hpp>
 #include <godot_cpp/classes/resource_loader.hpp>
@@ -15,19 +15,19 @@ namespace
 	static const char* default_tilesLoadPath;
 }
 
-void KakelGlobals::_bind_methods()
+void AppGlobals::_bind_methods()
 {
-	FUNC_("KakelGlobals::_bind_methods");
+	FUNC_("AppGlobals::_bind_methods");
 
 	// Non-api functions
-	ClassDB::bind_method(D_METHOD("auto_started_get"), &KakelGlobals::auto_started_get);
-	ClassDB::bind_method(D_METHOD("auto_started_set", "newVal"), &KakelGlobals::auto_started_set);
-	ClassDB::bind_method(D_METHOD("tiles_default_image_get"), &KakelGlobals::tiles_default_image_get);
-	ClassDB::bind_method(D_METHOD("tiles_default_image_set", "newVal"), &KakelGlobals::tiles_default_image_set);
-	ClassDB::bind_method(D_METHOD("tiles_loading_get"), &KakelGlobals::tiles_loading_get);
-	ClassDB::bind_method(D_METHOD("tiles_loading_set", "newVal"), &KakelGlobals::tiles_loading_set);
-	ClassDB::bind_method(D_METHOD("tiles_load_path_get"), &KakelGlobals::tiles_load_path_get);
-	ClassDB::bind_method(D_METHOD("tiles_load_path_set", "newVal"), &KakelGlobals::tiles_load_path_set);
+	ClassDB::bind_method(D_METHOD("auto_started_get"), &AppGlobals::auto_started_get);
+	ClassDB::bind_method(D_METHOD("auto_started_set", "newVal"), &AppGlobals::auto_started_set);
+	ClassDB::bind_method(D_METHOD("tiles_default_image_get"), &AppGlobals::tiles_default_image_get);
+	ClassDB::bind_method(D_METHOD("tiles_default_image_set", "newVal"), &AppGlobals::tiles_default_image_set);
+	ClassDB::bind_method(D_METHOD("tiles_loading_get"), &AppGlobals::tiles_loading_get);
+	ClassDB::bind_method(D_METHOD("tiles_loading_set", "newVal"), &AppGlobals::tiles_loading_set);
+	ClassDB::bind_method(D_METHOD("tiles_load_path_get"), &AppGlobals::tiles_load_path_get);
+	ClassDB::bind_method(D_METHOD("tiles_load_path_set", "newVal"), &AppGlobals::tiles_load_path_set);
 	
 	// Properties
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "auto_started"), "auto_started_set", "auto_started_get");
@@ -36,69 +36,69 @@ void KakelGlobals::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "tiles_load_path"), "tiles_load_path_set", "tiles_load_path_get");
 }
 
-KakelGlobals::KakelGlobals() :
+AppGlobals::AppGlobals() :
 	_autoStarted(default_autoStarted),
 	_tilesDefaultImage(default_tilesDefaultImage),
 	_tilesLoading(default_tilesLoading),
 	_tilesLoadPath(default_tilesLoadPath)
 {
-	FUNC_("KakelGlobals::KakelGlobals");
+	FUNC_("AppGlobals::AppGlobals");
 }
 
-KakelGlobals::~KakelGlobals()
+AppGlobals::~AppGlobals()
 {
-	FUNC_("KakelGlobals::~KakelGlobals");
+	FUNC_("AppGlobals::~AppGlobals");
 }
 
-bool KakelGlobals::auto_started_get() const
+bool AppGlobals::auto_started_get() const
 {
 	return _autoStarted;
 }
 	
-void KakelGlobals::auto_started_set(const bool newVal)
+void AppGlobals::auto_started_set(const bool newVal)
 {
 	if (_autoStarted != newVal)
 		_autoStarted = newVal;
 }
 	
-Ref<Theme> KakelGlobals::theme_get()
+Ref<Theme> AppGlobals::theme_get()
 {
 	return _theme;
 }
 	
-void KakelGlobals::theme_set(Ref<Theme> newVal)
+void AppGlobals::theme_set(Ref<Theme> newVal)
 {
 	_theme = newVal;
 }
 	
-bool KakelGlobals::tiles_default_image_get() const
+bool AppGlobals::tiles_default_image_get() const
 {
 	return _tilesDefaultImage;
 }
 	
-void KakelGlobals::tiles_default_image_set(const bool newVal)
+void AppGlobals::tiles_default_image_set(const bool newVal)
 {
 	if (_tilesDefaultImage != newVal)
 		_tilesDefaultImage = newVal;
 }
 	
-bool KakelGlobals::tiles_loading_get() const
+bool AppGlobals::tiles_loading_get() const
 {
 	return _tilesLoading;
 }
 	
-void KakelGlobals::tiles_loading_set(const bool newVal)
+void AppGlobals::tiles_loading_set(const bool newVal)
 {
 	if (_tilesLoading != newVal)
 		_tilesLoading = newVal;
 }
 
-String KakelGlobals::tiles_load_path_get()
+String AppGlobals::tiles_load_path_get()
 {
 	return _tilesLoadPath;
 }
 	
-void KakelGlobals::tiles_load_path_set(const String newVal)
+void AppGlobals::tiles_load_path_set(const String newVal)
 {
 	if (_tilesLoadPath != newVal)
 		_tilesLoadPath = newVal;

@@ -1,1 +1,1 @@
-extends KakelGlobals
+extends AppGlobals

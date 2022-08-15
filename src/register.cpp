@@ -5,8 +5,8 @@
 #include <godot_cpp/godot.hpp>
 
 #include "Game.hpp"
-#include "KakelGlobals.hpp"
-#include "KakelPreferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 #include "Main.hpp"
 #include "NewGame.hpp"
 #include "Prefs.hpp"
@@ -19,9 +19,9 @@ void initialize_module(ModuleInitializationLevel p_level)
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE)
 		return;
 
+    ClassDB::register_class<AppGlobals>();
+    ClassDB::register_class<AppPreferences>();
     ClassDB::register_class<Game>();
-    ClassDB::register_class<KakelGlobals>();
-    ClassDB::register_class<KakelPreferences>();
     ClassDB::register_class<Main>();
     ClassDB::register_class<NewGame>();
     ClassDB::register_class<Prefs>();

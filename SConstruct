@@ -70,10 +70,10 @@ env.Append(LIBPATH=(godot_cpp_path + '/bin',))
 env.Append(LIBS=(godot_cpp_library,))
 
 # Build
-env.SharedLibrary(out + out_ext, ('src/Game.cpp',
+env.SharedLibrary(out + out_ext, ('src/AppPreferences.cpp',
+                                  'src/AppGlobals.cpp',
+                                  'src/Game.cpp',
                                   'src/register.cpp',
-                                  'src/KakelPreferences.cpp',
-                                  'src/KakelGlobals.cpp',
                                   'src/Main.cpp',
                                   'src/NewGame.cpp',
                                   'src/Prefs.cpp',

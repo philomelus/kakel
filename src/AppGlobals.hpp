@@ -1,14 +1,14 @@
-#ifndef KAKELGLOBALS_HPP
-#define KAKELGLOBALS_HPP
+#ifndef APPGLOBALS_HPP
+#define APPGLOBALS_HPP
 
 #include <godot_cpp/classes/node.hpp>
 #include <godot_cpp/classes/theme.hpp>
 
 namespace godot
 {
-	class KakelGlobals : public Node
+	class AppGlobals : public Node
 	{
-		GDCLASS(KakelGlobals, Node);
+		GDCLASS(AppGlobals, Node);
 
 	private:
 		// When true, the game was started from AutoPath because AutoLoad was true
@@ -30,8 +30,8 @@ namespace godot
 		static void _bind_methods();
 
 	public:
-		KakelGlobals();
-		virtual ~KakelGlobals();
+		AppGlobals();
+		virtual ~AppGlobals();
 
 		bool auto_started_get() const;
 		void auto_started_set(const bool newVal);
