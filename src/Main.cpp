@@ -13,7 +13,7 @@ using namespace godot;
 
 void Main::_bind_methods()
 {
-	FUNC_("Main::_bind_method");
+	FUNC_("Main::_bind_methods");
 		
 	// API
 	ClassDB::bind_method(D_METHOD("check_auto_start"), &Main::check_auto_start);
@@ -42,23 +42,14 @@ Main::Main()
 Main::~Main()
 {
 	FUNC_("Main::~Main");
-	
-	memdelete(_centerContainer);
-	memdelete(_vboxContainer);
-	memdelete(_label);
-	memdelete(_load);
-	memdelete(_loadDialog);
-	memdelete(_options);
-	memdelete(_quit);
-	memdelete(_start);
 }
 
 void Main::_ready()
 {
 	FUNC_("Main::_ready");
 
-	_globals = get_node<Globals>("/root/Globals");
-	_preferences = get_node<Preferences>("/root/Preferences");
+	_globals = get_node<KakelGlobals>("/root/Globals");
+	_preferences = get_node<KakelPreferences>("/root/Preferences");
 	_tree = get_tree();
 
 	ERR_FAIL_COND(_globals == nullptr);
@@ -68,7 +59,7 @@ void Main::_ready()
 	Ref<Theme> theme = _globals->theme_get();
 	if (theme == nullptr)
 	{
-		theme = Ref(ResourceLoader::get_singleton()->load("res://theme.tres", "Theme",
+		theme = Ref(ResourceLoader::get_singleton()->load(_preferences->default_theme_get(), "Theme",
 														  ResourceLoader::CacheMode::CACHE_MODE_IGNORE));
 		_globals->theme_set(theme);
 	}
@@ -182,7 +173,7 @@ void Main::check_auto_start()
 		const String autoPath = _preferences->auto_path_get();
 		if (d->file_exists(_preferences->auto_path_get()))
 		{
-			UtilityFunctions::print("Main::check_auto_start: Loading game from \"{0}\"", autoPath);
+			UtilityFunctions::print("Main::check_auto_start: Loading game from \"", autoPath, "\"");
 			_globals->auto_started_set(true);
 			load_game(autoPath);
 		}
@@ -240,7 +231,7 @@ void Main::on_loadDialog_fileSelected(const String path)
 		_preferences->last_game_set(path);
 		_preferences->save(_preferences->P_PREFS);
 	}
-	UtilityFunctions::print("Main::on_loadDialog_fileSelected:  Loading game from \"{0}\"", path);
+	UtilityFunctions::print("Main::on_loadDialog_fileSelected:  Loading game from \"", path, "\"");
 	load_game(path);
 }
 	
@@ -249,13 +240,13 @@ void Main::on_new_pressed()
 	FUNC_("Main::on_new_pressed");
 	new_game();
 }
-	
+
 void Main::on_options_pressed()
 {
 	FUNC_("Main::on_options_pressed");
 	options();
 }
-	
+  
 void Main::on_quit_pressed()
 {
 	FUNC_("Main::on_quit_pressed");
@@ -265,7 +256,8 @@ void Main::on_quit_pressed()
 void Main::options()
 {
 	FUNC_("Main::prefs");
-	_tree->change_scene("res://Prefs.tscn");
+	Error err = _tree->change_scene("res://Prefs.tscn");
+	ERR_FAIL_COND(err != OK);
 }
 	
 void Main::quit()

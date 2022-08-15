@@ -5,10 +5,10 @@
 #include <godot_cpp/godot.hpp>
 
 #include "Game.hpp"
-#include "Globals.hpp"
+#include "KakelGlobals.hpp"
+#include "KakelPreferences.hpp"
 #include "Main.hpp"
 #include "NewGame.hpp"
-#include "Preferences.hpp"
 #include "Prefs.hpp"
 #include "TilesControl.hpp"
 
@@ -20,12 +20,12 @@ void initialize_module(ModuleInitializationLevel p_level)
 		return;
 
     ClassDB::register_class<Game>();
-    ClassDB::register_class<Globals>();
+    ClassDB::register_class<KakelGlobals>();
+    ClassDB::register_class<KakelPreferences>();
     ClassDB::register_class<Main>();
     ClassDB::register_class<NewGame>();
-    ClassDB::register_class<Preferences>();
     ClassDB::register_class<Prefs>();
-    // ClassDB::register_class<TilesControl>();
+	ClassDB::register_class<TilesControl>();
 }
 
 void uninitialize_module(ModuleInitializationLevel p_level)

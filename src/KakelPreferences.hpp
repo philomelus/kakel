@@ -1,13 +1,13 @@
-#ifndef PREFERENCES_HPP_INCLUDED
-#define PREFERENCES_HPP_INCLUDED
+#ifndef PREFERENCES_HPP
+#define PREFERENCES_HPP
 
 #include <godot_cpp/classes/node.hpp>
 
 namespace godot
 {
-	class Preferences : public Node
+	class KakelPreferences : public Node
 	{
-		GDCLASS(Preferences, Node);
+		GDCLASS(KakelPreferences, Node);
 
 	public:
 		static const char* P_PREFS;
@@ -20,6 +20,7 @@ namespace godot
 		int _columns;
 		String _defaultImage;
 		String _defaultTheme;
+		bool _keepAspect;
 		String _lastGame;
 		String _lastImage;
 		Color _numbersColor;
@@ -33,8 +34,8 @@ namespace godot
 		static void _bind_methods();
 
 	public:
-		Preferences();
-		~Preferences();
+		KakelPreferences();
+		~KakelPreferences();
 
 		void _ready() override;
 
@@ -61,6 +62,9 @@ namespace godot
 
 		String default_image_get() const;
 		void default_image_set(const String newVal);
+
+		bool keep_aspect_get() const;
+		void keep_aspect_set(const bool newVal);
 		
 		String last_game_get() const;
 		void last_game_set(const String newVal);
@@ -88,4 +92,4 @@ namespace godot
 	};
 }
 
-#endif	// PREFERENCES_HPP_INCLUDED
+#endif	// KAKELPREFERENCES_HPP

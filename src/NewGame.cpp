@@ -8,7 +8,7 @@ using namespace godot;
 
 void NewGame::_bind_methods()
 {
-	FUNC_("NewGame::_register_methods");
+	FUNC_("NewGame::_bind_methods");
 
 	// API
 	ClassDB::bind_method(D_METHOD("on_browse_pressed"), &NewGame::on_browse_pressed);
@@ -24,17 +24,7 @@ NewGame::NewGame()
 	  _tilesImageDialogUsed(false)
 {
 	FUNC_("NewGame::NewGame");
-}
-
-NewGame::~NewGame()
-{
-	FUNC_("NewGame::~NewGame");
-}
-
-void NewGame::_init()
-{
-	FUNC_("NewGame::_init");
-
+	
 	_browse = memnew(Button);
 	_cancel = memnew(Button);
 	_centerContainer = memnew(CenterContainer);
@@ -49,12 +39,17 @@ void NewGame::_init()
 	_vboxContainer = memnew(VBoxContainer);
 }
 
+NewGame::~NewGame()
+{
+	FUNC_("NewGame::~NewGame");
+}
+
 void NewGame::_ready()
 {
 	FUNC_("NewGame::_ready");
 		
-	_globals = get_node<Globals>("/root/Common");
-	_preferences = get_node<Preferences>("/root/Options");
+	_globals = get_node<KakelGlobals>("/root/Globals");
+	_preferences = get_node<KakelPreferences>("/root/Preferences");
 	_tree = get_tree();
 
 	ERR_FAIL_COND(_globals == nullptr);
@@ -150,6 +145,8 @@ void NewGame::_ready()
 		_imagePath = _preferences->last_image_get();
 	_image = load_image(_imagePath);
 
+	ERR_FAIL_COND(_image == nullptr);
+	
 	// Resize image and set as texture
 	call_deferred("update_image");
 }
@@ -158,7 +155,7 @@ Ref<Image> NewGame::load_image(const String path)
 {
 	FUNC_("NewGame::load_image");
 		
-	UtilityFunctions::print("NewGame::load_image: loading image from \"{0}\"", path);
+	UtilityFunctions::print("NewGame::load_image: loading image from \"", path, "\"");
 	Ref<Image> i;
 	if (path.substr(0, 4) == "res:")
 		i = ResourceLoader::get_singleton()->load(path, "Image", ResourceLoader::CacheMode::CACHE_MODE_IGNORE);
@@ -248,7 +245,6 @@ void NewGame::update_image()
 	ERR_FAIL_COND(size.x <= 0 && size.y <= 0);
 		
 	_image->resize(size.x, size.y);
-	_imageTexture = memnew(ImageTexture);
-	_imageTexture->create_from_image(_image);
+	_imageTexture = ImageTexture::create_from_image(_image);
 	_tilesImage->set_texture(_imageTexture);
 }

@@ -18,8 +18,8 @@
 #include <godot_cpp/classes/v_box_container.hpp>
 #include <godot_cpp/classes/v_separator.hpp>
 #include <godot_cpp/classes/window.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "KakelGlobals.hpp"
+#include "KakelPreferences.hpp"
 #include "TilesControl.hpp"
 
 namespace godot
@@ -31,7 +31,7 @@ namespace godot
 	private:
 		Button* _abort;
 		VBoxContainer* _gameBoard;
-		Globals* _globals;
+		KakelGlobals* _globals;
 		GridContainer* _gridContainer;
 		HFlowContainer* _hflowContainer;
 		HFlowContainer* _hflowContainer2;
@@ -48,7 +48,7 @@ namespace godot
 		Label* _movesLabel;
 		MenuButton* _options;
 		PanelContainer* _panelContainer;
-		Preferences* _preferences;
+		KakelPreferences* _preferences;
 		Button* _quit;
 		Button* _save;
 		FileDialog* _saveDialog;
@@ -71,7 +71,6 @@ namespace godot
 		Game();
 		~Game();
 
-		void _init();
 		void _input(const godot::Ref<godot::InputEvent>& ev) override;
 		void _ready() override;
 		
@@ -81,16 +80,16 @@ namespace godot
 		Ref<Image> load_image(const String path);
 		void on_abort_pressed();
 		void on_hintDialog_close_pressed();
-		void on_hintDialog_popupHide();
-		void on_hintDialog_resized();
+		void on_hintDialog_closeRequested();
+		void on_hintDialog_sizeChanged();
 		void on_hint_pressed();
+		void on_loadDialog_cancelled();
 		void on_loadDialog_fileSelected(const String path);
-		void on_loadDialog_popupHide();
 		void on_load_pressed();
 		void on_options_itemSelected(const int index);
 		void on_quit_pressed();
+		void on_saveDialog_cancelled();
 		void on_saveDialog_fileSelected(const String path);
-		void on_saveDialog_popupHide();
 		void on_save_pressed();
 		void on_tiles_itemRectChanged();
 		void on_tiles_loaded();

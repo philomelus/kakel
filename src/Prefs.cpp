@@ -1,5 +1,6 @@
 #include "Prefs.hpp"
 #include <godot_cpp/classes/global_constants.hpp>
+#include <godot_cpp/classes/resource_loader.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include "function.hpp"
 
@@ -18,17 +19,7 @@ void Prefs::_bind_methods()
 Prefs::Prefs()
 {
 	FUNC_("Prefs::Prefs");
-}
 
-Prefs::~Prefs()
-{
-	FUNC_("Prefs::~Prefs");
-}
-
-void Prefs::_init()
-{
-	FUNC_("Prefs::_init");
-		
 	_autoLoad = memnew(CheckButton);
 	_autoLoadLabel = memnew(Label);
 	_autoSave = memnew(CheckButton);
@@ -54,18 +45,29 @@ void Prefs::_init()
 	_vboxContainer = memnew(VBoxContainer);
 }
 
+Prefs::~Prefs()
+{
+	FUNC_("Prefs::~Prefs");
+}
+
 void Prefs::_ready()
 {
 	FUNC_("Prefs::_ready");
 		
-	_globals = get_node<Globals>("/root/Common");
-	_preferences = get_node<Preferences>("/root/Options");
+	_globals = get_node<KakelGlobals>("/root/Globals");
+	_preferences = get_node<KakelPreferences>("/root/Preferences");
 	_tree = get_tree();
 
 	ERR_FAIL_COND(_globals == nullptr);
 	ERR_FAIL_COND(_preferences == nullptr);
 
 	Ref<Theme> theme = _globals->theme_get();
+	if (theme == nullptr)
+	{
+		theme = Ref(ResourceLoader::get_singleton()->load(_preferences->default_theme_get(), "Theme",
+														  ResourceLoader::CacheMode::CACHE_MODE_IGNORE));
+		_globals->theme_set(theme);
+	}
 
 	ERR_FAIL_COND(theme == nullptr);
 

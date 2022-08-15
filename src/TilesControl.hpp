@@ -87,8 +87,8 @@ namespace godot
 		bool _gameComplete;
 		Ref<Image> _image;
 		String _imagePath;
-		float _lastSignal;
-		float _lastWinner;
+		double _lastSignal;
+		double _lastWinner;
 		int _moveDownIndex;
 		int _movedSignal;
 		int _moveLeftIndex;
@@ -129,12 +129,11 @@ namespace godot
 		TilesControl();
 		~TilesControl();
 
-		void _draw();
-		void _init();
-		void _input(const Ref<InputEvent> ev);
-		void _physics_process(const float delta);
-		void _ready();
-		void _unhandled_input(const Ref<InputEvent> ev);
+		void _draw() override;
+		void _input(const Ref<InputEvent>& ev) override;
+		void _physics_process(double delta) override;
+		void _ready() override;
+		void _unhandled_input(const Ref<InputEvent>& ev) override;
 		
 		// Load a game from file.
 		void load_game(const String path);

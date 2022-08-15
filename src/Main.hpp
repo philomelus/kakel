@@ -9,8 +9,8 @@
 #include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "KakelGlobals.hpp"
+#include "KakelPreferences.hpp"
 
 namespace godot
 {
@@ -20,13 +20,13 @@ namespace godot
 
 	private:
 		CenterContainer* _centerContainer;
-		Globals* _globals;
+		KakelGlobals* _globals;
 		Label* _label;
 		Button* _load;
 		FileDialog* _loadDialog;
 		bool _loadDialogUsed;
 		Button* _options;
-		Preferences* _preferences;
+		KakelPreferences* _preferences;
 		Button* _quit;
 		Button* _start;
 		SceneTree* _tree;

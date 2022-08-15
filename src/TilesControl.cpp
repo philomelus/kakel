@@ -19,12 +19,6 @@ void TilesControl::_bind_methods()
 	FUNC_("TilesControl::_bind_methods");
 		
 	// API
-	ClassDB::bind_method(D_METHOD("_draw"), &TilesControl::_draw);
-	ClassDB::bind_method(D_METHOD("_init"), &TilesControl::_init);
-	ClassDB::bind_method(D_METHOD("_input"), &TilesControl::_input);
-	ClassDB::bind_method(D_METHOD("_physics_process"), &TilesControl::_physics_process);
-	ClassDB::bind_method(D_METHOD("_ready"), &TilesControl::_ready);
-	ClassDB::bind_method(D_METHOD("_unhandled_input"), &TilesControl::_unhandled_input);
 	ClassDB::bind_method(D_METHOD("calc_movables"), &TilesControl::calc_movables);
 	ClassDB::bind_method(D_METHOD("load_game"), &TilesControl::load_game);
 	ClassDB::bind_method(D_METHOD("recalc_tiles"), &TilesControl::recalc_tiles);
@@ -82,7 +76,7 @@ void TilesControl::_bind_methods()
 
 	// Signals
 	ADD_SIGNAL(MethodInfo("loaded"));
-	ADD_SIGNAL(MethodInfo("loaded", PropertyInfo(Variant::INT, "count")));
+	ADD_SIGNAL(MethodInfo("moved", PropertyInfo(Variant::INT, "count")));
 	ADD_SIGNAL(MethodInfo("saved"));
 	ADD_SIGNAL(MethodInfo("won"));
 }
@@ -91,6 +85,28 @@ TilesControl::TilesControl() :
 	_gameComplete(false)
 {
 	FUNC_("TilesControl::TilesControl");
+
+	_columns = 4;
+	_columns0 = 3;
+	_gameComplete = false;
+	_imagePath = String();
+	_lastSignal = 0.0;
+	_lastWinner = 0.0;
+	_movedSignal = 0;
+	_moves = 0;
+	_movesEnabled = false;
+	_numTiles = 16;
+	_numTiles0 = 15;
+	_numbersColor = Color(0.8, 0.8, 0.8, 1);
+	_numbersVisible;
+	_outlinesColor = Color(0, 0, 0, 1);
+	_outlinesVisible;
+	_readyToRun = false;
+	_rows = 4;
+	_rows0 = 3;
+	_spacing = Vector2(5, 5);
+	_tilesReady = false;
+	_tileSize = Vector2();
 }
 
 TilesControl::~TilesControl()
@@ -167,34 +183,7 @@ void TilesControl::_draw()
 	}
 }
 	
-void TilesControl::_init()
-{
-	FUNC_("TilesControl::_init");
-
-	_columns = 4;
-	_columns0 = 3;
-	_gameComplete = false;
-	_imagePath = String();
-	_lastSignal = 0.0;
-	_lastWinner = 0.0;
-	_movedSignal = 0;
-	_moves = 0;
-	_movesEnabled = false;
-	_numTiles = 16;
-	_numTiles0 = 15;
-	_numbersColor = Color(0.8, 0.8, 0.8, 1);
-	_numbersVisible;
-	_outlinesColor = Color(0, 0, 0, 1);
-	_outlinesVisible;
-	_readyToRun = false;
-	_rows = 4;
-	_rows0 = 3;
-	_spacing = Vector2(5, 5);
-	_tilesReady = false;
-	_tileSize = Vector2();
-}
-
-void TilesControl::_input(const Ref<InputEvent> ev)
+void TilesControl::_input(const Ref<InputEvent>& ev)
 {
 	FUNCQ_("TilesControl::_inpuit");
 		
@@ -262,7 +251,7 @@ void TilesControl::_input(const Ref<InputEvent> ev)
 	}
 }
 	
-void TilesControl::_physics_process(const float delta)
+void TilesControl::_physics_process(double delta)
 {
 	FUNCQ_("TilesControl::_physics_process");
 		
@@ -307,7 +296,7 @@ void TilesControl::_ready()
 	_movesEnabled = false;
 }
 	
-void TilesControl::_unhandled_input(const Ref<InputEvent> ev)
+void TilesControl::_unhandled_input(const Ref<InputEvent>& ev)
 {
 	FUNCQ_("TilesControl::_unhandled_input");
 		
@@ -781,8 +770,7 @@ void TilesControl::recalc_tiles()
 			_image = load_image(_imagePath);
 			_image->resize(size.x, size.y);
 		}
-		Ref<ImageTexture> it = Ref(memnew(ImageTexture));
-		it->create_from_image(_image);
+		Ref<ImageTexture> it = ImageTexture::create_from_image(_image);
 		_tilesTexture = it;
 	}
 

@@ -1,17 +1,4 @@
-[gd_scene load_steps=3 format=2]
-
-[sub_resource type="GDNativeLibrary" id=1]
-entry/X11.64 = "res://bin/x11/kakel.so"
-entry/Windows.64 = "res://bin/kakel.dll"
-entry/OSX.64 = "res://bin/osx/kakel.dylib"
-dependency/X11.64 = [  ]
-dependency/Windows.64 = [  ]
-dependency/OSX.64 = [  ]
-
-[sub_resource type="NativeScript" id=2]
-resource_name = "Game"
-class_name = "Game"
-library = SubResource( 1 )
+[gd_scene format=3 uid="uid://cgqv3gqjj5nal"]
 
 [node name="Game" type="Control"]
 anchor_right = 1.0
@@ -19,7 +6,6 @@ anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Control" type="Control" parent="."]
+[node name="Game" type="Game" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-script = SubResource( 2 )

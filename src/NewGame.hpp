@@ -14,8 +14,8 @@
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/texture_rect.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "KakelGlobals.hpp"
+#include "KakelPreferences.hpp"
 
 namespace godot
 {
@@ -28,14 +28,14 @@ namespace godot
 		Button* _cancel;
 		CenterContainer* _centerContainer;
 		bool _changedImagePath;
-		Globals* _globals;
+		KakelGlobals* _globals;
 		HBoxContainer* _hboxContainer;
 		HBoxContainer* _hboxContainer2;
 		Ref<Image> _image;
 		String _imagePath;
-		ImageTexture* _imageTexture;
+		Ref<ImageTexture> _imageTexture;
 		MarginContainer* _marginContainer;
-		Preferences* _preferences;
+		KakelPreferences* _preferences;
 		Button* _start;
 		FileDialog* _tilesImageDialog;
 		bool _tilesImageDialogUsed;
@@ -52,7 +52,6 @@ namespace godot
 		NewGame();
 		~NewGame();
 
-		void _init();
 		void _ready() override;
 		
 	protected:

@@ -11,8 +11,8 @@
 #include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/spin_box.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "KakelGlobals.hpp"
+#include "KakelPreferences.hpp"
 
 namespace godot
 {
@@ -29,7 +29,7 @@ namespace godot
 		CenterContainer* _centerContainer;
 		SpinBox* _columns;
 		Label* _columnsLabel;
-		Globals* _globals;
+		KakelGlobals* _globals;
 		GridContainer* _gridContainer;
 		HBoxContainer* _hboxContainer;
 		MarginContainer* _marginContainer;
@@ -41,7 +41,7 @@ namespace godot
 		Label* _outlinesColorLabel;
 		CheckButton* _outlinesVisible;
 		Label* _outlinesVisibleLabel;
-		Preferences* _preferences;
+		KakelPreferences* _preferences;
 		SpinBox* _rows;
 		Label* _rowsLabel;
 		Button* _save;
@@ -55,7 +55,6 @@ namespace godot
 		Prefs();
 		~Prefs();
 
-		void _init();
 		void _ready() override;
 		
 	protected:
