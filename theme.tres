@@ -17,6 +17,7 @@ CheckButton/icons/off = ExtResource("6")
 CheckButton/icons/off_disabled = ExtResource("3")
 CheckButton/icons/on = ExtResource("5")
 CheckButton/icons/on_disabled = ExtResource("4")
+HBoxContainer/constants/separation = 10
 Label/font_sizes/font_size = 32
 LineEdit/font_sizes/font_size = 32
 MenuButton/font_sizes/font_size = 32

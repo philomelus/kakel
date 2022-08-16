@@ -34,19 +34,23 @@ namespace godot
 
 		// Number of columns in tiles.
 		int columns_get() const;
-		void columns_set(int newVal);
+		void columns_set(const int newVal);
 
 		// Path to image for tiles.
 		String image_path_get() const;
-		void image_path_set(String newVal);
+		void image_path_set(const String newVal);
 
+		// When true, image will maintain its aspect ratio
+		bool keep_aspect_get() const;
+		void keep_aspect_set(const bool newVal);
+		
 		// When true, user movements are allowed.
 		bool movable_get() const;
-		void movable_set(bool newVal);
+		void movable_set(const bool newVal);
 
 		// Color to use for drawing tile numbers.
 		Color numbers_color_get() const;
-		void numbers_color_set(Color newVal);
+		void numbers_color_set(const Color newVal);
 
 		// Font to use for drawing tile numbers.
 		Ref<Font> numbers_font_get() const;
@@ -54,23 +58,23 @@ namespace godot
 
 		// When true, show tile number in upper left.
 		bool numbers_visible_get() const;
-		void numbers_visible_set(bool newVal);
+		void numbers_visible_set(const bool newVal);
 
 		// Color to use for drawing tile outlines.
 		Color outlines_color_get() const;
-		void outlines_color_set(Color newVal);
+		void outlines_color_set(const Color newVal);
 
 		// When true, outline each tile.
 		bool outlines_visible_get() const;
-		void outlines_visible_set(bool newVal);
+		void outlines_visible_set(const bool newVal);
 
 		// Number of rows in tiles.
 		int rows_get() const;
-		void rows_set(int newVal);
+		void rows_set(const int newVal);
 
 		// Distance between tiles in pixels.
 		Vector2 spacing_get() const;
-		void spacing_set(Vector2 newVal);
+		void spacing_set(const Vector2 newVal);
 
 		// Total number of tiles in tiles.
 		int tiles_count_get() const;
@@ -87,6 +91,7 @@ namespace godot
 		bool _gameComplete;
 		Ref<Image> _image;
 		String _imagePath;
+		bool _keepAspect;
 		double _lastSignal;
 		double _lastWinner;
 		int _moveDownIndex;
@@ -139,8 +144,8 @@ namespace godot
 		void load_game(const String path);
 
 		// Recalculate the tiles.  Should be called after containing window is
-		// resized, to adapt the tile image to new size.
-		void recalc_tiles();
+		// resized (include aspect ratio changes).
+		void recalc_tiles(const bool force=false);
 
 		// Save current game to file.
 		void save_game(const String path);

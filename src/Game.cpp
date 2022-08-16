@@ -182,6 +182,7 @@ void Game::_ready()
 	PopupMenu* pm = _options->get_popup();
 	pm->add_check_item("Outlines", 0);
 	pm->add_check_item("Numbers", 1);
+	pm->add_check_item("Aspect Ratio", 2);
 	_hflowContainer->add_child(_options);
 		
 	// Separate control areas
@@ -310,26 +311,35 @@ void Game::_ready()
 	// Update GUI for common settings
 	_tiles->numbers_color_set(_preferences->numbers_color_get());
 	_tiles->outlines_color_set(_preferences->outlines_color_get());
+
+	// Numbers visible?
 	bool b = _preferences->numbers_visible_get();
 	_tiles->numbers_visible_set(b);
 	pm->set_item_checked(1, b);
+
+	// Outlines visible?
 	b = _preferences->outlines_visible_get();
 	_tiles->outlines_visible_set(b);
 	pm->set_item_checked(0, b);
 
+	// Keep aspect ratio?
+	b = _globals->tiles_keep_aspect_get();
+	_tiles->keep_aspect_set(b);
+	pm->set_item_checked(2, b);
+	
 	// Not all globals are used if loading a game.
 	if (_globals->tiles_loading_get())
 	{
 		_globals->tiles_loading_set(false);
 		const String tilesLoadPath = _globals->tiles_load_path_get();
-		UtilityFunctions::print("Game::_ready: Loading game from \"", tilesLoadPath, "\"");
+		FUNCP_("Loading game from \"", tilesLoadPath, "\"");
 		_tiles->load_game(tilesLoadPath);
 	}
 	else
 	{
 		_tiles->columns_set(_preferences->columns_get());
 		_tiles->rows_set(_preferences->rows_get());
-		if (_preferences->use_image_get())
+		if (_globals->tiles_use_image_get())
 		{
 			if (_globals->tiles_default_image_get())
 				_tiles->image_path_set(_preferences->default_image_get());
@@ -337,22 +347,28 @@ void Game::_ready()
 				_tiles->image_path_set(_preferences->last_image_get());
 			pm->set_item_disabled(0, false);
 			pm->set_item_disabled(1, false);
-			UtilityFunctions::print("Game::_ready: tiles using image");
+			pm->set_item_disabled(2, false);
+			FUNCP_("tiles using image");
 		}
 		else
 		{
 			_tiles->image_path_set("");
 			pm->set_item_disabled(0, true);
 			pm->set_item_disabled(1, true);
-			UtilityFunctions::print("Game::_ready: tiles not using image");
+			pm->set_item_disabled(2, true);
+			FUNCP_("tiles not using image");
 		}
 		_tiles->start();
 	}
+
+	// Haven't quit yet
+	_globals->tiles_quit_set(false);
 }
 	
 void Game::abort()
 {
 	FUNC_("Game::abort");
+	_globals->tiles_quit_set(true);
 	_tree->change_scene("res://Main.tscn");
 }
 	
@@ -476,6 +492,14 @@ void Game::on_options_itemSelected(const int index)
 	case 1: // Numbers
 		_tiles->numbers_visible_set(on);
 		break;
+
+	case 2: // Aspect Ratio
+		_tiles->keep_aspect_set(on);
+		break;
+		
+	default:
+		FUNCPF_("invalid menu item index ", index);
+		break;
 	}
 }
 	
@@ -523,10 +547,7 @@ void Game::on_tiles_itemRectChanged()
 	FUNC_("Game::on_tiles_itemRectChanged");
 	if (_tiles != nullptr)
 	{
-		UtilityFunctions::print("Game::on_tiles_itemRectChanged: p ",
-								_tiles->get_position(),
-								" s ",
-								_tiles->get_size());
+		FUNCP_("p ", _tiles->get_position(), " s ", _tiles->get_size());
 		_tiles->recalc_tiles();
 	}
 }

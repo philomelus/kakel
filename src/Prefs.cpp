@@ -30,6 +30,8 @@ Prefs::Prefs()
 	_columnsLabel = memnew(Label);
 	_gridContainer = memnew(GridContainer);
 	_hboxContainer = memnew(HBoxContainer);
+	_keepAspect = memnew(CheckButton);
+	_keepAspectLabel = memnew(Label);
 	_marginContainer = memnew(MarginContainer);
 	_numbersColor = memnew(ColorPickerButton);
 	_numbersColorLabel = memnew(Label);
@@ -115,6 +117,13 @@ void Prefs::_ready()
 	_rows->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
 	_gridContainer->add_child(_rows);
 
+	// Add keep aspect label
+	_keepAspectLabel->set_text("Keep Aspect Ratio");
+	_gridContainer->add_child(_keepAspectLabel);
+	
+	// Add keep aspect
+	_gridContainer->add_child(_keepAspect);
+	
 	// Add outlines visible label
 	_outlinesVisibleLabel->set_text("Show Outlines");
 	_outlinesVisibleLabel->set_tooltip("When enabled, tiles are outlined.");
@@ -196,6 +205,7 @@ void Prefs::_ready()
 	_autoLoad->set_pressed(_preferences->auto_load_get());
 	_autoSave->set_pressed(_preferences->auto_save_get());
 	_columns->set_value(_preferences->columns_get());
+	_keepAspect->set_pressed(_preferences->keep_aspect_get());
 	_numbersColor->set_pick_color(_preferences->numbers_color_get());
 	_numbersVisible->set_pressed(_preferences->numbers_visible_get());
 	_outlinesColor->set_pick_color(_preferences->outlines_color_get());
@@ -229,6 +239,11 @@ void Prefs::on_save_pressed()
 	if (_preferences->columns_get() != _columns->get_value())
 	{
 		_preferences->columns_set(_columns->get_value());
+		++updates;
+	}
+	if (_preferences->keep_aspect_get() != _keepAspect->is_pressed())
+	{
+		_preferences->keep_aspect_set(_keepAspect->is_pressed());
 		++updates;
 	}
 	if (_preferences->numbers_color_get() != _numbersColor->get_pick_color())

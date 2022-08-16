@@ -32,6 +32,8 @@ namespace godot
 		AppGlobals* _globals;
 		GridContainer* _gridContainer;
 		HBoxContainer* _hboxContainer;
+		CheckButton* _keepAspect;
+		Label* _keepAspectLabel;
 		MarginContainer* _marginContainer;
 		ColorPickerButton* _numbersColor;
 		Label* _numbersColorLabel;

@@ -133,8 +133,9 @@ void Main::_ready()
 	if (_preferences->last_image_get().length() > 0)
 		_globals->tiles_default_image_set(false);
 
-	// Queue call to auto start
-	call_deferred("check_auto_start");
+	// Queue call to auto start if needed
+	if (_globals->tiles_quit_get() == false)
+		call_deferred("check_auto_start");
 }
 
 void Main::_unhandled_input(const Ref<InputEvent>& ev)
@@ -169,12 +170,14 @@ void Main::check_auto_start()
 
 	if (_preferences->auto_load_get())
 	{
+		FUNCP_("checking auto start");
 		Ref<Directory> d = memnew(Directory);
 		const String autoPath = _preferences->auto_path_get();
 		if (d->file_exists(_preferences->auto_path_get()))
 		{
-			UtilityFunctions::print("Main::check_auto_start: Loading game from \"", autoPath, "\"");
+			FUNCPF_("auto load game from \"", autoPath, "\"");
 			_globals->auto_started_set(true);
+			_globals->tiles_quit_set(false);
 			load_game(autoPath);
 		}
 	}
@@ -231,7 +234,7 @@ void Main::on_loadDialog_fileSelected(const String path)
 		_preferences->last_game_set(path);
 		_preferences->save(_preferences->P_PREFS);
 	}
-	UtilityFunctions::print("Main::on_loadDialog_fileSelected:  Loading game from \"", path, "\"");
+	FUNCP_("Loading game from \"", path, "\"");
 	load_game(path);
 }
 	

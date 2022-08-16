@@ -20,12 +20,24 @@ namespace godot
 		// If true, use default image.
 		bool _tilesDefaultImage;
 
+		// Initial state of keep aspect when starting game
+		// (way to communicate from NewGame.tscn to Game.tscn)
+		bool _tilesKeepAspect;
+
 		// When true, the game in `TilesLoadPath` is loaded and restarted
 		bool _tilesLoading;
 		
 		// When TilesLoading is true, path to game file to load.
 		String _tilesLoadPath;
 
+		// When true, tiles has started then user quit
+		// (way to communicate from NewGame.tscn to Game.tscn)
+		bool _tilesQuit;
+
+		// Wether to use an image for tiles
+		// (way to communicate from NewGame.tscn to Game.tscn)
+		bool _tilesUseImage;
+		
 	protected:
 		static void _bind_methods();
 
@@ -42,11 +54,20 @@ namespace godot
 		bool tiles_default_image_get() const;
 		void tiles_default_image_set(const bool newVal);
 
+		bool tiles_keep_aspect_get() const;
+		void tiles_keep_aspect_set(const bool newVal);
+		
 		bool tiles_loading_get() const;
 		void tiles_loading_set(const bool newVal);
 
 		String tiles_load_path_get();
 		void tiles_load_path_set(const String newVal);
+
+		bool tiles_quit_get() const;
+		void tiles_quit_set(const bool newVal);
+		
+		bool tiles_use_image_get() const;
+		void tiles_use_image_set(const bool newVal);
 	};
 }
 

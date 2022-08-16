@@ -28,7 +28,6 @@ namespace godot
 		Color _outlinesColor;
 		bool _outlinesVisible;
 		int _rows;
-		bool _useImage;
 
 	protected:
 		static void _bind_methods();
@@ -86,9 +85,6 @@ namespace godot
 		
 		int rows_get() const;
 		void rows_set(const int newVal);
-
-		bool use_image_get() const;
-		void use_image_set(const bool newVal);
 	};
 }
 

@@ -38,6 +38,8 @@ void TilesControl::_bind_methods()
 	ClassDB::bind_method(D_METHOD("columns_set", "newVal"), &TilesControl::columns_set);
 	ClassDB::bind_method(D_METHOD("image_path_get"), &TilesControl::image_path_get);
 	ClassDB::bind_method(D_METHOD("image_path_set", "newVal"), &TilesControl::image_path_set);
+	ClassDB::bind_method(D_METHOD("keep_aspect_get"), &TilesControl::keep_aspect_get);
+	ClassDB::bind_method(D_METHOD("keep_aspect_set", "newVal"), &TilesControl::keep_aspect_set);
 	ClassDB::bind_method(D_METHOD("movable_get"), &TilesControl::movable_get);
 	ClassDB::bind_method(D_METHOD("movable_set", "newVal"), &TilesControl::movable_set);
 	ClassDB::bind_method(D_METHOD("numbers_font_get"), &TilesControl::numbers_font_get);
@@ -64,6 +66,7 @@ void TilesControl::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "can_move_up"), "can_move_up_set", "can_move_up_get");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "columns"), "columns_set", "columns_get");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "image_path"), "image_path_set", "image_path_get");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "keep_aspect"), "keep_aspect_set", "keep_aspect_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "movable"), "movable_set", "movable_get");
 	ADD_PROPERTY(PropertyInfo(Variant::OBJECT, "number_font"), "numbers_font_set", "numbers_font_get");
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "numbers_color"), "numbers_color_set", "numbers_color_get");
@@ -99,7 +102,7 @@ TilesControl::TilesControl() :
 	_numTiles0 = 15;
 	_numbersColor = Color(0.8, 0.8, 0.8, 1);
 	_numbersVisible;
-	_outlinesColor = Color(0, 0, 0, 1);
+	_outlinesColor = Color(0.5, 0.5, 0.5, 1);
 	_outlinesVisible;
 	_readyToRun = false;
 	_rows = 4;
@@ -141,14 +144,14 @@ void TilesControl::_draw()
 										 _tilesRectTexture[_tilesOrder[index]]);
 
 				// Add the tile number is desired
-				// if (_numbersVisible)
-				// {
-				// 	String name = String::num_int64(tileIndex + 1);
-				// 	extent = _numbersFont->get_string_size(name);
-				// 	draw_string(_numbersFont, Vector2(Rect2(_tilesRectScreen[index]).get_position().x + 5,
-				// 									  Rect2(_tilesRectScreen[index]).get_position().y + 10 + (extent.y / 2)),
-				// 				name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, _numbersColor);
-				// }
+				if (_numbersVisible)
+				{
+					String name = String::num_int64(tileIndex + 1);
+					extent = _numbersFont->get_string_size(name);
+					draw_string(_numbersFont, Vector2(Rect2(_tilesRectScreen[index]).get_position().x + 5,
+													  Rect2(_tilesRectScreen[index]).get_position().y + 10 + (extent.y / 2)),
+								name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, _numbersColor);
+				}
 
 				// Add an outline if desired
 				if (_outlinesVisible)
@@ -172,11 +175,11 @@ void TilesControl::_draw()
 				draw_rect(area, _outlinesColor, false);
 
 				// Draw tile number of tile
-				// String name = String::num_int64(tileIndex + 1);
-				// extent = _numbersFont->get_string_size(name);
-				// draw_string(_numbersFont, Vector2(area.get_position().x + ((area.get_size().x - extent.x) / 2),
-				// 								  area.get_position().y + ((area.get_size().y - extent.y) / 2) + extent.y),
-				// 			name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, _numbersColor);
+				String name = String::num_int64(tileIndex + 1);
+				extent = _numbersFont->get_string_size(name);
+				draw_string(_numbersFont, Vector2(area.get_position().x + ((area.get_size().x - extent.x) / 2),
+												  area.get_position().y + ((area.get_size().y - extent.y) / 2) + extent.y),
+							name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, _numbersColor);
 			}
 		} // Not blank tile
 		++index;
@@ -437,7 +440,7 @@ bool TilesControl::can_move_down_get() const
 	return _canMoveDown;
 }
 	
-void TilesControl::can_move_down_set(bool newVal)
+void TilesControl::can_move_down_set(const bool newVal)
 {
 	CRASH_NOW();
 }
@@ -447,7 +450,7 @@ bool TilesControl::can_move_left_get() const
 	return _canMoveLeft;
 }
 	
-void TilesControl::can_move_left_set(bool newVal)
+void TilesControl::can_move_left_set(const bool newVal)
 {
 	CRASH_NOW();
 }
@@ -457,7 +460,7 @@ bool TilesControl::can_move_right_get() const
 	return _canMoveRight;
 }
 	
-void TilesControl::can_move_right_set(bool newVal)
+void TilesControl::can_move_right_set(const bool newVal)
 {
 	CRASH_NOW();
 }
@@ -467,7 +470,7 @@ bool TilesControl::can_move_up_get() const
 	return _canMoveUp;
 }
 	
-void TilesControl::can_move_up_set(bool newVal)
+void TilesControl::can_move_up_set(const bool newVal)
 {
 	CRASH_NOW();
 }
@@ -477,7 +480,7 @@ int TilesControl::columns_get() const
 	return _columns;
 }
 	
-void TilesControl::columns_set(int newVal)
+void TilesControl::columns_set(const int newVal)
 {
 	ERR_FAIL_COND(newVal < 3 || newVal > 99);
 
@@ -490,19 +493,33 @@ void TilesControl::columns_set(int newVal)
 		_tilesReady = false;
 	}
 }
-	
+
+bool TilesControl::keep_aspect_get() const
+{
+	return _keepAspect;
+}
+
+void TilesControl::keep_aspect_set(const bool newVal)
+{
+	if (_keepAspect != newVal)
+	{
+		_keepAspect = newVal;
+		recalc_tiles(true);
+	}
+}
+
 String TilesControl::image_path_get() const
 {
 	return _imagePath;
 }
 	
-void TilesControl::image_path_set(String newVal)
+void TilesControl::image_path_set(const String newVal)
 {
 	if (_imagePath != newVal)
 	{
 		_imagePath = newVal;
 		if (newVal.length() > 0)
-			_image = Ref(load_image(_imagePath));
+			_image = load_image(_imagePath);
 		else if (_image.is_valid())
 			_image.unref();
 	}
@@ -556,7 +573,7 @@ void TilesControl::load_game(const String path)
 	if (useImage_)
 	{
 		_imagePath = imagePath_;
-		_image = Ref(load_image(_imagePath));
+		_image = load_image(_imagePath);
 	}
 	else
 	{
@@ -575,15 +592,12 @@ void TilesControl::load_game(const String path)
 	// Let owner know a game was loaded
 	emit_signal("loaded");
 		
-	// Reset tiles
-	call_deferred("recalc_tiles");
-	call_deferred("calc_movables");
-
 	// All ready
 	_readyToRun = true;
 	_movesEnabled = true;
 	_tilesReady = false;
 	call_deferred("update");
+	call_deferred("calc_movables");
 }
 
 Ref<Image> TilesControl::load_image(const String path)
@@ -591,7 +605,7 @@ Ref<Image> TilesControl::load_image(const String path)
 	FUNC_("TilesControl::load_image");
 
 	Ref<Image> i;
-	UtilityFunctions::print("TilesControl::load_image: Loading image from \"{0}\"", path);
+	FUNCP_("Loading image from \"", path, "\"");
 	if (path.substr(0, 4) == "res:")
 	{
 		i = ResourceLoader::get_singleton()->load(path, "Image", ResourceLoader::CacheMode::CACHE_MODE_IGNORE);
@@ -609,7 +623,7 @@ bool TilesControl::movable_get() const
 	return _movesEnabled;
 }
 	
-void TilesControl::movable_set(bool newVal)
+void TilesControl::movable_set(const bool newVal)
 {
 	if (_movesEnabled != newVal)
 		_movesEnabled = newVal;
@@ -688,7 +702,7 @@ Color TilesControl::numbers_color_get() const
 	return _numbersColor;
 }
 	
-void TilesControl::numbers_color_set(Color newVal)
+void TilesControl::numbers_color_set(const Color newVal)
 {
 	if (_numbersColor != newVal)
 	{
@@ -717,7 +731,7 @@ Color TilesControl::outlines_color_get() const
 	return _outlinesColor;
 }
 	
-void TilesControl::outlines_color_set(Color newVal)
+void TilesControl::outlines_color_set(const Color newVal)
 {
 	if (_outlinesColor != newVal)
 	{
@@ -732,7 +746,7 @@ bool TilesControl::outlines_visible_get() const
 	return _outlinesVisible;
 }
 	
-void TilesControl::outlines_visible_set(bool newVal)
+void TilesControl::outlines_visible_set(const bool newVal)
 {
 	if (_outlinesVisible != newVal)
 	{
@@ -741,7 +755,7 @@ void TilesControl::outlines_visible_set(bool newVal)
 	}
 }
 	
-void TilesControl::recalc_tiles()
+void TilesControl::recalc_tiles(const bool forced)
 {
 	FUNC_("TilesControl::recalc_tiles");
 		
@@ -755,33 +769,92 @@ void TilesControl::recalc_tiles()
 	_tilesReady = false;
 
 	// Reload and resize image if size changed
-	Vector2 size = get_size();
+	Vector2 canvasSize = get_size();
 	// In godot 3.x, this can be called before screen/window/canvas is set correctly,
 	// so just bail.  It will get called again with the correct settings implemented.
-	if (size.x <= 0 || size.y <= 0)
+	if (canvasSize.x <= 0 || canvasSize.y <= 0)
 	{
-		UtilityFunctions::print("TilesControl::recalc_tiles:  invalid size = {0}", size);
+		FUNCP_("invalid size = ", canvasSize);
 		return;
 	}
 	if (useImage())
 	{
-		if (!_image.is_valid() || size.x != _image->get_width() || size.y != _image->get_height())
+		Ref<Image> i;
+		if (forced || !_image.is_valid() || canvasSize.x != _image->get_width()
+			|| canvasSize.y != _image->get_height())
 		{
+			FUNCPF_("image needs resizing");
 			_image = load_image(_imagePath);
-			_image->resize(size.x, size.y);
+			if (_keepAspect)
+			{
+				FUNCPF_("keeping aspect ratio");
+				const Vector2 imageSize = _image->get_size();
+				const float h = canvasSize.x * (imageSize.y / imageSize.x);
+				const float w = canvasSize.y * (imageSize.x / imageSize.y);
+				const Vector2 newSize = h <= canvasSize.y ? Vector2(canvasSize.x, h) : Vector2(w, canvasSize.y);
+				if (newSize.x < canvasSize.x || newSize.y < canvasSize.y)
+				{
+					FUNCPF_("resizing with transparent borders");
+					
+					// Resize original image
+					Ref<Image> tempImage = _image->duplicate();
+					FUNCPF_("original image size ", tempImage->get_size());
+					tempImage->resize(newSize.x, newSize.y);
+					FUNCPF_("rescaled size = ", tempImage->get_size());
+
+					// Create and fill final image with transparency
+					i.instantiate();
+					i->create(canvasSize.x, canvasSize.y, true, tempImage->get_format());
+					i->fill(Color(1, 1, 1, 0));
+					FUNCPF_("final image size = ", i->get_size());
+					
+					// Copy resized image into final image, centered
+					const Rect2i srcRect(Vector2(0, 0), newSize);
+					FUNCPF_("source rect = ", srcRect);
+					Vector2i dst(0, 0);
+					if (newSize.x < canvasSize.x)
+					{
+						dst.x = canvasSize.x - newSize.x;
+						FUNCPF_("total horizontal extra space = ", dst.x);
+						dst.x /= 2;
+						FUNCPF_("added horizontal transparency of +/- ", dst.x);
+					}
+					if (newSize.y < canvasSize.y)
+					{
+						dst.y = canvasSize.y - newSize.y;
+						FUNCPF_("total vertical extra space = ", dst.x);
+						dst.y /= 2;
+						FUNCPF_("added vertical transparency of +/- ", dst.y);
+					}
+					FUNCPF_("offset in final image = ", dst);
+					i->blit_rect(*tempImage, srcRect, dst);
+				}
+				else
+				{
+					FUNCPF_("original and target image are same size: ", canvasSize, " == ", newSize);
+					i = _image->duplicate();
+					i->resize(newSize.x, newSize.y);
+				}
+			}
+			else
+			{
+				FUNCPF_("ignoring aspect ratio");
+				i = _image->duplicate();
+				i->resize(canvasSize.x, canvasSize.y);
+			}
 		}
-		Ref<ImageTexture> it = ImageTexture::create_from_image(_image);
+		Ref<ImageTexture> it = ImageTexture::create_from_image(i);
 		_tilesTexture = it;
 	}
 
 	// Determine width and height of tiles from our size.
-	_tileSize.x = (size.x - (_columns0 * _spacing.x)) / _columns;
-	_tileSize.y = (size.y - (_rows0 * _spacing.y)) / _rows;
+	_tileSize.x = (canvasSize.x - (_columns0 * _spacing.x)) / _columns;
+	_tileSize.y = (canvasSize.y - (_rows0 * _spacing.y)) / _rows;
 	if (_tileSize.x <= 0 || _tileSize.y <= 0)
 	{
 		// If this happens, its a fluke at startup and this will get called again
 		// which will be succesful.  In Godot 4+, this doesn't happen.
-		UtilityFunctions::print("TilesControl::recalc_tiles:  invalid _tileSize = {0}", _tileSize);
+		FUNCP_("invalid _tileSize = ", _tileSize);
 		return;
 	}
 
@@ -805,8 +878,9 @@ void TilesControl::recalc_tiles()
 		}
 	}
 	_tilesReady = true;
+	call_deferred("update");
 }
-		
+
 void TilesControl::reset_tiles()
 {
 	FUNC_("TilesControl::reset_tiles");
@@ -865,7 +939,7 @@ void TilesControl::reset_tiles()
 	// Initialized, but queue movement and tiles calc.
 	_readyToRun = true;
 	_movesEnabled = true;
-	call_deferred("recalc_tiles");
+	_tilesReady = false;
 	call_deferred("calc_movables");
 }
 	
@@ -874,7 +948,7 @@ int TilesControl::rows_get() const
 	return _rows;
 }
 	
-void TilesControl::rows_set(int newVal)
+void TilesControl::rows_set(const int newVal)
 {
 	ERR_FAIL_COND(newVal < 3 || newVal > 99);
 		
@@ -939,7 +1013,7 @@ Vector2 TilesControl::spacing_get() const
 	return _spacing;
 }
 
-void TilesControl::spacing_set(Vector2 newVal)
+void TilesControl::spacing_set(const Vector2 newVal)
 {
 	if (_spacing != newVal)
 		_spacing = newVal;
@@ -957,7 +1031,7 @@ int TilesControl::tiles_count_get() const
 	return _numTiles;
 }
 
-void TilesControl::tiles_count_set(int newVal)
+void TilesControl::tiles_count_set(const int newVal)
 {
 	// Not allowed to set this externally, but it can be useful
 	CRASH_NOW();

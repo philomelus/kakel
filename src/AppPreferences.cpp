@@ -30,7 +30,6 @@ namespace
     static const char* V_OUTLINESCOLOR = "outline_color";
     static const char* V_OUTLINESVISIBLE = "outlines_visible";
     static const char* V_ROWS = "rows";
-	static const char* V_USEIMAGE = "use_image";
 	
     // Paths.
     static const char* P_DEFAULTAUTOPATH = "user://auto.kakel";
@@ -53,7 +52,6 @@ namespace
 	static const Color default_outlinesColor = Color(0.5, 0.5, 0.5, 1);
 	static const bool default_outlinesVisible = false;
 	static const int default_rows = 4;
-	static const bool default_useImage = true;
 }
 
 const char* AppPreferences::P_PREFS = "user://prefs.cfg";
@@ -97,8 +95,6 @@ void AppPreferences::_bind_methods()
 	ClassDB::bind_method(D_METHOD("outlines_visible_set", "newVal"), &AppPreferences::outlines_visible_set);
 	ClassDB::bind_method(D_METHOD("rows_get"), &AppPreferences::rows_get);
 	ClassDB::bind_method(D_METHOD("rows_set", "newVal"), &AppPreferences::rows_set);
-	ClassDB::bind_method(D_METHOD("use_image_get"), &AppPreferences::use_image_get);
-	ClassDB::bind_method(D_METHOD("use_image_set", "newVal"), &AppPreferences::use_image_set);
 	
 	// Properties
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "auto_load"), "auto_load_set",	"auto_load_get");
@@ -116,7 +112,6 @@ void AppPreferences::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "outlines_color"), "outlines_color_set", "outlines_color_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "outlines_visible"), "outlines_visible_set", "outlines_visible_get");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "rows"), "rows_set", "rows_get");
-	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "use_image"), "use_image_set", "use_image_get");
 }
 
 AppPreferences::AppPreferences()
@@ -138,7 +133,6 @@ AppPreferences::AppPreferences()
 	_outlinesColor = default_outlinesColor;
 	_outlinesVisible = default_outlinesVisible;
 	_rows = default_rows;
-	_useImage = default_useImage;
 		
 	// Load preferences if exists
 	Ref<Directory> d = memnew(Directory);
@@ -296,6 +290,7 @@ void AppPreferences::load(const String path)
 	// FUNCP_("_defaultImage = \"", _defaultImage, "\"");
 	tmp = cf->get_value(S_GLOBALS, V_KEEPASPECT, default_keepAspect ? 1 : 0);
 	// FUNCP_("_keepAspect = ", tmp);
+	_keepAspect = tmp == 1;	
 	_lastGame = cf->get_value(S_GLOBALS, V_LASTGAME, default_lastGame);
 	// FUNCP_("_lastGame = \"", _lastGame, "\"");
 	_lastImage = cf->get_value(S_GLOBALS, V_LASTIMAGE, default_lastImage);
@@ -307,7 +302,7 @@ void AppPreferences::load(const String path)
 	// FUNCP_("_numbersVisible = ", tmp);
 	_numbersVisible = tmp == 1;
 	stmp = cf->get_value(S_GLOBALS, V_OUTLINESCOLOR, default_outlinesColor.to_html(true));
-	// FUNCP_("_outlinesColor = \"", stmp, "\"");
+	// FUNCPF_("_outlinesColor = \"", stmp, "\"");
 	_outlinesColor = Color(stmp);
 	tmp = cf->get_value(S_GLOBALS, V_OUTLINESVISIBLE, default_outlinesVisible ? 1 : 0);
 	// FUNCP_("_outlinesVisible = ", tmp);
@@ -371,17 +366,6 @@ void AppPreferences::rows_set(const int newVal)
 		_rows = newVal;
 }
 
-bool AppPreferences::use_image_get() const
-{
-	return _useImage;
-}
-
-void AppPreferences::use_image_set(const bool newVal)
-{
-	if (_useImage != newVal)
-		_useImage = newVal;
-}
-	
 void AppPreferences::save(const String path)
 {
 	FUNC_("AppPreferences::save");
@@ -414,7 +398,7 @@ void AppPreferences::save(const String path)
 	// FUNCP_("_numbersVisible = ", _numbersVisible ? 1 : 0);
 	cf->set_value(S_GLOBALS, V_NUMBERSVISIBLE, _numbersVisible ? 1 : 0);
 	stmp = _outlinesColor.to_html(true);
-	// FUNCP_("_outlinesColor = \"", stmp, "\"");
+	// FUNCPF_("_outlinesColor = \"", stmp, "\"");
 	cf->set_value(S_GLOBALS, V_OUTLINESCOLOR, stmp);
 	// FUNCP_("_outlinesVisible = ", _outlinesVisible ? 1 : 0);
 	cf->set_value(S_GLOBALS, V_OUTLINESVISIBLE, _outlinesVisible ? 1 : 0);
