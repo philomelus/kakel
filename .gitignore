@@ -26,3 +26,7 @@ data_*/
 *.kakel
 
 bin/*
+*.o
+*.a
+*.lib
+.sconsign.dblite
