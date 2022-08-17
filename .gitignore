@@ -19,3 +19,7 @@ data_*/
 
 .vscode/*
 *.kakel
+.sconsign.dblite
+*.o
+*.dll
+*.a
