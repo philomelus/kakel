@@ -12,6 +12,23 @@
 
 using namespace godot;
 
+namespace
+{
+	void outline(TilesControl* on, const Rect2 where, const Color color)
+	{
+		Rect2 area(where);
+		Vector2 v = area.get_position();
+		--v.x;
+		++v.y;
+		area.set_position(v);
+		v = area.get_size();
+		v.x += 2;
+		v.y += 2;
+		area.set_size(v);
+		on->draw_rect(area, color, false);
+	}
+}
+
 const int TilesControl::FILE_VERSION = 1;
 	
 void TilesControl::_bind_methods()
@@ -36,6 +53,8 @@ void TilesControl::_bind_methods()
 	ClassDB::bind_method(D_METHOD("can_move_up_set", "newVal"), &TilesControl::can_move_up_set);
 	ClassDB::bind_method(D_METHOD("columns_get"), &TilesControl::columns_get);
 	ClassDB::bind_method(D_METHOD("columns_set", "newVal"), &TilesControl::columns_set);
+	ClassDB::bind_method(D_METHOD("hilite_blank_get"), &TilesControl::hilite_blank_get);
+	ClassDB::bind_method(D_METHOD("hilite_blank_set", "newVal"), &TilesControl::hilite_blank_set);
 	ClassDB::bind_method(D_METHOD("image_path_get"), &TilesControl::image_path_get);
 	ClassDB::bind_method(D_METHOD("image_path_set", "newVal"), &TilesControl::image_path_set);
 	ClassDB::bind_method(D_METHOD("keep_aspect_get"), &TilesControl::keep_aspect_get);
@@ -89,6 +108,7 @@ TilesControl::TilesControl() :
 {
 	FUNC_("TilesControl::TilesControl");
 
+	_backgroundColor = Color::named("transparent");
 	_columns = 4;
 	_columns0 = 3;
 	_gameComplete = false;
@@ -148,6 +168,13 @@ void TilesControl::_draw()
 				{
 					String name = String::num_int64(tileIndex + 1);
 					extent = _numbersFont->get_string_size(name);
+
+					// First draw a 2 pixel outline
+					draw_string_outline(_numbersFont, Vector2(Rect2(_tilesRectScreen[index]).get_position().x + 5,
+													  Rect2(_tilesRectScreen[index]).get_position().y + 10 + (extent.y / 2)),
+										name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, 3, Color::named("black"));
+					
+					// Draw text in desired color
 					draw_string(_numbersFont, Vector2(Rect2(_tilesRectScreen[index]).get_position().x + 5,
 													  Rect2(_tilesRectScreen[index]).get_position().y + 10 + (extent.y / 2)),
 								name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, _numbersColor);
@@ -155,18 +182,7 @@ void TilesControl::_draw()
 
 				// Add an outline if desired
 				if (_outlinesVisible)
-				{
-					Rect2 area = _tilesRectScreen[index];
-					Vector2 v = area.get_position();
-					--v.x;
-					++v.y;
-					area.set_position(v);
-					v = area.get_size();
-					++v.x;
-					++v.y;
-					area.set_size(v);
-					draw_rect(area, _outlinesColor, false);
-				}
+					outline(this, _tilesRectScreen[index], _outlinesColor);
 			}
 			else			// if (useImage())
 			{
@@ -182,10 +198,24 @@ void TilesControl::_draw()
 							name, HorizontalAlignment::HORIZONTAL_ALIGNMENT_LEFT, -1, 24, _numbersColor);
 			}
 		} // Not blank tile
+		else
+		{
+			if (_hiliteBlank)
+			{
+				Rect2 area = _tilesRectScreen[index];
+				if (_outlinesVisible)
+					outline(this, area, _hiliteBlankColor);
+				String text = "Blank Tile";
+				extent = _numbersFont->get_string_size(text);
+				draw_string(_numbersFont, Vector2(area.get_position().x + ((area.get_size().x - extent.x) / 2),
+												  area.get_position().y + ((area.get_size().y - extent.y) / 2) + extent.y),
+							text, HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER, -1, 24, _hiliteBlankColor);
+			}
+		}
 		++index;
 	}
 }
-	
+
 void TilesControl::_input(const Ref<InputEvent>& ev)
 {
 	FUNCQ_("TilesControl::_inpuit");
@@ -357,8 +387,8 @@ void TilesControl::calc_movables()
 		return;
 
 	// Row and column of blank tile
-	const int row = _empty / _columns;
 	const int column = _empty % _columns;
+	const int row = _empty / _columns;
 
 	// Determine tiles that can move horizontally
 	const bool left_side = (column == 0);
@@ -494,6 +524,35 @@ void TilesControl::columns_set(const int newVal)
 	}
 }
 
+bool TilesControl::hilite_blank_get() const
+{
+	return _hiliteBlank;
+}
+
+void TilesControl::hilite_blank_set(const bool newVal)
+{
+	if (_hiliteBlank != newVal)
+	{
+		_hiliteBlank = newVal;
+		update();
+	}
+}
+
+Color TilesControl::hilite_blank_color_get() const
+{
+	return _hiliteBlankColor;
+}
+	
+void TilesControl::hilite_blank_color_set(const Color newVal)
+{
+	if (_hiliteBlankColor != newVal)
+	{
+		_hiliteBlankColor = newVal;
+		if (_hiliteBlank)
+			update();
+	}
+}
+	
 bool TilesControl::keep_aspect_get() const
 {
 	return _keepAspect;
@@ -565,7 +624,8 @@ void TilesControl::load_game(const String path)
 
 	bool numbersVisible_ = inp->get_8() != 0;
 	bool outlinesVisible_ = inp->get_8() != 0;
-		
+	bool keepAspect_ = inp->get_8() != 0;
+	
 	// Done loading data
 	inp->close();
 
@@ -587,6 +647,7 @@ void TilesControl::load_game(const String path)
 	_emptyId = eid;
 	_numbersVisible = numbersVisible_;
 	_outlinesVisible = outlinesVisible_;
+	_keepAspect = keepAspect_;
 	++_movedSignal;
 
 	// Let owner know a game was loaded
@@ -783,62 +844,47 @@ void TilesControl::recalc_tiles(const bool forced)
 		if (forced || !_image.is_valid() || canvasSize.x != _image->get_width()
 			|| canvasSize.y != _image->get_height())
 		{
-			FUNCPF_("image needs resizing");
 			_image = load_image(_imagePath);
 			if (_keepAspect)
 			{
-				FUNCPF_("keeping aspect ratio");
 				const Vector2 imageSize = _image->get_size();
 				const float h = canvasSize.x * (imageSize.y / imageSize.x);
 				const float w = canvasSize.y * (imageSize.x / imageSize.y);
 				const Vector2 newSize = h <= canvasSize.y ? Vector2(canvasSize.x, h) : Vector2(w, canvasSize.y);
 				if (newSize.x < canvasSize.x || newSize.y < canvasSize.y)
 				{
-					FUNCPF_("resizing with transparent borders");
-					
 					// Resize original image
 					Ref<Image> tempImage = _image->duplicate();
-					FUNCPF_("original image size ", tempImage->get_size());
 					tempImage->resize(newSize.x, newSize.y);
-					FUNCPF_("rescaled size = ", tempImage->get_size());
 
 					// Create and fill final image with transparency
 					i.instantiate();
-					i->create(canvasSize.x, canvasSize.y, true, tempImage->get_format());
-					i->fill(Color(1, 1, 1, 0));
-					FUNCPF_("final image size = ", i->get_size());
+					i->create(canvasSize.x, canvasSize.y, false, tempImage->get_format());
+					i->fill(_backgroundColor);
 					
 					// Copy resized image into final image, centered
 					const Rect2i srcRect(Vector2(0, 0), newSize);
-					FUNCPF_("source rect = ", srcRect);
 					Vector2i dst(0, 0);
 					if (newSize.x < canvasSize.x)
 					{
 						dst.x = canvasSize.x - newSize.x;
-						FUNCPF_("total horizontal extra space = ", dst.x);
 						dst.x /= 2;
-						FUNCPF_("added horizontal transparency of +/- ", dst.x);
 					}
 					if (newSize.y < canvasSize.y)
 					{
 						dst.y = canvasSize.y - newSize.y;
-						FUNCPF_("total vertical extra space = ", dst.x);
 						dst.y /= 2;
-						FUNCPF_("added vertical transparency of +/- ", dst.y);
 					}
-					FUNCPF_("offset in final image = ", dst);
 					i->blit_rect(*tempImage, srcRect, dst);
 				}
 				else
 				{
-					FUNCPF_("original and target image are same size: ", canvasSize, " == ", newSize);
 					i = _image->duplicate();
 					i->resize(newSize.x, newSize.y);
 				}
 			}
 			else
 			{
-				FUNCPF_("ignoring aspect ratio");
 				i = _image->duplicate();
 				i->resize(canvasSize.x, canvasSize.y);
 			}
@@ -848,8 +894,8 @@ void TilesControl::recalc_tiles(const bool forced)
 	}
 
 	// Determine width and height of tiles from our size.
-	_tileSize.x = (canvasSize.x - (_columns0 * _spacing.x)) / _columns;
-	_tileSize.y = (canvasSize.y - (_rows0 * _spacing.y)) / _rows;
+	_tileSize.x = (canvasSize.x - (_columns0 * _spacing.x) - 4) / _columns;
+	_tileSize.y = (canvasSize.y - (_rows0 * _spacing.y) - 5) / _rows;
 	if (_tileSize.x <= 0 || _tileSize.y <= 0)
 	{
 		// If this happens, its a fluke at startup and this will get called again
@@ -871,8 +917,8 @@ void TilesControl::recalc_tiles(const bool forced)
 		for (int col = 0; col < _columns; ++col)
 		{
 			const int idx = (row * _columns) + col;
-			_tilesRectScreen[idx] = Rect2(Vector2((col * _tileSize.x) + (col * _spacing.x),
-												  (row * _tileSize.y) + (row * _spacing.y)),
+			_tilesRectScreen[idx] = Rect2(Vector2(2 + (col * _tileSize.x) + (col * _spacing.x),
+												  2 + (row * _tileSize.y) + (row * _spacing.y)),
 										  _tileSize);
 			_tilesRectTexture[idx] = Rect2(Vector2(col * _tileSize.x, row * _tileSize.y), _tileSize);
 		}
@@ -1000,7 +1046,10 @@ void TilesControl::save_game(const String path)
 	// Visible outlines and number
 	sav->store_8(_numbersVisible ? 1 : 0);
 	sav->store_8(_outlinesVisible ? 1 : 0);
-	   
+
+	// Keep aspect
+	sav->store_8(_keepAspect ? 1 : 0);
+	
 	// All done
 	sav->close();
 
@@ -1033,6 +1082,7 @@ int TilesControl::tiles_count_get() const
 
 void TilesControl::tiles_count_set(const int newVal)
 {
-	// Not allowed to set this externally, but it can be useful
+	// Not allowed to set this externally, but it can be useful so its
+	// read only (gdextension doesn't allow this as far as I can tell).
 	CRASH_NOW();
 }

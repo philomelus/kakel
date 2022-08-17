@@ -30,6 +30,10 @@ Prefs::Prefs()
 	_columnsLabel = memnew(Label);
 	_gridContainer = memnew(GridContainer);
 	_hboxContainer = memnew(HBoxContainer);
+	_hiliteBlankLabel = memnew(Label);
+	_hiliteBlank = memnew(CheckButton);
+	_hiliteBlankColorLabel = memnew(Label);
+	_hiliteBlankColor = memnew(ColorPickerButton);
 	_keepAspect = memnew(CheckButton);
 	_keepAspectLabel = memnew(Label);
 	_marginContainer = memnew(MarginContainer);
@@ -119,9 +123,12 @@ void Prefs::_ready()
 
 	// Add keep aspect label
 	_keepAspectLabel->set_text("Keep Aspect Ratio");
+	_keepAspectLabel->set_tooltip("When enabled, the image aspect ratio is maintained within tiles.");
+	_keepAspectLabel->set_mouse_filter(Control::MouseFilter::MOUSE_FILTER_STOP);
 	_gridContainer->add_child(_keepAspectLabel);
 	
 	// Add keep aspect
+	_keepAspect->set_h_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
 	_gridContainer->add_child(_keepAspect);
 	
 	// Add outlines visible label
@@ -162,6 +169,25 @@ void Prefs::_ready()
 	// Add numbers color
 	_gridContainer->add_child(_numbersColor);
 
+	// Add hilite blank label
+	_hiliteBlankLabel->set_text("Hilite Blank Tile");
+	_hiliteBlankLabel->set_tooltip("When enabled, the blank tile is hilited.");
+	_hiliteBlankLabel->set_mouse_filter(Control::MouseFilter::MOUSE_FILTER_STOP);
+	_gridContainer->add_child(_hiliteBlankLabel);
+
+	// Add hilite blank
+	_hiliteBlank->set_h_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
+	_gridContainer->add_child(_hiliteBlank);
+
+	// Add hilite blank color label
+	_hiliteBlankColorLabel->set_text("Hilite Blank Color");
+	_hiliteBlankColorLabel->set_tooltip("When blank tile is hilited, its drawn in this color.");
+	_hiliteBlankColorLabel->set_mouse_filter(Control::MouseFilter::MOUSE_FILTER_STOP);
+	_gridContainer->add_child(_hiliteBlankColorLabel);
+
+    // Add hilite blank color
+	_gridContainer->add_child(_hiliteBlankColor);
+	
 	// Add auto save label
 	_autoSaveLabel->set_text("Auto Save on Exit");
 	_autoSaveLabel->set_tooltip("If \"Exit Kakel\" button is used, automatically save the current game before exit.");
@@ -205,6 +231,8 @@ void Prefs::_ready()
 	_autoLoad->set_pressed(_preferences->auto_load_get());
 	_autoSave->set_pressed(_preferences->auto_save_get());
 	_columns->set_value(_preferences->columns_get());
+	_hiliteBlank->set_pressed(_preferences->hilite_blank_get());
+	_hiliteBlankColor->set_pick_color(_preferences->hilite_blank_color_get());
 	_keepAspect->set_pressed(_preferences->keep_aspect_get());
 	_numbersColor->set_pick_color(_preferences->numbers_color_get());
 	_numbersVisible->set_pressed(_preferences->numbers_visible_get());
@@ -239,6 +267,16 @@ void Prefs::on_save_pressed()
 	if (_preferences->columns_get() != _columns->get_value())
 	{
 		_preferences->columns_set(_columns->get_value());
+		++updates;
+	}
+	if (_preferences->hilite_blank_get() != _hiliteBlank->is_pressed())
+	{
+		_preferences->hilite_blank_set(_hiliteBlank->is_pressed());
+		++updates;
+	}
+	if (_preferences->hilite_blank_color_get() != _hiliteBlankColor->get_pick_color())
+	{
+		_preferences->hilite_blank_color_set(_hiliteBlankColor->get_pick_color());
 		++updates;
 	}
 	if (_preferences->keep_aspect_get() != _keepAspect->is_pressed())

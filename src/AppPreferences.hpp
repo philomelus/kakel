@@ -20,6 +20,8 @@ namespace godot
 		int _columns;
 		String _defaultImage;
 		String _defaultTheme;
+		bool _hiliteBlank;
+		Color _hiliteBlankColor;
 		bool _keepAspect;
 		String _lastGame;
 		String _lastImage;
@@ -62,6 +64,12 @@ namespace godot
 		String default_image_get() const;
 		void default_image_set(const String newVal);
 
+		bool hilite_blank_get() const;
+		void hilite_blank_set(const bool newVal);
+
+		Color hilite_blank_color_get() const;
+		void hilite_blank_color_set(const Color newVal);
+		
 		bool keep_aspect_get() const;
 		void keep_aspect_set(const bool newVal);
 		

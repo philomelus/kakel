@@ -14,12 +14,19 @@ namespace godot
 		// When true, the game was started from AutoPath because AutoLoad was true
 		bool _autoStarted;
 
+		// When true, globals have been initialized from preferences as needed.
+		// This should only happen once at app start.
+		bool _preferencesImported;
+		
 		// Theme for all UI
 		Ref<Theme> _theme;
 		
 		// If true, use default image.
 		bool _tilesDefaultImage;
 
+		// When true, enhance blank tiles display
+		bool _tilesHiliteBlank;
+		
 		// Initial state of keep aspect when starting game
 		// (way to communicate from NewGame.tscn to Game.tscn)
 		bool _tilesKeepAspect;
@@ -48,11 +55,17 @@ namespace godot
 		bool auto_started_get() const;
 		void auto_started_set(const bool newVal);
 
+		bool preferences_imported_get() const;
+		void preferences_imported_set(const bool newVal);
+		
 		Ref<Theme> theme_get();
 		void theme_set(Ref<Theme> newVal);
 		
 		bool tiles_default_image_get() const;
 		void tiles_default_image_set(const bool newVal);
+
+		bool tiles_hilite_blank_get() const;
+		void tiles_hilite_blank_set(const bool newVal);
 
 		bool tiles_keep_aspect_get() const;
 		void tiles_keep_aspect_set(const bool newVal);

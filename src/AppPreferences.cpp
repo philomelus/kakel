@@ -14,44 +14,48 @@ namespace
     static const char* S_GLOBALS = "globals";
 
     // Values.
-    static const char* V_VERSION = "version";
-    static const char* V_AUTOLOAD = "auto_load";
-    static const char* V_AUTOPATH = "auto_path";
-    static const char* V_AUTOREMOVEONWIN = "auto_remove_on_win";
-    static const char* V_AUTOSAVE = "auto_save";
-    static const char* V_COLUMNS = "columns";
-    static const char* V_DEFAULTIMAGE = "default_image";
-    static const char* V_DEFAULTTHEME = "default_theme";
-	static const char* V_KEEPASPECT = "keep_aspect";
-    static const char* V_LASTGAME = "last_game";
-    static const char* V_LASTIMAGE = "last_image";
-    static const char* V_NUMBERSCOLOR = "number_color";
-    static const char* V_NUMBERSVISIBLE = "numbers_visible";
-    static const char* V_OUTLINESCOLOR = "outline_color";
-    static const char* V_OUTLINESVISIBLE = "outlines_visible";
-    static const char* V_ROWS = "rows";
+    const char* V_VERSION = "version";
+    const char* V_AUTOLOAD = "auto_load";
+    const char* V_AUTOPATH = "auto_path";
+    const char* V_AUTOREMOVEONWIN = "auto_remove_on_win";
+    const char* V_AUTOSAVE = "auto_save";
+    const char* V_COLUMNS = "columns";
+    const char* V_DEFAULTIMAGE = "default_image";
+    const char* V_DEFAULTTHEME = "default_theme";
+	const char* V_HILITEBLANK = "hilite_blank";
+	const char* V_HILITEBLANKCOLOR = "hilite_blank_color";
+	const char* V_KEEPASPECT = "keep_aspect";
+    const char* V_LASTGAME = "last_game";
+    const char* V_LASTIMAGE = "last_image";
+    const char* V_NUMBERSCOLOR = "number_color";
+    const char* V_NUMBERSVISIBLE = "numbers_visible";
+    const char* V_OUTLINESCOLOR = "outline_color";
+    const char* V_OUTLINESVISIBLE = "outlines_visible";
+    const char* V_ROWS = "rows";
 	
     // Paths.
-    static const char* P_DEFAULTAUTOPATH = "user://auto.kakel";
-	static const char* P_DEFAULTTHEME = "res://theme.tres";
-    static const char* P_DEFAULTIMAGE = "res://default_image.png";
+    const char* P_DEFAULTAUTOPATH = "user://auto.kakel";
+	const char* P_DEFAULTTHEME = "res://theme.tres";
+    const char* P_DEFAULTIMAGE = "res://default_image.png";
 
 	// Defaults
-	static const bool default_autoLoad = true;
-	static const char* default_autoPath = P_DEFAULTAUTOPATH;
-	static const bool default_autoRemoveOnWin = true;
-	static const bool default_autoSave = true;
-	static const int default_columns = 4;
-	static const char* default_defaultImage = P_DEFAULTIMAGE;
-	static const char* default_defaultTheme = P_DEFAULTTHEME;
-	static const bool default_keepAspect = false;
-	static const char* default_lastGame = "";
-	static const char* default_lastImage = "";
-	static const Color default_numbersColor = Color(0.8, 0.8, 0.8, 1);
-	static const bool default_numbersVisible = true;
-	static const Color default_outlinesColor = Color(0.5, 0.5, 0.5, 1);
-	static const bool default_outlinesVisible = false;
-	static const int default_rows = 4;
+	const bool default_autoLoad = true;
+	const char* default_autoPath = P_DEFAULTAUTOPATH;
+	const bool default_autoRemoveOnWin = true;
+	const bool default_autoSave = true;
+	const int default_columns = 4;
+	const char* default_defaultImage = P_DEFAULTIMAGE;
+	const char* default_defaultTheme = P_DEFAULTTHEME;
+	const bool default_hiliteBlank = false;
+	const Color default_hiliteBlankColor = Color(0.8, 0.4, 0.4, 1);
+	const bool default_keepAspect = false;
+	const char* default_lastGame = "";
+	const char* default_lastImage = "";
+	const Color default_numbersColor = Color(0.8, 0.8, 0.8, 1);
+	const bool default_numbersVisible = true;
+	const Color default_outlinesColor = Color(0.5, 0.5, 0.5, 1);
+	const bool default_outlinesVisible = false;
+	const int default_rows = 4;
 }
 
 const char* AppPreferences::P_PREFS = "user://prefs.cfg";
@@ -79,6 +83,10 @@ void AppPreferences::_bind_methods()
 	ClassDB::bind_method(D_METHOD("default_image_set", "newVal"), &AppPreferences::default_image_set);
 	ClassDB::bind_method(D_METHOD("default_theme_get"), &AppPreferences::default_theme_get);
 	ClassDB::bind_method(D_METHOD("default_theme_set", "newVal"), &AppPreferences::default_theme_set);
+	ClassDB::bind_method(D_METHOD("hilite_blank_get"), &AppPreferences::hilite_blank_get);
+	ClassDB::bind_method(D_METHOD("hilite_blank_set", "newVal"), &AppPreferences::hilite_blank_set);
+	ClassDB::bind_method(D_METHOD("hilite_blank_color_get"), &AppPreferences::hilite_blank_color_get);
+	ClassDB::bind_method(D_METHOD("hilite_blank_color_get", "newVal"), &AppPreferences::hilite_blank_color_set);
 	ClassDB::bind_method(D_METHOD("keep_aspect_get"), &AppPreferences::keep_aspect_get);
 	ClassDB::bind_method(D_METHOD("keep_aspect_set", "newVal"), &AppPreferences::keep_aspect_set);
 	ClassDB::bind_method(D_METHOD("last_game_get"), &AppPreferences::last_game_get);
@@ -104,6 +112,8 @@ void AppPreferences::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "columns"), "columns_set", "columns_get");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "default_image"), "default_image_set", "default_image_get");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "default_theme"), "default_theme_set", "default_theme_get");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "hilite_blank"), "hilite_blank_set", "hilite_blank_get");
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "hilite_blank_color"), "hilite_blank_color_set", "hilite_blank_color_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "keep_aspect"), "keep_aspect_set",	"keep_aspect_get");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "last_game"), "last_game_set", "last_game_get");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "last_image"), "last_image_set", "last_image_get");
@@ -125,6 +135,8 @@ AppPreferences::AppPreferences()
 	_columns = default_columns;
 	_defaultTheme = default_defaultTheme;
 	_defaultImage = default_defaultImage;
+	_hiliteBlank = default_hiliteBlank;
+	_hiliteBlankColor = default_hiliteBlankColor;
 	_keepAspect = default_keepAspect;
 	_lastGame = default_lastGame;
 	_lastImage = default_lastImage;
@@ -158,7 +170,7 @@ bool AppPreferences::auto_load_get() const
 	return _autoLoad;
 }
 	
-void AppPreferences::auto_load_set(bool newVal)
+void AppPreferences::auto_load_set(const bool newVal)
 {
 	if (_autoLoad != newVal)
 		_autoLoad = newVal;
@@ -180,7 +192,7 @@ bool AppPreferences::auto_remove_on_win_get() const
 	return _autoRemoveOnWin;
 }
 	
-void AppPreferences::auto_remove_on_win_set(bool newVal)
+void AppPreferences::auto_remove_on_win_set(const bool newVal)
 {
 	if (_autoRemoveOnWin != newVal)
 		_autoRemoveOnWin = newVal;
@@ -191,7 +203,7 @@ bool AppPreferences::auto_save_get() const
 	return _autoSave;
 }
 	
-void AppPreferences::auto_save_set(bool newVal)
+void AppPreferences::auto_save_set(const bool newVal)
 {
 	if (_autoSave != newVal)
 		_autoSave = newVal;
@@ -202,7 +214,7 @@ int AppPreferences::columns_get() const
 	return _columns;
 }
 	
-void AppPreferences::columns_set(int newVal)
+void AppPreferences::columns_set(const int newVal)
 {
 	if (_columns != newVal)
 		_columns = newVal;
@@ -235,6 +247,28 @@ String AppPreferences::default_image_get() const
 	return _defaultImage;
 }
 
+bool AppPreferences::hilite_blank_get() const
+{
+	return _hiliteBlank;
+}
+
+void AppPreferences::hilite_blank_set(const bool newVal)
+{
+	if (_hiliteBlank != newVal)
+		_hiliteBlank = newVal;
+}
+
+Color AppPreferences::hilite_blank_color_get() const
+{
+	return _hiliteBlankColor;
+}
+
+void AppPreferences::hilite_blank_color_set(const Color newVal)
+{
+	if (_hiliteBlankColor != newVal)
+		_hiliteBlankColor = newVal;
+}
+
 bool AppPreferences::keep_aspect_get() const
 {
 	return _keepAspect;
@@ -257,7 +291,7 @@ String AppPreferences::last_image_get() const
 	return _lastImage;
 }
 	
-void AppPreferences::last_image_set(String newVal)
+void AppPreferences::last_image_set(const String newVal)
 {
 	if (_lastImage != newVal)
 		_lastImage = newVal;
@@ -266,10 +300,13 @@ void AppPreferences::last_image_set(String newVal)
 void AppPreferences::load(const String path)
 {
 	FUNC_("AppPreferences::load");
-		
+
+	int tmp;
+	String stmp;
+	
 	Ref<ConfigFile> cf = memnew(ConfigFile);
 	cf->load(path);
-	int tmp = (int) cf->get_value(S_GLOBALS, V_VERSION, PREFS_VERSION);
+	tmp = (int) cf->get_value(S_GLOBALS, V_VERSION, PREFS_VERSION);
 	ERR_FAIL_COND(tmp != PREFS_VERSION);
 	tmp = cf->get_value(S_GLOBALS, V_AUTOLOAD, default_autoLoad ? 1 : 0);
 	// FUNCP_("_autoLoad = ", tmp);
@@ -288,6 +325,12 @@ void AppPreferences::load(const String path)
 	// FUNCP_("_defaultTheme = \"", _defaultTheme, "\"");
 	_defaultImage = cf->get_value(S_GLOBALS, V_DEFAULTIMAGE, default_defaultImage);
 	// FUNCP_("_defaultImage = \"", _defaultImage, "\"");
+	tmp = cf->get_value(S_GLOBALS, V_HILITEBLANK, default_hiliteBlank ? 1 : 0);
+	// FUNCP_("_hiliteBlank = ", tmp);
+	_hiliteBlank = tmp == 1;
+	stmp = cf->get_value(S_GLOBALS, V_HILITEBLANKCOLOR, default_hiliteBlankColor.to_html(false));
+	// FUNCPF_("_hiliteBlankColor = \"", stmp, "\"");
+	_hiliteBlankColor = Color::html(stmp.substr(0, 6));
 	tmp = cf->get_value(S_GLOBALS, V_KEEPASPECT, default_keepAspect ? 1 : 0);
 	// FUNCP_("_keepAspect = ", tmp);
 	_keepAspect = tmp == 1;	
@@ -295,15 +338,15 @@ void AppPreferences::load(const String path)
 	// FUNCP_("_lastGame = \"", _lastGame, "\"");
 	_lastImage = cf->get_value(S_GLOBALS, V_LASTIMAGE, default_lastImage);
 	// FUNCP_("_lastImage = \"", _lastImage, "\"");
-	String stmp = cf->get_value(S_GLOBALS, V_NUMBERSCOLOR, default_numbersColor.to_html(true));
+	stmp = cf->get_value(S_GLOBALS, V_NUMBERSCOLOR, default_numbersColor.to_html(false));
 	// FUNCP_("_numbersColor = \"", stmp, "\"");
-	_numbersColor = Color(stmp);
+	_numbersColor = Color::html(stmp.substr(0, 6));
 	tmp = cf->get_value(S_GLOBALS, V_NUMBERSVISIBLE, default_numbersVisible ? 1 : 0);
 	// FUNCP_("_numbersVisible = ", tmp);
 	_numbersVisible = tmp == 1;
-	stmp = cf->get_value(S_GLOBALS, V_OUTLINESCOLOR, default_outlinesColor.to_html(true));
+	stmp = cf->get_value(S_GLOBALS, V_OUTLINESCOLOR, default_outlinesColor.to_html(false));
 	// FUNCPF_("_outlinesColor = \"", stmp, "\"");
-	_outlinesColor = Color(stmp);
+	_outlinesColor = Color::html(stmp.substr(0, 6));
 	tmp = cf->get_value(S_GLOBALS, V_OUTLINESVISIBLE, default_outlinesVisible ? 1 : 0);
 	// FUNCP_("_outlinesVisible = ", tmp);
 	_outlinesVisible = tmp == 1;
@@ -369,39 +412,54 @@ void AppPreferences::rows_set(const int newVal)
 void AppPreferences::save(const String path)
 {
 	FUNC_("AppPreferences::save");
-		
+
+	int tmp;
+	String stmp;
+	
 	Ref<ConfigFile> cf = memnew(ConfigFile);
 	cf->set_value(S_GLOBALS, V_VERSION, PREFS_VERSION);
-	// FUNCP_("_autoLoad = ", _autoLoad ? 1 : 0);
-	cf->set_value(S_GLOBALS, V_AUTOLOAD, _autoLoad ? 1 : 0);
+	tmp = _autoLoad ? 1 : 0;
+	// FUNCP_("_autoLoad = ", tmp);
+	cf->set_value(S_GLOBALS, V_AUTOLOAD, tmp);
 	// FUNCP_("_autoPath = \"", _autoPath, "\"");
 	cf->set_value(S_GLOBALS, V_AUTOPATH, _autoPath);
-	// FUNCP_("_autoRemoveOnWin = ", _autoRemoveOnWin ? 1 : 0);
-	cf->set_value(S_GLOBALS, V_AUTOREMOVEONWIN, _autoRemoveOnWin ? 1 : 0);
-	// FUNCP_("_autoSave = ", _autoSave ? 1 : 0);
-	cf->set_value(S_GLOBALS, V_AUTOSAVE, _autoSave ? 1 : 0);
+	tmp = _autoRemoveOnWin ? 1 : 0;
+	// FUNCP_("_autoRemoveOnWin = ", tmp);
+	cf->set_value(S_GLOBALS, V_AUTOREMOVEONWIN, tmp);
+	tmp = _autoSave ? 1 : 0;
+	// FUNCP_("_autoSave = ", tmp);
+	cf->set_value(S_GLOBALS, V_AUTOSAVE, tmp);
 	// FUNCP_("_columns = ", _columns);
 	cf->set_value(S_GLOBALS, V_COLUMNS, _columns);
 	// FUNCP_("_defaultTheme = \"", _defaultTheme, "\"");
 	cf->set_value(S_GLOBALS, V_DEFAULTTHEME, _defaultTheme);
 	// FUNCP_("_defaultImage = \"", _defaultImage, "\"");
 	cf->set_value(S_GLOBALS, V_DEFAULTIMAGE, _defaultImage);
-	// FUNCP_("_keepAspect = ", _keepAspect ? 1 : 0);
-	cf->set_value(S_GLOBALS, V_KEEPASPECT, _keepAspect ? 1 : 0);
+	tmp = _hiliteBlank ? 1 : 0;
+	// FUNCP_("_hiliteBlank = ", tmp);
+	cf->set_value(S_GLOBALS, V_HILITEBLANK, tmp);
+	stmp = _hiliteBlankColor.to_html(true);
+	// FUNCP_("_hiliteBlankColor = \"", stmp, "\"");
+	cf->set_value(S_GLOBALS, V_HILITEBLANKCOLOR, stmp.substr(0, 6));
+	tmp = _keepAspect ? 1 : 0;
+	// FUNCP_("_keepAspect = ", tmp);
+	cf->set_value(S_GLOBALS, V_KEEPASPECT, tmp);
     // FUNCP_("_lastGame = \"", _lastGame, "\"");
 	cf->set_value(S_GLOBALS, V_LASTGAME, _lastGame);
 	// FUNCP_("_lastImage = \"", _lastImage, "\"");
 	cf->set_value(S_GLOBALS, V_LASTIMAGE, _lastImage);
-	String stmp = _numbersColor.to_html(true);
+	stmp = _numbersColor.to_html(true);
 	// FUNCP_("_numbersColor = \"", stmp, "\"");
-	cf->set_value(S_GLOBALS, V_NUMBERSCOLOR, stmp);
-	// FUNCP_("_numbersVisible = ", _numbersVisible ? 1 : 0);
-	cf->set_value(S_GLOBALS, V_NUMBERSVISIBLE, _numbersVisible ? 1 : 0);
+	cf->set_value(S_GLOBALS, V_NUMBERSCOLOR, stmp.substr(0, 6));
+	tmp = _numbersVisible ? 1 : 0;
+	// FUNCP_("_numbersVisible = ", tmp);
+	cf->set_value(S_GLOBALS, V_NUMBERSVISIBLE, tmp);
 	stmp = _outlinesColor.to_html(true);
 	// FUNCPF_("_outlinesColor = \"", stmp, "\"");
-	cf->set_value(S_GLOBALS, V_OUTLINESCOLOR, stmp);
-	// FUNCP_("_outlinesVisible = ", _outlinesVisible ? 1 : 0);
-	cf->set_value(S_GLOBALS, V_OUTLINESVISIBLE, _outlinesVisible ? 1 : 0);
+	cf->set_value(S_GLOBALS, V_OUTLINESCOLOR, stmp.substr(0, 6));
+	tmp = _outlinesVisible ? 1 : 0;
+	// FUNCP_("_outlinesVisible = ", tmp);
+	cf->set_value(S_GLOBALS, V_OUTLINESVISIBLE, tmp);
 	// FUNCP_("_rows = ", _rows);
 	cf->set_value(S_GLOBALS, V_ROWS, _rows);
 	cf->save(path);

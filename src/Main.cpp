@@ -136,6 +136,14 @@ void Main::_ready()
 	// Queue call to auto start if needed
 	if (_globals->tiles_quit_get() == false)
 		call_deferred("check_auto_start");
+
+	// If this is first run, import preferences into globals
+	if (_globals->preferences_imported_get() == false)
+	{
+		_globals->tiles_keep_aspect_set(_preferences->keep_aspect_get());
+		_globals->tiles_hilite_blank_set(_preferences->hilite_blank_get());
+		_globals->preferences_imported_set(true);
+	}
 }
 
 void Main::_unhandled_input(const Ref<InputEvent>& ev)

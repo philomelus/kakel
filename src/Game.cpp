@@ -8,6 +8,15 @@
 
 using namespace godot;
 
+namespace
+{
+	// Options menu items indexes
+	const int MI_HILITEBLANK = 3;
+	const int MI_KEEPASPECT = 2;
+	const int MI_NUMBERSVISIBLE = 1;
+	const int MI_OUTLINESVISIBLE = 0;
+}
+
 void Game::_bind_methods()
 {
 	FUNC_("Game::_bind_methods");
@@ -180,9 +189,10 @@ void Game::_ready()
 	_options->set_h_size_flags(0);
 	_options->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
 	PopupMenu* pm = _options->get_popup();
-	pm->add_check_item("Outlines", 0);
-	pm->add_check_item("Numbers", 1);
-	pm->add_check_item("Aspect Ratio", 2);
+	pm->add_check_item("Outlines", MI_OUTLINESVISIBLE);
+	pm->add_check_item("Numbers", MI_NUMBERSVISIBLE);
+	pm->add_check_item("Aspect Ratio", MI_KEEPASPECT);
+	pm->add_check_item("Hilite Blank", MI_HILITEBLANK);
 	_hflowContainer->add_child(_options);
 		
 	// Separate control areas
@@ -315,17 +325,23 @@ void Game::_ready()
 	// Numbers visible?
 	bool b = _preferences->numbers_visible_get();
 	_tiles->numbers_visible_set(b);
-	pm->set_item_checked(1, b);
+	pm->set_item_checked(MI_NUMBERSVISIBLE, b);
 
 	// Outlines visible?
 	b = _preferences->outlines_visible_get();
 	_tiles->outlines_visible_set(b);
-	pm->set_item_checked(0, b);
+	pm->set_item_checked(MI_OUTLINESVISIBLE, b);
 
 	// Keep aspect ratio?
 	b = _globals->tiles_keep_aspect_get();
 	_tiles->keep_aspect_set(b);
-	pm->set_item_checked(2, b);
+	pm->set_item_checked(MI_KEEPASPECT, b);
+	
+	// Hilite blank?
+	b = _globals->tiles_hilite_blank_get();
+	_tiles->hilite_blank_set(b);
+	pm->set_item_checked(MI_HILITEBLANK, b);
+	_tiles->hilite_blank_color_set(_preferences->hilite_blank_color_get());
 	
 	// Not all globals are used if loading a game.
 	if (_globals->tiles_loading_get())
@@ -345,17 +361,17 @@ void Game::_ready()
 				_tiles->image_path_set(_preferences->default_image_get());
 			else
 				_tiles->image_path_set(_preferences->last_image_get());
-			pm->set_item_disabled(0, false);
-			pm->set_item_disabled(1, false);
-			pm->set_item_disabled(2, false);
+			pm->set_item_disabled(MI_KEEPASPECT, false);
+			pm->set_item_disabled(MI_NUMBERSVISIBLE, false);
+			pm->set_item_disabled(MI_OUTLINESVISIBLE, false);
 			FUNCP_("tiles using image");
 		}
 		else
 		{
 			_tiles->image_path_set("");
-			pm->set_item_disabled(0, true);
-			pm->set_item_disabled(1, true);
-			pm->set_item_disabled(2, true);
+			pm->set_item_disabled(MI_KEEPASPECT, true);
+			pm->set_item_disabled(MI_NUMBERSVISIBLE, true);
+			pm->set_item_disabled(MI_OUTLINESVISIBLE, true);
 			FUNCP_("tiles not using image");
 		}
 		_tiles->start();
@@ -364,7 +380,7 @@ void Game::_ready()
 	// Haven't quit yet
 	_globals->tiles_quit_set(false);
 }
-	
+
 void Game::abort()
 {
 	FUNC_("Game::abort");
@@ -485,16 +501,20 @@ void Game::on_options_itemSelected(const int index)
 	const bool on = pm->is_item_checked(index);
 	switch (index)
 	{
-	case 0: // Outlines
+	case MI_OUTLINESVISIBLE:
 		_tiles->outlines_visible_set(on);
 		break;
 
-	case 1: // Numbers
+	case MI_NUMBERSVISIBLE:
 		_tiles->numbers_visible_set(on);
 		break;
 
-	case 2: // Aspect Ratio
+	case MI_KEEPASPECT:
 		_tiles->keep_aspect_set(on);
+		break;
+
+	case MI_HILITEBLANK:
+		_tiles->hilite_blank_set(on);
 		break;
 		
 	default:

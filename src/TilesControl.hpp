@@ -20,6 +20,10 @@ namespace godot
 	public:	
 		static const int FILE_VERSION;
 		
+		// Color used for unused area of tiles when keeping aspect ratio
+		Color background_color_get() const;
+		void background_color_set(const Color newVal);
+		
 		// When true, a tile can be moved down.
 		bool can_move_down_get() const;
 
@@ -36,6 +40,12 @@ namespace godot
 		int columns_get() const;
 		void columns_set(const int newVal);
 
+		bool hilite_blank_get() const;
+		void hilite_blank_set(const bool newVal);
+
+		Color hilite_blank_color_get() const;
+		void hilite_blank_color_set(const Color newVal);
+		
 		// Path to image for tiles.
 		String image_path_get() const;
 		void image_path_set(const String newVal);
@@ -80,6 +90,7 @@ namespace godot
 		int tiles_count_get() const;
 
 	private:
+		Color _backgroundColor;
 		bool _canMoveDown;
 		bool _canMoveLeft;
 		bool _canMoveRight;
@@ -89,6 +100,8 @@ namespace godot
 		int _empty;
 		int _emptyId;
 		bool _gameComplete;
+		bool _hiliteBlank;
+		Color _hiliteBlankColor;
 		Ref<Image> _image;
 		String _imagePath;
 		bool _keepAspect;
