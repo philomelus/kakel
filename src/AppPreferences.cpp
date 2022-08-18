@@ -86,7 +86,7 @@ void AppPreferences::_bind_methods()
 	ClassDB::bind_method(D_METHOD("hilite_blank_get"), &AppPreferences::hilite_blank_get);
 	ClassDB::bind_method(D_METHOD("hilite_blank_set", "newVal"), &AppPreferences::hilite_blank_set);
 	ClassDB::bind_method(D_METHOD("hilite_blank_color_get"), &AppPreferences::hilite_blank_color_get);
-	ClassDB::bind_method(D_METHOD("hilite_blank_color_get", "newVal"), &AppPreferences::hilite_blank_color_set);
+	ClassDB::bind_method(D_METHOD("hilite_blank_color_set", "newVal"), &AppPreferences::hilite_blank_color_set);
 	ClassDB::bind_method(D_METHOD("keep_aspect_get"), &AppPreferences::keep_aspect_get);
 	ClassDB::bind_method(D_METHOD("keep_aspect_set", "newVal"), &AppPreferences::keep_aspect_set);
 	ClassDB::bind_method(D_METHOD("last_game_get"), &AppPreferences::last_game_get);
