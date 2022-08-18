@@ -206,7 +206,6 @@ void NewGame::update_image()
 	}
 	else
 		i->resize(size.x, size.y);
-	FUNCPF_("resized to ", i->get_size());
 	_imageTexture = ImageTexture::create_from_image(i);
 	_tilesImage->set_texture(_imageTexture);
 }
