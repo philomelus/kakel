@@ -2,13 +2,10 @@
 #define MAIN_HPP_INCLUDED
 
 #include <godot_cpp/classes/button.hpp>
-#include <godot_cpp/classes/center_container.hpp>
 #include <godot_cpp/classes/file_dialog.hpp>
 #include <godot_cpp/classes/input_event.hpp>
-#include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
-#include <godot_cpp/classes/v_box_container.hpp>
 #include "AppGlobals.hpp"
 #include "AppPreferences.hpp"
 
@@ -19,9 +16,7 @@ namespace godot
 		GDCLASS(Main, PanelContainer);
 
 	private:
-		CenterContainer* _centerContainer;
 		AppGlobals* _globals;
-		Label* _label;
 		Button* _load;
 		FileDialog* _loadDialog;
 		bool _loadDialogUsed;
@@ -30,7 +25,6 @@ namespace godot
 		Button* _quit;
 		Button* _start;
 		SceneTree* _tree;
-		VBoxContainer* _vboxContainer;
 
 	protected:
 		static void _bind_methods();

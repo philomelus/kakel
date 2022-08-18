@@ -28,15 +28,6 @@ Main::Main()
 	: _loadDialogUsed(false)
 {
 	FUNC_("Main::Main");
-	
-	_centerContainer = memnew(CenterContainer);
-	_vboxContainer = memnew(VBoxContainer);
-	_label = memnew(Label);
-	_load = memnew(Button);
-	_loadDialog = memnew(FileDialog);
-	_options = memnew(Button);
-	_quit = memnew(Button);
-	_start = memnew(Button);
 }
 
 Main::~Main()
@@ -48,86 +39,42 @@ void Main::_ready()
 {
 	FUNC_("Main::_ready");
 
+	PanelContainer::_ready();
+	
 	_globals = get_node<AppGlobals>("/root/Globals");
+	ERR_FAIL_COND(_globals == nullptr);
+
 	_preferences = get_node<AppPreferences>("/root/Preferences");
+	ERR_FAIL_COND(_preferences == nullptr);
+	
+	_start = get_node<Button>("CenterContainer/VBoxContainer/Start");
+	ERR_FAIL_COND(_start == nullptr);
+
+	_load = get_node<Button>("CenterContainer/VBoxContainer/Load");
+	ERR_FAIL_COND(_load == nullptr);
+
+	_options = get_node<Button>("CenterContainer/VBoxContainer/Options");
+	ERR_FAIL_COND(_options == nullptr);
+
+	_quit = get_node<Button>("CenterContainer/VBoxContainer/Quit");
+	ERR_FAIL_COND(_quit == nullptr);
+
+	_loadDialog = get_node<FileDialog>("LoadDialog");
+	ERR_FAIL_COND(_loadDialog == nullptr);
+
 	_tree = get_tree();
 
-	ERR_FAIL_COND(_globals == nullptr);
-	ERR_FAIL_COND(_preferences == nullptr);
-
-	// Load default theme if needed
-	Ref<Theme> theme = _globals->theme_get();
-	if (theme == nullptr)
-	{
-		theme = Ref(ResourceLoader::get_singleton()->load(_preferences->default_theme_get(), "Theme",
-														  ResourceLoader::CacheMode::CACHE_MODE_IGNORE));
-		_globals->theme_set(theme);
-	}
-		
-	ERR_FAIL_COND(theme == nullptr);
-
-	// Set our settings
-	set_anchors_preset(Control::LayoutPreset::PRESET_FULL_RECT);
-	set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-	set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-	set_h_grow_direction(Control::GrowDirection::GROW_DIRECTION_BOTH);
-	set_v_grow_direction(Control::GrowDirection::GROW_DIRECTION_BOTH);
-			
-	// Add center contianer
-	add_child(_centerContainer);
-			
-	// Add v box container
-	_centerContainer->add_child(_vboxContainer);
-
-	// Add label
-	_label->set_theme(theme);
-	_label->set_text("KAKEL");
-	_label->set_horizontal_alignment(HorizontalAlignment::HORIZONTAL_ALIGNMENT_CENTER);
-	_label->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-	_label->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-	_vboxContainer->add_child(_label);
-			
-	// Add new button
-	_start->set_theme(theme);
-	_start->set_tooltip("Start a new game.");
-	_start->set_text("New");
-	_vboxContainer->add_child(_start);
-			
-	// Add load button
-	_load->set_theme(theme);
-	_load->set_tooltip("Load a previously saved game.");
-	_load->set_text("Load");
-	_vboxContainer->add_child(_load);
-			
-	// Add preferences button
-	_options->set_theme(theme);
-	_options->set_tooltip("Change game settings.");
-	_options->set_text("Options");
-	_vboxContainer->add_child(_options);
-			
-	// Add quit button
-	_quit->set_theme(theme);
-	_quit->set_tooltip("Exit the game.");
-	_quit->set_text("Quit");
-	_vboxContainer->add_child(_quit);
-			
-	// Add load dialog
-	_loadDialog->set_min_size(Vector2(480, 320));
-	_loadDialog->set_title("Open A Game");
-	_loadDialog->set_mode_overrides_title(false);
-	_loadDialog->set_file_mode(FileDialog::FileMode::FILE_MODE_OPEN_FILE);
-	_loadDialog->set_access(FileDialog::Access::ACCESS_FILESYSTEM);
-	PackedStringArray filters;
-	filters.append("*.kakel;Kakel Games");
-	_loadDialog->set_filters(filters);
-	add_child(_loadDialog);
-		
 	// Connect signals
-	_start->connect("pressed", Callable(this, "on_new_pressed"));
-	_load->connect("pressed", Callable(this, "on_load_pressed"));
-	_options->connect("pressed", Callable(this, "on_options_pressed"));
-	_quit->connect("pressed", Callable(this, "on_quit_pressed"));
-	_loadDialog->connect("file_selected", Callable(this, "on_loadDialog_fileSelected"));
+	Error err = _start->connect("pressed", Callable(this, "on_new_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _load->connect("pressed", Callable(this, "on_load_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _options->connect("pressed", Callable(this, "on_options_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _quit->connect("pressed", Callable(this, "on_quit_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _loadDialog->connect("file_selected", Callable(this, "on_loadDialog_fileSelected"));
+	ERR_FAIL_COND(err != Error::OK);
 
 	// If an image was loaded previously, then default is no longer known
 	if (_preferences->last_image_get().length() > 0)
