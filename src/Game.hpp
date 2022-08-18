@@ -4,19 +4,14 @@
 #include <godot_cpp/classes/button.hpp>
 #include <godot_cpp/classes/control.hpp>
 #include <godot_cpp/classes/file_dialog.hpp>
-#include <godot_cpp/classes/grid_container.hpp>
-#include <godot_cpp/classes/h_flow_container.hpp>
 #include <godot_cpp/classes/image.hpp>
 #include <godot_cpp/classes/input_event.hpp>
 #include <godot_cpp/classes/label.hpp>
 #include <godot_cpp/classes/line_edit.hpp>
-#include <godot_cpp/classes/margin_container.hpp>
 #include <godot_cpp/classes/menu_button.hpp>
-#include <godot_cpp/classes/panel_container.hpp>
 #include <godot_cpp/classes/scene_tree.hpp>
 #include <godot_cpp/classes/texture_rect.hpp>
 #include <godot_cpp/classes/v_box_container.hpp>
-#include <godot_cpp/classes/v_separator.hpp>
 #include <godot_cpp/classes/window.hpp>
 #include "AppGlobals.hpp"
 #include "AppPreferences.hpp"
@@ -29,40 +24,34 @@ namespace godot
 		GDCLASS(Game, Control);
 		
 	private:
+		// Common
+		AppGlobals* _globals;
+		AppPreferences* _preferences;
+		SceneTree* _tree;
+
+		// UI
 		Button* _abort;
 		VBoxContainer* _gameBoard;
-		AppGlobals* _globals;
-		GridContainer* _gridContainer;
-		HFlowContainer* _hflowContainer;
-		HFlowContainer* _hflowContainer2;
 		Button* _hint;
 		Button* _hintClose;
 		Window* _hintDialog;
-		bool _hintDialogUsed;
 		TextureRect* _hintImage;
 		Button* _load;
 		FileDialog* _loadDialog;
-		bool _loadDialogUsed;
-		MarginContainer* _marginContainer;
 		LineEdit* _moves;
-		Label* _movesLabel;
 		MenuButton* _options;
-		PanelContainer* _panelContainer;
-		AppPreferences* _preferences;
 		Button* _quit;
 		Button* _save;
 		FileDialog* _saveDialog;
-		bool _saveDialogUsed;
 		TilesControl* _tiles;
-		SceneTree* _tree;
-		VSeparator* _vseparator;
-		VSeparator* _vseparator2;
-		VSeparator* _vseparator3;
-		VSeparator* _vseparator4;
-		VSeparator* _vseparator5;
 		Button* _winnerClose;
 		Window* _winnerDialog;
 		Label* _winnerLabel;
+
+		// Internal
+		bool _hintDialogUsed;
+		bool _loadDialogUsed;
+		bool _saveDialogUsed;
 
 	protected:
 		static void _bind_methods();

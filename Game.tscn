@@ -1,11 +1,203 @@
-[gd_scene format=3 uid="uid://cgqv3gqjj5nal"]
+[gd_scene load_steps=2 format=3 uid="uid://cgqv3gqjj5nal"]
 
-[node name="Game" type="Control"]
+[ext_resource type="Theme" uid="uid://hdvofvgu3s3q" path="res://theme.tres" id="1_icjfe"]
+
+[node name="Game" type="Game"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Game" type="Game" parent="."]
+[node name="GameBoard" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="PanelContainer" type="PanelContainer" parent="GameBoard"]
+offset_right = 1280.0
+offset_bottom = 53.0
+size_flags_horizontal = 3
+
+[node name="HFlowContainer2" type="HFlowContainer" parent="GameBoard/PanelContainer"]
+offset_right = 1280.0
+offset_bottom = 53.0
+size_flags_horizontal = 3
+theme = ExtResource("1_icjfe")
+
+[node name="HFlowContainer" type="HFlowContainer" parent="GameBoard/PanelContainer/HFlowContainer2"]
+offset_right = 1051.0
+offset_bottom = 53.0
+size_flags_horizontal = 3
+
+[node name="Abort" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_right = 170.0
+offset_bottom = 53.0
+size_flags_vertical = 4
+text = "Quit Game"
+
+[node name="VSeparator" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 174.0
+offset_right = 178.0
+offset_bottom = 53.0
+
+[node name="Quit" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 182.0
+offset_right = 334.0
+offset_bottom = 53.0
+size_flags_vertical = 4
+text = "Exit Kakel"
+
+[node name="VSeparator2" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 338.0
+offset_right = 342.0
+offset_bottom = 53.0
+
+[node name="Load" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 346.0
+offset_right = 428.0
+offset_bottom = 53.0
+size_flags_vertical = 4
+text = "Load"
+
+[node name="VSeparator3" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 432.0
+offset_right = 436.0
+offset_bottom = 53.0
+
+[node name="Save" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 440.0
+offset_right = 518.0
+offset_bottom = 53.0
+size_flags_vertical = 4
+text = "Save"
+
+[node name="VSeparator4" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 522.0
+offset_right = 526.0
+offset_bottom = 53.0
+
+[node name="Options" type="MenuButton" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 530.0
+offset_right = 657.0
+offset_bottom = 53.0
+size_flags_vertical = 4
+text = "Options"
+item_count = 4
+popup/item_0/text = "Outlines"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+popup/item_1/text = "Numbers"
+popup/item_1/checkable = 1
+popup/item_1/id = 1
+popup/item_2/text = "Aspect Ratio"
+popup/item_2/checkable = 1
+popup/item_2/id = 2
+popup/item_3/text = "Hilite Blank"
+popup/item_3/checkable = 1
+popup/item_3/id = 3
+
+[node name="VSeparator5" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 661.0
+offset_right = 665.0
+offset_bottom = 53.0
+
+[node name="Hint" type="Button" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
+offset_left = 669.0
+offset_right = 741.0
+offset_bottom = 53.0
+size_flags_vertical = 4
+text = "Hint"
+
+[node name="GridContainer" type="GridContainer" parent="GameBoard/PanelContainer/HFlowContainer2"]
+offset_left = 1055.0
+offset_right = 1280.0
+offset_bottom = 53.0
+size_flags_horizontal = 8
+columns = 2
+
+[node name="MovesLabel" type="Label" parent="GameBoard/PanelContainer/HFlowContainer2/GridContainer"]
+offset_top = 2.0
+offset_right = 97.0
+offset_bottom = 50.0
+text = "Moves"
+
+[node name="Moves" type="LineEdit" parent="GameBoard/PanelContainer/HFlowContainer2/GridContainer"]
+offset_left = 101.0
+offset_right = 225.0
+offset_bottom = 53.0
+text = "0"
+alignment = 1
+editable = false
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+shortcut_keys_enabled = false
+middle_mouse_paste_enabled = false
+
+[node name="MarginContainer" type="MarginContainer" parent="GameBoard"]
+offset_top = 57.0
+offset_right = 1280.0
+offset_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Tiles" type="TilesControl" parent="GameBoard/MarginContainer"]
+offset_right = 1280.0
+offset_bottom = 663.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="WinnerDialog" type="Window" parent="."]
+title = "Winner!"
+size = Vector2i(320, 320)
+visible = false
+exclusive = true
+min_size = Vector2i(320, 320)
+
+[node name="WinnerLabel" type="Label" parent="WinnerDialog"]
+offset_right = 40.0
+offset_bottom = 23.0
+theme = ExtResource("1_icjfe")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WinnerClose" type="Button" parent="WinnerDialog"]
+offset_right = 8.0
+offset_bottom = 8.0
+theme = ExtResource("1_icjfe")
+text = "Close"
+
+[node name="HintDialog" type="Window" parent="."]
+title = "Hint"
+size = Vector2i(480, 320)
+visible = false
+exclusive = true
+min_size = Vector2i(480, 320)
+
+[node name="HintImage" type="TextureRect" parent="HintDialog"]
+offset_right = 40.0
+offset_bottom = 40.0
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="HintClose" type="Button" parent="HintDialog"]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Close"
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+title = "Load Game"
+size = Vector2i(480, 320)
+min_size = Vector2i(480, 320)
+ok_button_text = "Open"
+mode_overrides_title = false
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.kakel;Kakel Games")
+
+[node name="SaveDailog" type="FileDialog" parent="."]
+title = "Save Game"
+size = Vector2i(480, 320)
+min_size = Vector2i(480, 320)
+ok_button_text = "Save"
+mode_overrides_title = false
+access = 2
+filters = PackedStringArray("*.kakel;Kakel Games")
