@@ -1,9 +1,225 @@
-[gd_scene format=3 uid="uid://b1xhjxf6xswcr"]
+[gd_scene load_steps=2 format=3 uid="uid://b1xhjxf6xswcr"]
+
+[ext_resource type="Theme" uid="uid://hdvofvgu3s3q" path="res://theme.tres" id="1_gx8v2"]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Prefs" type="Prefs" parent="."]
+[node name="PanelContainer" type="Prefs" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+offset_right = 1280.0
+offset_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+offset_left = 419.0
+offset_top = 32.0
+offset_right = 860.0
+offset_bottom = 687.0
+theme = ExtResource("1_gx8v2")
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_right = 441.0
+offset_bottom = 578.0
+size_flags_horizontal = 4
+columns = 2
+
+[node name="ColumnsLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 2.0
+offset_right = 281.0
+offset_bottom = 50.0
+hint_tooltip = "Number of tiles in grid."
+mouse_filter = 0
+text = "Columns"
+
+[node name="Columns" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_right = 441.0
+offset_bottom = 53.0
+min_value = 3.0
+max_value = 99.0
+value = 4.0
+alignment = 1
+
+[node name="RowsLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 59.0
+offset_right = 281.0
+offset_bottom = 107.0
+hint_tooltip = "Number of tiles in grid."
+mouse_filter = 0
+text = "Columns"
+
+[node name="Rows" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 57.0
+offset_right = 441.0
+offset_bottom = 110.0
+min_value = 3.0
+max_value = 99.0
+value = 4.0
+alignment = 1
+
+[node name="KeepAspectLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 114.0
+offset_right = 281.0
+offset_bottom = 162.0
+hint_tooltip = "When enabled, the image aspect ratio is maintained within tiles."
+mouse_filter = 0
+text = "Keep Aspect Ratio"
+
+[node name="KeepAspect" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 114.0
+offset_right = 407.0
+offset_bottom = 162.0
+size_flags_horizontal = 4
+
+[node name="OutlinesVisibleLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 166.0
+offset_right = 281.0
+offset_bottom = 214.0
+hint_tooltip = "When enabled, tiles are outlined."
+mouse_filter = 0
+text = "Show Outlines"
+
+[node name="OutlinesVisible" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 166.0
+offset_right = 407.0
+offset_bottom = 214.0
+size_flags_horizontal = 4
+
+[node name="OutlinesColorLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 218.0
+offset_right = 281.0
+offset_bottom = 266.0
+hint_tooltip = "Outlines are drawn in this color."
+mouse_filter = 0
+text = "Outlines Color"
+
+[node name="OutlinesColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 218.0
+offset_right = 441.0
+offset_bottom = 266.0
+
+[node name="NumbersVisibleLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 270.0
+offset_right = 281.0
+offset_bottom = 318.0
+hint_tooltip = "When enabled, tile numbers are shown in upper left of each tile."
+mouse_filter = 0
+text = "Show Numbers"
+
+[node name="NumbersVisible" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 270.0
+offset_right = 407.0
+offset_bottom = 318.0
+size_flags_horizontal = 4
+
+[node name="NumbersColorLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 322.0
+offset_right = 281.0
+offset_bottom = 370.0
+hint_tooltip = "Tile numbers are drawn in this color."
+mouse_filter = 0
+text = "Numbers Color"
+
+[node name="NumbersColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 322.0
+offset_right = 441.0
+offset_bottom = 370.0
+
+[node name="HiliteBlankLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 374.0
+offset_right = 281.0
+offset_bottom = 422.0
+hint_tooltip = "When enabled, the blank tile is hilited."
+mouse_filter = 0
+text = "Hilite Blank Tile"
+
+[node name="HiliteBlank" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 374.0
+offset_right = 407.0
+offset_bottom = 422.0
+size_flags_horizontal = 4
+
+[node name="HiliteBlankColorLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 426.0
+offset_right = 281.0
+offset_bottom = 474.0
+hint_tooltip = "When blank tile is hilited, its drawn in this color."
+mouse_filter = 0
+text = "Hilite Blank Color"
+
+[node name="HiliteBlankColor" type="ColorPickerButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 285.0
+offset_top = 426.0
+offset_right = 441.0
+offset_bottom = 474.0
+
+[node name="AutoSaveLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 478.0
+offset_right = 281.0
+offset_bottom = 526.0
+hint_tooltip = "If \"Exit Kakel\" button is used, automatically save the current game before exit."
+mouse_filter = 0
+text = "Auto Save on Exit"
+
+[node name="AutoSave" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 478.0
+offset_right = 407.0
+offset_bottom = 526.0
+size_flags_horizontal = 4
+
+[node name="AutoLoadLabel" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_top = 530.0
+offset_right = 281.0
+offset_bottom = 578.0
+hint_tooltip = "If previous automatically saved game from exit
+exists, automatically load that game on launch."
+mouse_filter = 0
+text = "Auto Load on Start"
+
+[node name="AutoLoad" type="CheckButton" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
+offset_left = 319.0
+offset_top = 530.0
+offset_right = 407.0
+offset_bottom = 578.0
+size_flags_horizontal = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/CenterContainer/VBoxContainer"]
+offset_top = 582.0
+offset_right = 441.0
+offset_bottom = 655.0
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/CenterContainer/VBoxContainer/MarginContainer"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 431.0
+offset_bottom = 63.0
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Cancel" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+offset_left = 113.0
+offset_right = 220.0
+offset_bottom = 53.0
+text = "Cancel"
+
+[node name="Save" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+offset_left = 230.0
+offset_right = 308.0
+offset_bottom = 53.0
+text = "Save"
