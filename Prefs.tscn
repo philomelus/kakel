@@ -52,7 +52,7 @@ offset_right = 281.0
 offset_bottom = 107.0
 hint_tooltip = "Number of tiles in grid."
 mouse_filter = 0
-text = "Columns"
+text = "Rows"
 
 [node name="Rows" type="SpinBox" parent="PanelContainer/CenterContainer/VBoxContainer/GridContainer"]
 offset_left = 285.0
