@@ -1,4 +1,4 @@
-#include "Preferences.hpp"
+#include "AppPreferences.hpp"
 #include <ConfigFile.hpp>
 #include <Directory.hpp>
 #include "auto_free.hpp"
@@ -57,48 +57,48 @@ namespace
 
 namespace godot
 {
-    const char* Preferences::P_PREFS = "user://prefs.cfg";
+    const char* AppPreferences::P_PREFS = "user://prefs.cfg";
 	
-	void Preferences::_register_methods()
+	void AppPreferences::_register_methods()
 	{
-		FUNC_("Preferences::_register_methods");
+		FUNC_("AppPreferences::_register_methods");
 		
 		// API
-		register_method("_ready", &Preferences::_ready);
-		register_method("load", &Preferences::load);
-		register_method("save", &Preferences::save);
+		register_method("_ready", &AppPreferences::_ready);
+		register_method("load", &AppPreferences::load);
+		register_method("save", &AppPreferences::save);
 
 		// Properties
-		register_property<Preferences, bool>("auto_load", &Preferences::auto_load_set, &Preferences::auto_load_get, default_autoLoad);
-		register_property<Preferences, String>("auto_path", &Preferences::auto_path_set, &Preferences::auto_path_get, default_autoPath);
-		register_property<Preferences, bool>("auto_remove_on_win", &Preferences::auto_remove_on_win_set, &Preferences::auto_remove_on_win_get, default_autoRemoveOnWin);
-		register_property<Preferences, bool>("auto_save", &Preferences::auto_save_set, &Preferences::auto_save_get, default_autoSave);
-		register_property<Preferences, int>("columns", &Preferences::columns_set, &Preferences::columns_get, default_columns);
-		register_property<Preferences, String>("default_theme", &Preferences::default_theme_set, &Preferences::default_theme_get, default_defaultTheme);
-		register_property<Preferences, String>("default_image", &Preferences::default_image_set, &Preferences::default_image_get, default_defaultImage);
-		register_property<Preferences, String>("last_game", &Preferences::last_game_set, &Preferences::last_game_get, default_lastGame);
-		register_property<Preferences, String>("last_image", &Preferences::last_image_set, &Preferences::last_image_get, default_lastImage);
-		register_property<Preferences, Color>("numbers_color", &Preferences::numbers_color_set, &Preferences::numbers_color_get, default_numbersColor);
-		register_property<Preferences, bool>("numbers_visible", &Preferences::numbers_visible_set, &Preferences::numbers_visible_get, default_numbersVisible);
-		register_property<Preferences, Color>("outlines_color", &Preferences::outlines_color_set, &Preferences::outlines_color_get, default_outlinesColor);
-		register_property<Preferences, bool>("outlines_visible", &Preferences::outlines_visible_set, &Preferences::outlines_visible_get, default_outlinesVisible);
-		register_property<Preferences, int>("rows", &Preferences::rows_set, &Preferences::rows_get, default_rows);
-		register_property<Preferences, bool>("use_image", &Preferences::use_image_set, &Preferences::use_image_get, default_useImage);
+		register_property<AppPreferences, bool>("auto_load", &AppPreferences::auto_load_set, &AppPreferences::auto_load_get, default_autoLoad);
+		register_property<AppPreferences, String>("auto_path", &AppPreferences::auto_path_set, &AppPreferences::auto_path_get, default_autoPath);
+		register_property<AppPreferences, bool>("auto_remove_on_win", &AppPreferences::auto_remove_on_win_set, &AppPreferences::auto_remove_on_win_get, default_autoRemoveOnWin);
+		register_property<AppPreferences, bool>("auto_save", &AppPreferences::auto_save_set, &AppPreferences::auto_save_get, default_autoSave);
+		register_property<AppPreferences, int>("columns", &AppPreferences::columns_set, &AppPreferences::columns_get, default_columns);
+		register_property<AppPreferences, String>("default_theme", &AppPreferences::default_theme_set, &AppPreferences::default_theme_get, default_defaultTheme);
+		register_property<AppPreferences, String>("default_image", &AppPreferences::default_image_set, &AppPreferences::default_image_get, default_defaultImage);
+		register_property<AppPreferences, String>("last_game", &AppPreferences::last_game_set, &AppPreferences::last_game_get, default_lastGame);
+		register_property<AppPreferences, String>("last_image", &AppPreferences::last_image_set, &AppPreferences::last_image_get, default_lastImage);
+		register_property<AppPreferences, Color>("numbers_color", &AppPreferences::numbers_color_set, &AppPreferences::numbers_color_get, default_numbersColor);
+		register_property<AppPreferences, bool>("numbers_visible", &AppPreferences::numbers_visible_set, &AppPreferences::numbers_visible_get, default_numbersVisible);
+		register_property<AppPreferences, Color>("outlines_color", &AppPreferences::outlines_color_set, &AppPreferences::outlines_color_get, default_outlinesColor);
+		register_property<AppPreferences, bool>("outlines_visible", &AppPreferences::outlines_visible_set, &AppPreferences::outlines_visible_get, default_outlinesVisible);
+		register_property<AppPreferences, int>("rows", &AppPreferences::rows_set, &AppPreferences::rows_get, default_rows);
+		register_property<AppPreferences, bool>("use_image", &AppPreferences::use_image_set, &AppPreferences::use_image_get, default_useImage);
 	}
 
-	Preferences::Preferences()
+	AppPreferences::AppPreferences()
 	{
-		FUNC_("Preferences::Preferences");
+		FUNC_("AppPreferences::AppPreferences");
 	}
 
-	Preferences::~Preferences()
+	AppPreferences::~AppPreferences()
 	{
-		FUNC_("Preferences::~Preferences");
+		FUNC_("AppPreferences::~AppPreferences");
 	}
 
-	void Preferences::_init()
+	void AppPreferences::_init()
 	{
-		FUNC_("Preferences::_init");
+		FUNC_("AppPreferences::_init");
 		
 		_autoLoad = default_autoLoad;
 		_autoPath = default_autoPath;
@@ -120,118 +120,118 @@ namespace godot
 		Ref<Directory> d(Directory::_new());
 		if (d->file_exists(P_PREFS))
 		{
-			Godot::print("Preferences::_init: Loading preferences from \"{0}\"", P_PREFS);
+			FUNCP_("AppPreferences::_init: Loading preferences from \"{0}\"", P_PREFS);
 			load(P_PREFS);
 		}
 	}
 
-	void Preferences::_ready()
+	void AppPreferences::_ready()
 	{
-		FUNC_("Preferences::_ready");
+		FUNC_("AppPreferences::_ready");
 	}
 			
-	bool Preferences::auto_load_get() const
+	bool AppPreferences::auto_load_get() const
 	{
 		return _autoLoad;
 	}
 	
-	void Preferences::auto_load_set(bool newVal)
+	void AppPreferences::auto_load_set(bool newVal)
 	{
 		if (_autoLoad != newVal)
 			_autoLoad = newVal;
 	}
 	
-	String Preferences::auto_path_get() const
+	String AppPreferences::auto_path_get() const
 	{
 		return _autoPath;
 	}
 	
-	void Preferences::auto_path_set(const String newVal)
+	void AppPreferences::auto_path_set(const String newVal)
 	{
 		if (_autoPath != newVal)
 			_autoPath = newVal;
 	}
 	
-	bool Preferences::auto_remove_on_win_get() const
+	bool AppPreferences::auto_remove_on_win_get() const
 	{
 		return _autoRemoveOnWin;
 	}
 	
-	void Preferences::auto_remove_on_win_set(bool newVal)
+	void AppPreferences::auto_remove_on_win_set(bool newVal)
 	{
 		if (_autoRemoveOnWin != newVal)
 			_autoRemoveOnWin = newVal;
 	}
 	
-	bool Preferences::auto_save_get() const
+	bool AppPreferences::auto_save_get() const
 	{
 		return _autoSave;
 	}
 	
-	void Preferences::auto_save_set(bool newVal)
+	void AppPreferences::auto_save_set(bool newVal)
 	{
 		if (_autoSave != newVal)
 			_autoSave = newVal;
 	}
 	
-	int Preferences::columns_get() const
+	int AppPreferences::columns_get() const
 	{
 		return _columns;
 	}
 	
-	void Preferences::columns_set(int newVal)
+	void AppPreferences::columns_set(int newVal)
 	{
 		if (_columns != newVal)
 			_columns = newVal;
 	}
 	
-	String Preferences::default_theme_get() const
+	String AppPreferences::default_theme_get() const
 	{
 		return _defaultTheme;
 	}
 	
-	void Preferences::default_theme_set(const String newVal)
+	void AppPreferences::default_theme_set(const String newVal)
 	{
 		if (_defaultTheme != newVal)
 			_defaultTheme = newVal;
 	}
 	
-	String Preferences::default_image_get() const
+	String AppPreferences::default_image_get() const
 	{
 		return _defaultImage;
 	}
 	
-	void Preferences::default_image_set(const String newVal)
+	void AppPreferences::default_image_set(const String newVal)
 	{
 		if (_defaultImage != newVal)
 			_defaultImage = newVal;
 	}
 	
-	String Preferences::last_game_get() const
+	String AppPreferences::last_game_get() const
 	{
 		return _lastGame;
 	}
 	
-	void Preferences::last_game_set(const String newVal)
+	void AppPreferences::last_game_set(const String newVal)
 	{
 		if (_lastGame != newVal)
 			_lastGame = newVal;
 	}
 	
-	String Preferences::last_image_get() const
+	String AppPreferences::last_image_get() const
 	{
 		return _lastImage;
 	}
 	
-	void Preferences::last_image_set(String newVal)
+	void AppPreferences::last_image_set(String newVal)
 	{
 		if (_lastImage != newVal)
 			_lastImage = newVal;
 	}
 	
-	void Preferences::load(const String path)
+	void AppPreferences::load(const String path)
 	{
-		FUNC_("Preferences::load");
+		FUNC_("AppPreferences::load");
 		
 		auto_free<ConfigFile> cf(ConfigFile::_new());
         cf->load(path);
@@ -258,75 +258,75 @@ namespace godot
         _rows = cf->get_value(S_GLOBALS, V_ROWS, default_rows);
 	}
 	
-	Color Preferences::numbers_color_get() const
+	Color AppPreferences::numbers_color_get() const
 	{
 		return _numbersColor;
 	}
 	
-	void Preferences::numbers_color_set(const Color newVal)
+	void AppPreferences::numbers_color_set(const Color newVal)
 	{
 		if (_numbersColor != newVal)
 			_numbersColor = newVal;
 	}
 	
-	bool Preferences::numbers_visible_get() const
+	bool AppPreferences::numbers_visible_get() const
 	{
 		return _numbersVisible;
 	}
 	
-	void Preferences::numbers_visible_set(const bool newVal)
+	void AppPreferences::numbers_visible_set(const bool newVal)
 	{
 		if (_numbersVisible != newVal)
 			_numbersVisible = newVal;
 	}
 	
-	Color Preferences::outlines_color_get() const
+	Color AppPreferences::outlines_color_get() const
 	{
 		return _outlinesColor;
 	}
 	
-	void Preferences::outlines_color_set(const Color newVal)
+	void AppPreferences::outlines_color_set(const Color newVal)
 	{
 		if (_outlinesColor != newVal)
 			_outlinesColor = newVal;
 	}
 		
-	bool Preferences::outlines_visible_get() const
+	bool AppPreferences::outlines_visible_get() const
 	{
 		return _outlinesVisible;
 	}
 	
-	void Preferences::outlines_visible_set(const bool newVal)
+	void AppPreferences::outlines_visible_set(const bool newVal)
 	{
 		if (_outlinesVisible != newVal)
 			_outlinesVisible = newVal;
 	}
 	
-	int Preferences::rows_get() const
+	int AppPreferences::rows_get() const
 	{
 		return _rows;
 	}
 	
-	void Preferences::rows_set(const int newVal)
+	void AppPreferences::rows_set(const int newVal)
 	{
 		if (_rows != newVal)
 			_rows = newVal;
 	}
 
-	bool Preferences::use_image_get() const
+	bool AppPreferences::use_image_get() const
 	{
 		return _useImage;
 	}
 
-	void Preferences::use_image_set(const bool newVal)
+	void AppPreferences::use_image_set(const bool newVal)
 	{
 		if (_useImage != newVal)
 			_useImage = newVal;
 	}
 	
-	void Preferences::save(const String path)
+	void AppPreferences::save(const String path)
 	{
-		FUNC_("Preferences::save");
+		FUNC_("AppPreferences::save");
 		
         auto_free<ConfigFile> cf(ConfigFile::_new());
         cf->set_value(S_GLOBALS, V_VERSION, PREFS_VERSION);

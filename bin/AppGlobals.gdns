@@ -4,6 +4,6 @@
 
 [resource]
 resource_name = "Globals"
-class_name = "Globals"
+class_name = "AppGlobals"
 library = ExtResource( 1 )
-script_class_name = "Globals"
+script_class_name = "AppGlobals"

@@ -7,9 +7,9 @@
 
 namespace godot
 {
-	class Globals : public Node
+	class AppGlobals : public Node
 	{
-		GODOT_CLASS(Globals, Node)
+		GODOT_CLASS(AppGlobals, Node)
 
 	private:
 		// When true, the game was started from AutoPath because AutoLoad was true
@@ -28,8 +28,8 @@ namespace godot
 		String _tilesLoadPath;
 		
 	public:
-		Globals();
-		~Globals();
+		AppGlobals();
+		~AppGlobals();
 
 		void _init();
 

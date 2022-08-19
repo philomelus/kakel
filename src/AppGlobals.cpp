@@ -1,4 +1,4 @@
-#include "Globals.hpp"
+#include "AppGlobals.hpp"
 #include <ConfigFile.hpp>
 #include <Directory.hpp>
 #include <ResourceLoader.hpp>
@@ -17,90 +17,90 @@ namespace
 
 namespace godot
 {
-	void Globals::_register_methods()
+	void AppGlobals::_register_methods()
 	{
-		FUNC_("Globals::_register_methods");
+		FUNC_("AppGlobals::_register_methods");
 		
 		// Properties
-		register_property<Globals, bool>("auto_started", &Globals::auto_started_set, &Globals::auto_started_get, default_autoStarted);
-		register_property<Globals, bool>("tiles_default_image", &Globals::tiles_default_image_set, &Globals::tiles_default_image_get, default_tilesDefaultImage);
-		register_property<Globals, bool>("tiles_loading", &Globals::tiles_loading_set, &Globals::tiles_loading_get, default_tilesLoading);
-		register_property<Globals, String>("tiles_load_path", &Globals::tiles_load_path_set, &Globals::tiles_load_path_get, default_tilesLoadPath);
+		register_property<AppGlobals, bool>("auto_started", &AppGlobals::auto_started_set, &AppGlobals::auto_started_get, default_autoStarted);
+		register_property<AppGlobals, bool>("tiles_default_image", &AppGlobals::tiles_default_image_set, &AppGlobals::tiles_default_image_get, default_tilesDefaultImage);
+		register_property<AppGlobals, bool>("tiles_loading", &AppGlobals::tiles_loading_set, &AppGlobals::tiles_loading_get, default_tilesLoading);
+		register_property<AppGlobals, String>("tiles_load_path", &AppGlobals::tiles_load_path_set, &AppGlobals::tiles_load_path_get, default_tilesLoadPath);
 	}
 
-	Globals::Globals() :
+	AppGlobals::AppGlobals() :
 		_autoStarted(default_autoStarted),
 		_tilesDefaultImage(default_tilesDefaultImage),
 		_tilesLoading(default_tilesLoading),
 		_tilesLoadPath(default_tilesLoadPath)
 	{
-		FUNC_("Globals::Globals");
+		FUNC_("AppGlobals::AppGlobals");
 	}
 
-	Globals::~Globals()
+	AppGlobals::~AppGlobals()
 	{
-		FUNC_("Globals::~Globals");
+		FUNC_("AppGlobals::~AppGlobals");
 	}
 
-	void Globals::_init()
+	void AppGlobals::_init()
 	{
-		FUNC_("Globals::_init");
+		FUNC_("AppGlobals::_init");
 
-		Godot::print("Globals::_init: auto_started = {0}", _autoStarted);
-		Godot::print("Globals::_init: tiles_default_image = {0}", _tilesDefaultImage);
-		Godot::print("Globals::_init: tiles_loading = {0}", _tilesLoading);
-		Godot::print("Globals::_init: tiles_load_path = \"{0}\"", _tilesLoadPath);
+		FUNCP_("AppGlobals::_init: auto_started = {0}", _autoStarted);
+		FUNCP_("AppGlobals::_init: tiles_default_image = {0}", _tilesDefaultImage);
+		FUNCP_("AppGlobals::_init: tiles_loading = {0}", _tilesLoading);
+		FUNCP_("AppGlobals::_init: tiles_load_path = \"{0}\"", _tilesLoadPath);
 	}
 
-	bool Globals::auto_started_get() const
+	bool AppGlobals::auto_started_get() const
 	{
 		return _autoStarted;
 	}
 	
-	void Globals::auto_started_set(const bool newVal)
+	void AppGlobals::auto_started_set(const bool newVal)
 	{
 		if (_autoStarted != newVal)
 			_autoStarted = newVal;
 	}
 	
-	Ref<Theme> Globals::theme_get()
+	Ref<Theme> AppGlobals::theme_get()
 	{
 		return _theme;
 	}
 	
-	void Globals::theme_set(Ref<Theme> newVal)
+	void AppGlobals::theme_set(Ref<Theme> newVal)
 	{
 		_theme = newVal;
 	}
 	
-	bool Globals::tiles_default_image_get() const
+	bool AppGlobals::tiles_default_image_get() const
 	{
 		return _tilesDefaultImage;
 	}
 	
-	void Globals::tiles_default_image_set(const bool newVal)
+	void AppGlobals::tiles_default_image_set(const bool newVal)
 	{
 		if (_tilesDefaultImage != newVal)
 			_tilesDefaultImage = newVal;
 	}
 	
-	bool Globals::tiles_loading_get() const
+	bool AppGlobals::tiles_loading_get() const
 	{
 		return _tilesLoading;
 	}
 	
-	void Globals::tiles_loading_set(const bool newVal)
+	void AppGlobals::tiles_loading_set(const bool newVal)
 	{
 		if (_tilesLoading != newVal)
 			_tilesLoading = newVal;
 	}
 
-	String Globals::tiles_load_path_get()
+	String AppGlobals::tiles_load_path_get()
 	{
 		return _tilesLoadPath;
 	}
 	
-	void Globals::tiles_load_path_set(const String newVal)
+	void AppGlobals::tiles_load_path_set(const String newVal)
 	{
 		if (_tilesLoadPath != newVal)
 			_tilesLoadPath = newVal;

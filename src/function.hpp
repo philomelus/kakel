@@ -1,6 +1,14 @@
 #ifndef FUNCTION_HPP
 #define FUNCTION_HPP
 
+#define FUNC_(name) FUNCTION ___func___(name)
+#define FUNCQ_(name) FUNCTION ___func___(name, true)
+#define FUNCV_(name) FUNCTION ___func___(name, false)
+#define FUNCP_ ___func___.print
+#define FUNCPF_ ___func___.fprint
+#define FUNCQ() ___func___.quiet()
+#define FUNCV() ___func___.verbose()
+
 namespace godot
 {
 	class FUNCTION
@@ -11,23 +19,28 @@ namespace godot
 			  _quiet(quiet)
 		{
 			if (!_quiet)
-				godot::Godot::print("{0}: --> enter", _name);
+				Godot::print(_name, ": --> enter");
 		}
 		~FUNCTION()
 		{
 			if (!_quiet)
-				godot::Godot::print("{0}: <-- exit", _name);
+				Godot::print(_name, ": <-- exit");
 		}
 
+		template <typename... Args>
+		void fprint(const Args&... args) { Godot::print(_name, ": ", args...); }
+
+		template <typename... Args>
+		void print(const Args&... args) { if (!_quiet) Godot::print(_name, ": ", args...); }
+
+		void quiet() { _quiet = true; }
+		
+		void verbose() { _quiet = false; }
+		
 	private:
-		const bool _quiet;
+		bool _quiet;
 		const char* const _name;
 	};
-
-#ifndef FUNC_
-#define FUNC_(name) FUNCTION ___func(name);
-#define FUNCQ_(name) FUNCTION ___func(name, true)
-#endif
 }
 
 #endif	// FUNCTION_HPP

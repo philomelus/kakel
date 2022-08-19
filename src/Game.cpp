@@ -105,8 +105,8 @@ namespace godot
 	{
 		FUNC_("Game::_ready");
 		
-		_globals = get_node<Globals>("/root/Globals");
-		_preferences = get_node<Preferences>("/root/Preferences");
+		_globals = get_node<AppGlobals>("/root/Globals");
+		_preferences = get_node<AppPreferences>("/root/Preferences");
 		_tree = get_tree();
 
 		ERR_FAIL_COND(_globals == nullptr);
@@ -334,7 +334,7 @@ namespace godot
         {
             _globals->tiles_loading_set(false);
             const String tilesLoadPath = _globals->tiles_load_path_get();
-			Godot::print("Game::_ready: Loading game from \"{0}\"", tilesLoadPath);
+			FUNCP_("Game::_ready: Loading game from \"{0}\"", tilesLoadPath);
             _tiles->load_game(tilesLoadPath);
         }
         else
@@ -349,14 +349,14 @@ namespace godot
                     _tiles->image_path_set(_preferences->last_image_get());
                 pm->set_item_disabled(0, false);
                 pm->set_item_disabled(1, false);
-				Godot::print("Game::_ready: tiles using image");
+				FUNCP_("Game::_ready: tiles using image");
             }
             else
             {
                 _tiles->image_path_set("");
                 pm->set_item_disabled(0, true);
                 pm->set_item_disabled(1, true);
-				Godot::print("Game::_ready: tiles not using image");
+				FUNCP_("Game::_ready: tiles not using image");
             }
             _tiles->start();
         }
@@ -582,8 +582,8 @@ namespace godot
 
         // Notify user.
         _winnerDialog->popup_centered();
-		Godot::print("_winnerDialog: p {0} s {1}", _winnerDialog->get_position(), _winnerDialog->get_size());
-		Godot::print("_winnerLabel: p {0} s {1}", _winnerLabel->get_position(), _winnerLabel->get_size());
+		FUNCP_("_winnerDialog: p {0} s {1}", _winnerDialog->get_position(), _winnerDialog->get_size());
+		FUNCP_("_winnerLabel: p {0} s {1}", _winnerLabel->get_position(), _winnerLabel->get_size());
 	}
 	
 	void Game::on_winnerDialog_close_pressed()

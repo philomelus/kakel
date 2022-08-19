@@ -6,9 +6,9 @@
 
 namespace godot
 {
-	class Preferences : public Node
+	class AppPreferences : public Node
 	{
-		GODOT_CLASS(Preferences, Node)
+		GODOT_CLASS(AppPreferences, Node)
 
 	public:
 		static const char* P_PREFS;
@@ -31,8 +31,8 @@ namespace godot
 		bool _useImage;
 		
 	public:
-		Preferences();
-		~Preferences();
+		AppPreferences();
+		~AppPreferences();
 
 		void _init();
 		void _ready();

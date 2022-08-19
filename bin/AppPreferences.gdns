@@ -4,5 +4,6 @@
 
 [resource]
 resource_name = "Preferences"
-class_name = "Preferences"
+class_name = "AppPreferences"
 library = ExtResource( 1 )
+script_class_name = "AppPreferences"

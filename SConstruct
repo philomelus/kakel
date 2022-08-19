@@ -69,13 +69,12 @@ env.Append(LIBPATH=[cpp_bindings_path + 'bin'])
 env.Append(LIBS=[cpp_library])
 
 # Build
-env.SharedLibrary('bin/kakel', ('src/Game.cpp',
-                                'src/gdexample.cpp',
-                                'src/gdlibrary.cpp',
-                                'src/Globals.cpp',
+env.SharedLibrary('bin/kakel', ('src/AppGlobals.cpp',
+                                'src/AppPreferences.cpp',
+                                'src/Game.cpp',
+                                'src/register.cpp',
                                 'src/Main.cpp',
                                 'src/NewGame.cpp',
-                                'src/Preferences.cpp',
                                 'src/Prefs.cpp',
                                 'src/TilesControl.cpp'))
 

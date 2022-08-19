@@ -12,8 +12,8 @@
 #include <PanelContainer.hpp>
 #include <SpinBox.hpp>
 #include <VBoxContainer.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 
 namespace godot
 {
@@ -22,6 +22,12 @@ namespace godot
 		GODOT_CLASS(Prefs, PanelContainer)
 
 	private:
+		// Common
+		AppGlobals* _globals;
+		AppPreferences* _preferences;
+		SceneTree* _tree;
+
+		// UI
 		CheckButton* _autoLoad;
 		Label* _autoLoadLabel;
 		CheckButton* _autoSave;
@@ -30,7 +36,6 @@ namespace godot
 		CenterContainer* _centerContainer;
 		SpinBox* _columns;
 		Label* _columnsLabel;
-		Globals* _globals;
 		GridContainer* _gridContainer;
 		HBoxContainer* _hboxContainer;
 		MarginContainer* _marginContainer;
@@ -42,13 +47,11 @@ namespace godot
 		Label* _outlinesColorLabel;
 		CheckButton* _outlinesVisible;
 		Label* _outlinesVisibleLabel;
-		Preferences* _preferences;
 		SpinBox* _rows;
 		Label* _rowsLabel;
 		Button* _save;
-		SceneTree* _tree;
 		VBoxContainer* _vboxContainer;
-		
+
 	public:
 		Prefs();
 		~Prefs();

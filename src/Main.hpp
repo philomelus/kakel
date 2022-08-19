@@ -10,8 +10,8 @@
 #include <PanelContainer.hpp>
 #include <SceneTree.hpp>
 #include <VBoxContainer.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 
 namespace godot
 {
@@ -20,19 +20,24 @@ namespace godot
 		GODOT_CLASS(Main, PanelContainer)
 
 	private:
+		// Common
+		AppGlobals* _globals;
+		AppPreferences* _preferences;
+
+		// UI
 		CenterContainer* _centerContainer;
-		Globals* _globals;
 		Label* _label;
 		Button* _load;
 		FileDialog* _loadDialog;
-		bool _loadDialogUsed;
 		Button* _options;
-		Preferences* _preferences;
 		Button* _quit;
 		Button* _start;
 		SceneTree* _tree;
 		VBoxContainer* _vboxContainer;
 
+		// Internal
+		bool _loadDialogUsed;
+   
 	public:
 		static void _register_methods();
 

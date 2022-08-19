@@ -55,8 +55,8 @@ namespace godot
 	{
 		FUNC_("NewGame::_ready");
 		
-		_globals = get_node<Globals>("/root/Globals");
-		_preferences = get_node<Preferences>("/root/Preferences");
+		_globals = get_node<AppGlobals>("/root/Globals");
+		_preferences = get_node<AppPreferences>("/root/Preferences");
 		_tree = get_tree();
 
 		ERR_FAIL_COND(_globals == nullptr);
@@ -165,7 +165,7 @@ namespace godot
 	{
 		FUNC_("NewGame::load_image");
 		
-		Godot::print("NewGame::load_image: loading image from \"{0}\"", path);
+		FUNCP_("NewGame::load_image: loading image from \"{0}\"", path);
 		Ref<Image> i;
 		if (path.substr(0, 4) == "res:")
 			i = Ref(ResourceLoader::get_singleton()->load(path, "Image", true));

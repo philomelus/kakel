@@ -15,8 +15,8 @@
 #include <SceneTree.hpp>
 #include <TextureRect.hpp>
 #include <VBoxContainer.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 
 namespace godot
 {
@@ -25,26 +25,31 @@ namespace godot
 		GODOT_CLASS(NewGame, PanelContainer)
 
 	private:
+		// Common
+		AppGlobals* _globals;
+		AppPreferences* _preferences;
+		SceneTree* _tree;
+
+		// UI
 		Button* _browse;
 		Button* _cancel;
 		CenterContainer* _centerContainer;
-		bool _changedImagePath;
-		Globals* _globals;
 		HBoxContainer* _hboxContainer;
 		HBoxContainer* _hboxContainer2;
-		Ref<Image> _image;
-		String _imagePath;
 		ImageTexture* _imageTexture;
 		MarginContainer* _marginContainer;
-		Preferences* _preferences;
 		Button* _start;
 		FileDialog* _tilesImageDialog;
-		bool _tilesImageDialogUsed;
 		TextureRect* _tilesImage;
-		SceneTree* _tree;
 		CheckButton* _useImage;
 		Label* _useImageLabel;
 		VBoxContainer* _vboxContainer;
+
+		// Internal
+		bool _changedImagePath;
+		Ref<Image> _image;
+		String _imagePath;
+		bool _tilesImageDialogUsed;
 		
 	public:
 		NewGame();

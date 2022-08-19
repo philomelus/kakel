@@ -9,13 +9,19 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "",
-"class": "Globals",
+"base": "Node",
+"class": "AppGlobals",
 "language": "NativeScript",
-"path": "res://bin/Globals.gdns"
+"path": "res://bin/AppGlobals.gdns"
+}, {
+"base": "Node",
+"class": "AppPreferences",
+"language": "NativeScript",
+"path": "res://bin/AppPreferences.gdns"
 } ]
 _global_script_class_icons={
-"Globals": ""
+"AppGlobals": "",
+"AppPreferences": ""
 }
 
 [application]
@@ -28,8 +34,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Globals="*res://bin/Globals.gdns"
-Preferences="*res://bin/Preferences.gdns"
+Globals="*res://bin/AppGlobals.gdns"
+Preferences="*res://bin/AppPreferences.gdns"
 
 [display]
 

@@ -19,8 +19,8 @@
 #include <VBoxContainer.hpp>
 #include <VSeparator.hpp>
 #include <WindowDialog.hpp>
-#include "Globals.hpp"
-#include "Preferences.hpp"
+#include "AppGlobals.hpp"
+#include "AppPreferences.hpp"
 #include "TilesControl.hpp"
 
 namespace godot
@@ -32,7 +32,7 @@ namespace godot
 	private:
 		Button* _abort;
 		VBoxContainer* _gameBoard;
-		Globals* _globals;
+		AppGlobals* _globals;
 		GridContainer* _gridContainer;
 		HFlowContainer* _hflowContainer;
 		HFlowContainer* _hflowContainer2;
@@ -49,7 +49,7 @@ namespace godot
 		Label* _movesLabel;
 		MenuButton* _options;
 		PanelContainer* _panelContainer;
-		Preferences* _preferences;
+		AppPreferences* _preferences;
 		Button* _quit;
 		Button* _save;
 		FileDialog* _saveDialog;

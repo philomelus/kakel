@@ -60,8 +60,8 @@ namespace godot
 	{
 		FUNC_("Main::_ready");
 		
-		_globals = get_node<Globals>("/root/Globals");
-		_preferences = get_node<Preferences>("/root/Preferences");
+		_globals = get_node<AppGlobals>("/root/Globals");
+		_preferences = get_node<AppPreferences>("/root/Preferences");
 		_tree = get_tree();
 
 		ERR_FAIL_COND(_globals == nullptr);
@@ -195,7 +195,7 @@ namespace godot
 			const String autoPath = _preferences->auto_path_get();
 			if (d->file_exists(_preferences->auto_path_get()))
 			{
-				Godot::print("Main::check_auto_start: Loading game from \"{0}\"", autoPath);
+				FUNCP_("Main::check_auto_start: Loading game from \"{0}\"", autoPath);
 				_globals->auto_started_set(true);
 				load_game(autoPath);
 			}
@@ -253,7 +253,7 @@ namespace godot
 			_preferences->last_game_set(path);
 			_preferences->save(_preferences->P_PREFS);
 		}
-		Godot::print("Main::on_loadDialog_fileSelected:  Loading game from \"{0}\"", path);
+		FUNCP_("Main::on_loadDialog_fileSelected:  Loading game from \"{0}\"", path);
 		load_game(path);
 	}
 	

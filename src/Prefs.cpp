@@ -65,8 +65,8 @@ namespace godot
 	{
 		FUNC_("Prefs::_ready");
 		
-		_globals = get_node<Globals>("/root/Globals");
-		_preferences = get_node<Preferences>("/root/Preferences");
+		_globals = get_node<AppGlobals>("/root/Globals");
+		_preferences = get_node<AppPreferences>("/root/Preferences");
 		_tree = get_tree();
 
 		ERR_FAIL_COND(_globals == nullptr);
