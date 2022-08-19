@@ -55,6 +55,8 @@ void TilesControl::_bind_methods()
 	ClassDB::bind_method(D_METHOD("columns_set", "newVal"), &TilesControl::columns_set);
 	ClassDB::bind_method(D_METHOD("hilite_blank_get"), &TilesControl::hilite_blank_get);
 	ClassDB::bind_method(D_METHOD("hilite_blank_set", "newVal"), &TilesControl::hilite_blank_set);
+	ClassDB::bind_method(D_METHOD("hilite_blank_color_get"), &TilesControl::hilite_blank_color_get);
+	ClassDB::bind_method(D_METHOD("hilite_blank_color_set", "newVal"), &TilesControl::hilite_blank_color_set);
 	ClassDB::bind_method(D_METHOD("image_path_get"), &TilesControl::image_path_get);
 	ClassDB::bind_method(D_METHOD("image_path_set", "newVal"), &TilesControl::image_path_set);
 	ClassDB::bind_method(D_METHOD("keep_aspect_get"), &TilesControl::keep_aspect_get);
@@ -84,6 +86,8 @@ void TilesControl::_bind_methods()
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "can_move_right"), "can_move_right_set", "can_move_right_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "can_move_up"), "can_move_up_set", "can_move_up_get");
 	ADD_PROPERTY(PropertyInfo(Variant::INT, "columns"), "columns_set", "columns_get");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "hilite_blank"), "hilite_blank_set", "hilite_blank_get");
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "hilite_blank_color"), "hilite_blank_color_set", "hilite_blank_color_get");
 	ADD_PROPERTY(PropertyInfo(Variant::STRING, "image_path"), "image_path_set", "image_path_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "keep_aspect"), "keep_aspect_set", "keep_aspect_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "movable"), "movable_set", "movable_get");
@@ -778,7 +782,7 @@ bool TilesControl::numbers_visible_get() const
 	return _numbersVisible;
 }
 	
-void TilesControl::numbers_visible_set(bool newVal)
+void TilesControl::numbers_visible_set(const bool newVal)
 {
 	if (_numbersVisible != newVal)
 	{
