@@ -6,6 +6,7 @@
 #include <CenterContainer.hpp>
 #include <CheckButton.hpp>
 #include <FileDialog.hpp>
+#include <GridContainer.hpp>
 #include <HBoxContainer.hpp>
 #include <Image.hpp>
 #include <ImageTexture.hpp>
@@ -34,9 +35,11 @@ namespace godot
 		Button* _browse;
 		Button* _cancel;
 		CenterContainer* _centerContainer;
+		GridContainer* _gridContainer;
 		HBoxContainer* _hboxContainer;
-		HBoxContainer* _hboxContainer2;
 		ImageTexture* _imageTexture;
+		CheckButton* _keepAspect;
+		Label* _keepAspectLabel;
 		MarginContainer* _marginContainer;
 		Button* _start;
 		FileDialog* _tilesImageDialog;
@@ -64,6 +67,7 @@ namespace godot
 		Ref<Image> load_image(const String path);
 		void on_browse_pressed();
 		void on_cancel_pressed();
+		void on_keepAspect_pressed();
 		void on_start_pressed();
 		void on_tilesImageDialog_fileSelected(const String path);
 		void on_useImage_pressed();

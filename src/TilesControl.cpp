@@ -12,6 +12,23 @@
 
 using namespace godot;
 
+namespace
+{
+	void outline(TilesControl* on, const Rect2 where, const Color color)
+	{
+		Rect2 area(where);
+		Vector2 v = area.get_position();
+		--v.x;
+		++v.y;
+		area.set_position(v);
+		v = area.get_size();
+		v.x += 2;
+		v.y += 2;
+		area.set_size(v);
+		on->draw_rect(area, color, false);
+	}
+}
+
 namespace godot
 {
 	const int TilesControl::FILE_VERSION = 1;
@@ -34,12 +51,16 @@ namespace godot
 		register_method("start", &TilesControl::start);
 		
 		// Properties
+		register_property<TilesControl, Color>("background_color", &TilesControl::background_color_set, &TilesControl::background_color_get, Color(1.0, 1.0, 1.0, 0));
 		register_property<TilesControl, bool>("can_move_down", &TilesControl::can_move_down_set, &TilesControl::can_move_down_get, false);
 		register_property<TilesControl, bool>("can_move_left", &TilesControl::can_move_left_set, &TilesControl::can_move_left_get, false);
 		register_property<TilesControl, bool>("can_move_right", &TilesControl::can_move_right_set, &TilesControl::can_move_right_get, false);
 		register_property<TilesControl, bool>("can_move_up", &TilesControl::can_move_up_set, &TilesControl::can_move_up_get, false);
 		register_property<TilesControl, int>("columns", &TilesControl::columns_set, &TilesControl::columns_get, 4);
+		register_property<TilesControl, bool>("hilite_blank", &TilesControl::hilite_blank_set, &TilesControl::hilite_blank_get, false);
+		register_property<TilesControl, Color>("hilite_blank_color", &TilesControl::hilite_blank_color_set, &TilesControl::hilite_blank_color_get, Color(0.8, 0.4, 0.4, 1));
 		register_property<TilesControl, String>("image_path", &TilesControl::image_path_set, &TilesControl::image_path_get, String());
+		register_property<TilesControl, bool>("keep_aspect", &TilesControl::keep_aspect_set, &TilesControl::keep_aspect_get, false);
 		register_property<TilesControl, bool>("movable", &TilesControl::movable_set, &TilesControl::movable_get, false);
 		register_property<TilesControl, Ref<Font>>("number_font", &TilesControl::numbers_font_set, &TilesControl::numbers_font_get, nullptr);
 		register_property<TilesControl, Color>("numbers_color", &TilesControl::numbers_color_set, &TilesControl::numbers_color_get, Color(0.8, 0.8, 0.8, 1));
@@ -69,6 +90,11 @@ namespace godot
 	TilesControl::~TilesControl()
 	{
 		FUNC_("TilesControl::~TilesControl");
+		if (_tilesOrder != nullptr)
+		{
+			auto_free tilesOrder(_tilesOrder);
+			_tilesOrder = nullptr;
+		}
 		if (_tilesRectScreen != nullptr)
 		{
 			auto_free tilesRectScreen(_tilesRectScreen);
@@ -86,9 +112,13 @@ namespace godot
 		FUNC_("TilesControl::_draw");
 
 		// No drawing before everything is ready
-		if (!_readyToRun || !_tilesReady)
+		if (!_readyToRun)
 			return;
 
+		// Tiles need to be defined to draw
+		if (!_tilesReady)
+			return;
+		
 		// Loop through all tiles and draw them
 		Vector2 extent;
 		int index = 0;
@@ -119,18 +149,7 @@ namespace godot
 
 					// Add an outline if desired
 					if (_outlinesVisible)
-					{
-						Rect2 area = _tilesRectScreen[index];
-						Vector2 v = area.get_position();
-						--v.x;
-						++v.y;
-						area.set_position(v);
-						v = area.get_size();
-						++v.x;
-						++v.y;
-						area.set_size(v);
-						draw_rect(area, _outlinesColor, false);
-					}
+						outline(this, _tilesRectScreen[index], _outlinesColor);
 				}
 				else			// if (useImage())
 				{
@@ -145,7 +164,21 @@ namespace godot
 													  area.get_position().y + ((area.get_size().y - extent.y) / 2) + extent.y),
 								name, _numbersColor);
 				}
-			} // Not blank tile
+			}
+			else				// if (tileIndex != _emptyId)
+			{
+				if (_hiliteBlank)
+				{
+					Rect2 area = _tilesRectScreen[index];
+					if (_outlinesVisible)
+						outline(this, area, _hiliteBlankColor);
+					String text = "Blank Tile";
+					extent = _numbersFont->get_string_size(text);
+					draw_string(_numbersFont, Vector2(area.get_position().x + ((area.get_size().x - extent.x) / 2),
+													  area.get_position().y + ((area.get_size().y - extent.y) / 2) + extent.y),
+								text, _hiliteBlankColor);
+				}
+			}
 			++index;
 		}
 	}
@@ -154,6 +187,7 @@ namespace godot
 	{
 		FUNC_("TilesControl::_init");
 
+		_backgroundColor = Color(1, 1, 1, 0);
 		_columns = 4;
 		_columns0 = 3;
 		_gameComplete = false;
@@ -175,15 +209,25 @@ namespace godot
 		_spacing = Vector2(5, 5);
 		_tilesOrder = nullptr;
 		_tilesReady = false;
+		_tilesRectScreen = nullptr;
+		_tilesRectTexture = nullptr;
 		_tileSize = Vector2();
 	}
 
 	void TilesControl::_input(const Ref<InputEvent> ev)
 	{
-		FUNCQ_("TilesControl::_inpuit");
+		FUNCQ_("TilesControl::_input");
 		
-		// Do nothing while paused or uninitialized
-		if (!_readyToRun || !_tilesReady || _tree->is_paused() || !_movesEnabled)
+		// Do nothing while not started
+		if (!_readyToRun)
+			return;
+		
+		// Do nothing if started but tiles not setup
+		if (!_tilesReady)
+			return;
+		
+		// Do nothing if we've been paused or moves are disabled
+		if (_tree->is_paused() || !_movesEnabled)
 			return;
 
 		// Only handle mouse clicks here
@@ -249,14 +293,15 @@ namespace godot
 	void TilesControl::_physics_process(const float delta)
 	{
 		FUNCQ_("TilesControl::_physics_process");
-		
+
+		// Do nothing until started
 		if (!_readyToRun)
 			return;
 
 		// Update tiles if needed.
 		if (!_tilesReady)
 			recalc_tiles();
-
+		
 		// Emit moved signal if needed @ 1/50th second.
 		if (_movedSignal > 0)
 		{
@@ -286,7 +331,7 @@ namespace godot
 		FUNC_("TilesControl::_ready");
 		
 		_tree = get_tree();
-		
+
 		_readyToRun = false;
 		_movesEnabled = false;
 	}
@@ -294,7 +339,7 @@ namespace godot
 	void TilesControl::_unhandled_input(const Ref<InputEvent> ev)
 	{
 		FUNCQ_("TilesControl::_unhandled_input");
-		
+
 		if (!_readyToRun || !_tilesReady || _tree->is_paused() || !_movesEnabled
 			|| !ev->is_action_type())
 		{
@@ -337,6 +382,20 @@ namespace godot
 				move_down();
 				return;
 			}
+		}
+	}
+
+	Color TilesControl::background_color_get() const
+	{
+		return _backgroundColor;
+	}
+
+	void TilesControl::background_color_set(const Color newVal)
+	{
+		if (_backgroundColor != newVal)
+		{
+			_backgroundColor = newVal;
+			update();
 		}
 	}
 	
@@ -403,7 +462,7 @@ namespace godot
 	
 	bool TilesControl::check_complete()
 	{
-		FUNCQ_("TilesControl::check_complete");
+		FUNC_("TilesControl::check_complete");
 
 		// Only signal winner once
 		if (_gameComplete)
@@ -434,6 +493,7 @@ namespace godot
 	
 	void TilesControl::can_move_down_set(bool newVal)
 	{
+		FUNCPF_("can_move_down_set is not usable");
 		CRASH_NOW();
 	}
 	
@@ -444,6 +504,7 @@ namespace godot
 	
 	void TilesControl::can_move_left_set(bool newVal)
 	{
+		FUNCPF_("can_move_left_set is not usable");
 		CRASH_NOW();
 	}
 	
@@ -454,6 +515,7 @@ namespace godot
 	
 	void TilesControl::can_move_right_set(bool newVal)
 	{
+		FUNCPF_("can_move_right_set is not usable");
 		CRASH_NOW();
 	}
 	
@@ -464,6 +526,7 @@ namespace godot
 	
 	void TilesControl::can_move_up_set(bool newVal)
 	{
+		FUNCPF_("can_move_up_set is not usable");
 		CRASH_NOW();
 	}
 	
@@ -472,7 +535,7 @@ namespace godot
 		return _columns;
 	}
 	
-	void TilesControl::columns_set(int newVal)
+	void TilesControl::columns_set(const int newVal)
 	{
 		ERR_FAIL_COND(newVal < 3 || newVal > 99);
 
@@ -485,13 +548,42 @@ namespace godot
 			_tilesReady = false;
 		}
 	}
+
+	bool TilesControl::hilite_blank_get() const
+	{
+		return _hiliteBlank;
+	}
+
+	void TilesControl::hilite_blank_set(const bool newVal)
+	{
+		if (_hiliteBlank != newVal)
+		{
+			_hiliteBlank = newVal;
+			update();
+		}
+	}
+
+	Color TilesControl::hilite_blank_color_get() const
+	{
+		return _hiliteBlankColor;
+	}
+
+	void TilesControl::hilite_blank_color_set(const Color newVal)
+	{
+		if (_hiliteBlankColor != newVal)
+		{
+			_hiliteBlankColor = newVal;
+			if (_hiliteBlank)
+				update();
+		}
+	}
 	
 	String TilesControl::image_path_get() const
 	{
 		return _imagePath;
 	}
 	
-	void TilesControl::image_path_set(String newVal)
+	void TilesControl::image_path_set(const String newVal)
 	{
 		if (_imagePath != newVal)
 		{
@@ -500,6 +592,20 @@ namespace godot
 				_image = Ref(load_image(_imagePath));
 			else if (_image.is_valid())
 				_image.unref();
+		}
+	}
+
+	bool TilesControl::keep_aspect_get() const
+	{
+		return _keepAspect;
+	}
+
+	void TilesControl::keep_aspect_set(const bool newVal)
+	{
+		if (_keepAspect != newVal)
+		{
+			_keepAspect = newVal;
+			recalc_tiles(true);
 		}
 	}
 	
@@ -542,14 +648,16 @@ namespace godot
 
 		bool numbersVisible_ = inp->get_8() != 0;
 		bool outlinesVisible_ = inp->get_8() != 0;
+		bool keepAspect_ = inp->get_8() != 0;
 		
 		// Done loading data
 		inp->close();
 
+		// Re/Initialize all settings for loaded game
 		if (useImage_)
 		{
 			_imagePath = imagePath_;
-			_image = Ref(load_image(_imagePath));
+			_image = load_image(_imagePath);
 		}
 		else
 		{
@@ -563,20 +671,18 @@ namespace godot
 		_emptyId = eid;
 		_numbersVisible = numbersVisible_;
 		_outlinesVisible = outlinesVisible_;
+		_keepAspect = keepAspect_;
 		++_movedSignal;
 
 		// Let owner know a game was loaded
 		emit_signal("loaded");
 		
-		// Reset tiles
-		call_deferred("recalc_tiles");
-		call_deferred("calc_movables");
-
 		// All ready
 		_readyToRun = true;
 		_movesEnabled = true;
 		_tilesReady = false;
 		call_deferred("update");
+		call_deferred("calc_movables");
 	}
 
 	Ref<Image> TilesControl::load_image(const String path)
@@ -671,9 +777,12 @@ namespace godot
 	
 	void TilesControl::numbers_font_set(Ref<Font> newVal)
 	{
-		_numbersFont = newVal;
-		if (_numbersVisible)
-			update();
+		if (_numbersFont != newVal)
+		{
+			_numbersFont = newVal;
+			if (_numbersVisible)
+				update();
+		}
 	}
 	
 	Color TilesControl::numbers_color_get() const
@@ -734,10 +843,10 @@ namespace godot
 		}
 	}
 	
-	void TilesControl::recalc_tiles()
+	void TilesControl::recalc_tiles(const bool forced)
 	{
 		FUNC_("TilesControl::recalc_tiles");
-		
+
 		if (!_readyToRun)
 			return;
 
@@ -748,34 +857,78 @@ namespace godot
 		_tilesReady = false;
 
 		// Reload and resize image if size changed
-		Vector2 size = get_size();
+		Vector2 canvasSize = get_size();
 		// In godot 3.x, this can be called before screen/window/canvas is set correctly,
 		// so just bail.  It will get called again with the correct settings implemented.
-		if (size.x <= 0 || size.y <= 0)
+		if (canvasSize.x <= 0 || canvasSize.y <= 0)
 		{
-			Godot::print("TilesControl::recalc_tiles:  invalid size = {0}", size);
+			Godot::print("TilesControl::recalc_tiles:  invalid size = {0}", canvasSize);
 			return;
 		}
 		if (useImage())
 		{
-			if (!_image.is_valid() || size.x != _image->get_width() || size.y != _image->get_height())
+			Ref<Image> i;
+			if (forced || !_image.is_valid() || canvasSize.x != _image->get_width()
+				|| canvasSize.y != _image->get_height())
 			{
 				_image = load_image(_imagePath);
-				_image->resize(size.x, size.y);
+				if (_keepAspect)
+				{
+					const Vector2 imageSize = _image->get_size();
+					const float h = canvasSize.x * (imageSize.y / imageSize.x);
+					const float w = canvasSize.y * (imageSize.x / imageSize.y);
+					const Vector2 newSize = h <= canvasSize.y ? Vector2(canvasSize.x, h) : Vector2(w, canvasSize.y);
+					if (newSize.x < canvasSize.x || newSize.y < canvasSize.y)
+					{
+						// Resize original image
+						Ref<Image> tempImage = _image->duplicate();
+						tempImage->resize(newSize.x, newSize.y);
+
+						// Create and fill final image with transparency
+						i = Ref(Image::_new());
+						i->create(canvasSize.x, canvasSize.y, false, tempImage->get_format());
+						i->fill(_backgroundColor);
+					
+						// Copy resized image into final image, centered
+						const Rect2 srcRect(Vector2(0, 0), newSize);
+						Vector2 dst(0, 0);
+						if (newSize.x < canvasSize.x)
+						{
+							dst.x = canvasSize.x - newSize.x;
+							dst.x /= 2;
+						}
+						if (newSize.y < canvasSize.y)
+						{
+							dst.y = canvasSize.y - newSize.y;
+							dst.y /= 2;
+						}
+						i->blit_rect(*tempImage, srcRect, dst);
+					}
+					else
+					{
+						i = _image->duplicate();
+						i->resize(newSize.x, newSize.y);
+					}
+				}
+				else
+				{
+					i = _image->duplicate();
+					i->resize(canvasSize.x, canvasSize.y);
+				}
 			}
 			Ref<ImageTexture> it = ImageTexture::_new();
-			it->create_from_image(_image);
+			it->create_from_image(i);
 			_tilesTexture = it;
 		}
 
 		// Determine width and height of tiles from our size.
-		_tileSize.x = (size.x - (_columns0 * _spacing.x)) / _columns;
-		_tileSize.y = (size.y - (_rows0 * _spacing.y)) / _rows;
+		_tileSize.x = (canvasSize.x - (_columns0 * _spacing.x)) / _columns;
+		_tileSize.y = (canvasSize.y - (_rows0 * _spacing.y)) / _rows;
 		if (_tileSize.x <= 0 || _tileSize.y <= 0)
 		{
 			// If this happens, its a fluke at startup and this will get called again
 			// which will be succesful.  In Godot 4+, this doesn't happen.
-			Godot::print("TilesControl::recalc_tiles:  invalid _tileSize = {0}", _tileSize);
+			FUNCP_("TilesControl::recalc_tiles:  invalid _tileSize = {0}", _tileSize);
 			return;
 		}
 
@@ -797,13 +950,14 @@ namespace godot
 			for (int col = 0; col < _columns; ++col)
 			{
 				const int idx = (row * _columns) + col;
-				_tilesRectScreen[idx] = Rect2(Vector2((col * _tileSize.x) + (col * _spacing.x),
-													  (row * _tileSize.y) + (row * _spacing.y)),
+				_tilesRectScreen[idx] = Rect2(Vector2(2 + (col * _tileSize.x) + (col * _spacing.x),
+													  2 + (row * _tileSize.y) + (row * _spacing.y)),
 											  _tileSize);
 				_tilesRectTexture[idx] = Rect2(Vector2(col * _tileSize.x, row * _tileSize.y), _tileSize);
 			}
 		}
 		_tilesReady = true;
+		call_deferred("update");
 	}
 		
 	void TilesControl::reset_tiles()
@@ -867,7 +1021,7 @@ namespace godot
 		// Initialized, but queue movement and tiles calc.
 		_readyToRun = true;
 		_movesEnabled = true;
-		call_deferred("recalc_tiles");
+		_tilesReady = false;
 		call_deferred("calc_movables");
 	}
 	
@@ -893,7 +1047,7 @@ namespace godot
 	void TilesControl::save_game(const String path)
 	{
 		FUNC_("TilesControl::save_game");
-		
+
 		if (!_readyToRun)
 			return;
 
@@ -928,7 +1082,10 @@ namespace godot
 		// Visible outlines and number
 		sav->store_8(_numbersVisible ? 1 : 0);
 		sav->store_8(_outlinesVisible ? 1 : 0);
-	   
+
+		// Keep aspect
+		sav->store_8(_keepAspect ? 1 : 0);
+		
 		// All done
 		sav->close();
 
@@ -962,6 +1119,7 @@ namespace godot
 	void TilesControl::tiles_count_set(int newVal)
 	{
 		// Not allowed to set this externally, but it can be useful
+		FUNCPF_("tiles_count_set is not usable");
 		CRASH_NOW();
 	}
 }

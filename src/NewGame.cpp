@@ -15,6 +15,7 @@ namespace godot
 		register_method("_ready", &NewGame::_ready);
 		register_method("on_browse_pressed", &NewGame::on_browse_pressed);
 		register_method("on_cancel_pressed", &NewGame::on_cancel_pressed);
+		register_method("on_keepAspect_pressed", &NewGame::on_keepAspect_pressed);
 		register_method("on_start_pressed", &NewGame::on_start_pressed);
 		register_method("on_tilesImageDialog_fileSelected", &NewGame::on_tilesImageDialog_fileSelected);
 		register_method("on_useImage_pressed", &NewGame::on_useImage_pressed);
@@ -40,8 +41,10 @@ namespace godot
 		_browse = Button::_new();
 		_cancel = Button::_new();
 		_centerContainer = CenterContainer::_new();
+		_gridContainer = GridContainer::_new();
 		_hboxContainer = HBoxContainer::_new();
-		_hboxContainer2 = HBoxContainer::_new();
+		_keepAspect = CheckButton::_new();
+		_keepAspectLabel = Label::_new();
 		_marginContainer = MarginContainer::_new();
 		_start = Button::_new();
 		_tilesImageDialog = FileDialog::_new();
@@ -84,21 +87,33 @@ namespace godot
 		_centerContainer->set_theme(theme);
 		_centerContainer->add_child(_vboxContainer);
 
-		// Add h box container
-		_vboxContainer->add_child(_hboxContainer);
+		// Add grid container
+		_gridContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
+		_gridContainer->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
+		_gridContainer->set_columns(2);
+		_vboxContainer->add_child(_gridContainer);
 
 		// Add use image label
 		_useImageLabel->set_text("Use Image");
-		_hboxContainer->add_child(_useImageLabel);
+		_gridContainer->add_child(_useImageLabel);
 
 		// Add use image
-		_hboxContainer->add_child(_useImage);
+		_gridContainer->add_child(_useImage);
 
+		// Add keep aspect label
+		_keepAspectLabel->set_text("Keep Aspect Ratio");
+		_gridContainer->add_child(_keepAspectLabel);
+
+		// Add keep aspect
+		_gridContainer->add_child(_keepAspect);
+			
 		// Add tiles image
 		_tilesImage->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_tilesImage->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_tilesImage->set_custom_minimum_size(Vector2(200, 200));
-		_tilesImage->set_stretch_mode(TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED);
+		_tilesImage->set_stretch_mode(_globals->tiles_keep_aspect_get()
+									  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
+									  : TextureRect::StretchMode::STRETCH_SCALE);
 		_vboxContainer->add_child(_tilesImage);
 
 		// Add browse button
@@ -112,16 +127,16 @@ namespace godot
 		_vboxContainer->add_child(_marginContainer);
 
 		// Add h box container
-		_hboxContainer2->set_alignment(BoxContainer::AlignMode::ALIGN_CENTER);
-		_marginContainer->add_child(_hboxContainer2);
+		_hboxContainer->set_alignment(BoxContainer::AlignMode::ALIGN_CENTER);
+		_marginContainer->add_child(_hboxContainer);
 		
 		// Add cancel button
 		_cancel->set_text("Cancel");
-		_hboxContainer2->add_child(_cancel);
+		_hboxContainer->add_child(_cancel);
 
 		// Add start button
 		_start->set_text("Start");
-		_hboxContainer2->add_child(_start);
+		_hboxContainer->add_child(_start);
 		
 		// Add tile image dialog
 		_tilesImageDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
@@ -143,13 +158,16 @@ namespace godot
 		// Signals
 		_browse->connect("pressed", this, "on_browse_pressed");
 		_cancel->connect("pressed", this, "on_cancel_pressed");
+		_keepAspect->connect("pressed", this, "on_keepAspect_pressed");
 		_start->connect("pressed", this, "on_start_pressed");
 		_tilesImageDialog->connect("file_selected", this, "on_tilesImageDialog_fileSelected");
 		_useImage->connect("pressed", this, "on_useImage_pressed");
 
         // Update variables from globals
-		const bool useImage = _preferences->use_image_get();
+		const bool useImage = _globals->tiles_use_image_get();
         _useImage->set_pressed(useImage == true);
+		_keepAspect->set_pressed(_globals->tiles_keep_aspect_get());
+		_keepAspect->set_disabled(useImage == false);
         _browse->set_disabled(useImage == false);
         if (_globals->tiles_default_image_get())
             _imagePath = _preferences->default_image_get();
@@ -201,6 +219,16 @@ namespace godot
 		
 		_tree->change_scene("res://Main.tscn");
 	}
+
+	void NewGame::on_keepAspect_pressed()
+	{
+		FUNC_("NewGame::on_keepAspect_pressed");
+
+		_tilesImage->set_stretch_mode(_keepAspect->is_pressed()
+									  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
+									  : TextureRect::StretchMode::STRETCH_SCALE);
+		update_image();
+	}
 	
 	void NewGame::on_start_pressed()
 	{
@@ -208,7 +236,7 @@ namespace godot
 
 		if (_useImage->is_pressed())
 		{
-            _preferences->use_image_set(true);
+            _globals->tiles_use_image_set(true);
             if (_changedImagePath)
             {
                 _globals->tiles_default_image_set(false);
@@ -217,13 +245,8 @@ namespace godot
             }
 		}
         else
-        {
-			if (_preferences->use_image_get())
-			{
-				_preferences->use_image_set(false);
-                _preferences->save(_preferences->P_PREFS);
-			}
-        }
+			_globals->tiles_use_image_set(false);
+		_globals->tiles_keep_aspect_set(_keepAspect->is_pressed());
 		_tree->change_scene("res://Game.tscn");
 	}
 	
@@ -240,8 +263,10 @@ namespace godot
 	void NewGame::on_useImage_pressed()
 	{
 		FUNC_("NewGame::on_useImage_pressed");
-		
-        _browse->set_disabled(!_useImage->is_pressed());
+
+		const bool pressed = _useImage->is_pressed();
+        _browse->set_disabled(!pressed);
+        _keepAspect->set_disabled(!pressed);
 	}
 	
 	void NewGame::update_image()
@@ -250,13 +275,22 @@ namespace godot
 		
 		ERR_FAIL_COND(_image == nullptr);
 		
-		Vector2 size = _tilesImage->get_size();
-		
-		ERR_FAIL_COND(size.x <= 0 && size.y <= 0);
-		
-		_image->resize(size.x, size.y);
+        Ref<Image> i = _image->duplicate();
+        const Vector2 size = _tilesImage->get_size();
+        if (_keepAspect->is_pressed())
+        {
+			const Vector2 imageSize = i->get_size();
+			const float h = size.x * (imageSize.y / imageSize.x);
+			const float w = size.y * (imageSize.x / imageSize.y);
+			if( h <= size.y)
+				i->resize(size.x, h);
+			else
+				i->resize(w, size.y);
+        }
+        else
+			i->resize(size.x, size.y);
 		_imageTexture = ImageTexture::_new();
-		_imageTexture->create_from_image(_image);
-		_tilesImage->set_texture(_imageTexture);
+		_imageTexture->create_from_image(i);
+        _tilesImage->set_texture(_imageTexture);
 	}
 }

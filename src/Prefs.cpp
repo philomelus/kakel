@@ -46,6 +46,12 @@ namespace godot
 		_columnsLabel = Label::_new();
 		_gridContainer = GridContainer::_new();
 		_hboxContainer = HBoxContainer::_new();
+		_hiliteBlank = CheckButton::_new();
+		_hiliteBlankLabel = Label::_new();
+		_hiliteBlankColor = ColorPickerButton::_new();
+		_hiliteBlankColorLabel = Label::_new();
+		_keepAspect = CheckButton::_new();
+		_keepAspectLabel = Label::_new();
 		_marginContainer = MarginContainer::_new();
 		_numbersColor = ColorPickerButton::_new();
 		_numbersColorLabel = Label::_new();
@@ -128,6 +134,16 @@ namespace godot
 		_rows->set_align(LineEdit::Align::ALIGN_CENTER);
 		_gridContainer->add_child(_rows);
 
+		// Add keep aspect label
+		_keepAspectLabel->set_text("Keep Aspect Ratio");
+		_keepAspectLabel->set_tooltip("When enabled, the image shown on tiles\nmaintains its aspect ratio.");
+		_keepAspectLabel->set_mouse_filter(0);
+		_gridContainer->add_child(_keepAspectLabel);
+
+		// Add keep aspect
+		_keepAspect->set_h_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
+		_gridContainer->add_child(_keepAspect);
+		
 		// Add outlines visible label
 		_outlinesVisibleLabel->set_text("Show Outlines");
 		_outlinesVisibleLabel->set_tooltip("When enabled, tiles are outlined.");
@@ -166,6 +182,25 @@ namespace godot
 		// Add numbers color
 		_gridContainer->add_child(_numbersColor);
 
+		// Add hilite blank label
+		_hiliteBlankLabel->set_text("Hilite Blank Tile");
+		_hiliteBlankLabel->set_tooltip("When enabled, the blank tile will be hilited.");
+		_hiliteBlankLabel->set_mouse_filter(0);
+		_gridContainer->add_child(_hiliteBlankLabel);
+		
+		// Add hilite blank
+		_hiliteBlank->set_h_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
+		_gridContainer->add_child(_hiliteBlank);
+		
+		// Add hilite blank color label
+		_hiliteBlankColorLabel->set_text("Hilite Blank Color");
+		_hiliteBlankColorLabel->set_tooltip("Color used to hilite the blank tile.");
+		_hiliteBlankColorLabel->set_mouse_filter(0);
+		_gridContainer->add_child(_hiliteBlankColorLabel);
+
+		// Add hilite blank color
+		_gridContainer->add_child(_hiliteBlankColor);
+		
 		// Add auto save label
 		_autoSaveLabel->set_text("Auto Save on Exit");
 		_autoSaveLabel->set_tooltip("If \"Exit Kakel\" button is used, automatically save the current game before exit.");
@@ -209,6 +244,9 @@ namespace godot
         _autoLoad->set_pressed(_preferences->auto_load_get());
         _autoSave->set_pressed(_preferences->auto_save_get());
         _columns->set_value(_preferences->columns_get());
+		_hiliteBlank->set_pressed(_preferences->hilite_blank_get());
+		_hiliteBlankColor->set_pick_color(_preferences->hilite_blank_color_get());
+		_keepAspect->set_pressed(_preferences->keep_aspect_get());
         _numbersColor->set_pick_color(_preferences->numbers_color_get());
         _numbersVisible->set_pressed(_preferences->numbers_visible_get());
         _outlinesColor->set_pick_color(_preferences->outlines_color_get());
@@ -244,6 +282,23 @@ namespace godot
             _preferences->columns_set(_columns->get_value());
             ++updates;
         }
+		if (_preferences->hilite_blank_get() != _hiliteBlank->is_pressed())
+		{
+			_preferences->hilite_blank_set(_hiliteBlank->is_pressed());
+			_globals->tiles_hilite_blank_set(_hiliteBlank->is_pressed());
+			++updates;
+		}
+        if (_preferences->hilite_blank_color_get() != _hiliteBlankColor->get_pick_color())
+        {
+            _preferences->hilite_blank_color_set(_hiliteBlankColor->get_pick_color());
+            ++updates;
+        }
+		if (_preferences->keep_aspect_get() != _keepAspect->is_pressed())
+		{
+			_preferences->keep_aspect_set(_keepAspect->is_pressed());
+			_globals->tiles_keep_aspect_set(_keepAspect->is_pressed());
+			++updates;
+		}
         if (_preferences->numbers_color_get() != _numbersColor->get_pick_color())
         {
             _preferences->numbers_color_set(_numbersColor->get_pick_color());

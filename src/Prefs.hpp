@@ -38,6 +38,12 @@ namespace godot
 		Label* _columnsLabel;
 		GridContainer* _gridContainer;
 		HBoxContainer* _hboxContainer;
+		CheckButton* _hiliteBlank;
+		Label* _hiliteBlankLabel;
+		ColorPickerButton* _hiliteBlankColor;
+		Label* _hiliteBlankColorLabel;
+		CheckButton* _keepAspect;
+		Label* _keepAspectLabel;
 		MarginContainer* _marginContainer;
 		ColorPickerButton* _numbersColor;
 		Label* _numbersColorLabel;

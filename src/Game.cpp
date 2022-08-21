@@ -8,6 +8,14 @@
 
 using namespace godot;
 
+namespace
+{
+	const int MI_HILITEBLANK = 3;
+	const int MI_KEEPASPECT = 2;
+	const int MI_NUMBERSVISIBLE = 1;
+	const int MI_OUTLINESVISIBLE = 0;
+}
+
 namespace godot
 {
 	void Game::_register_methods()
@@ -125,18 +133,19 @@ namespace godot
 		set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 
 		// Add v box control to hold everything
-		_gameBoard->set_margin(GlobalConstants::MARGIN_RIGHT, 1280);
-		_gameBoard->set_margin(GlobalConstants::MARGIN_BOTTOM, 720);
+		_gameBoard->set_anchor(GlobalConstants::MARGIN_RIGHT, 1, false, false);
+		_gameBoard->set_anchor(GlobalConstants::MARGIN_BOTTOM, 1, false, false);
 		_gameBoard->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_gameBoard->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		add_child(_gameBoard);
 		
 		// Add panel container around top area
+		_panelContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_gameBoard->add_child(_panelContainer);
 
 		// Add h flow connector for full toolbar
-		_hflowContainer2->set_theme(theme);
 		_hflowContainer2->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
+		_hflowContainer2->set_theme(theme);
 		_panelContainer->add_child(_hflowContainer2);
 
 		// Add h flow container for left part of toolbar
@@ -184,8 +193,10 @@ namespace godot
 		_options->set_h_size_flags(0);
 		_options->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
 		PopupMenu* pm = _options->get_popup();
-		pm->add_check_item("Outlines", 0);
-		pm->add_check_item("Numbers", 1);
+		pm->add_check_item("Outlines", MI_OUTLINESVISIBLE);
+		pm->add_check_item("Numbers", MI_NUMBERSVISIBLE);
+		pm->add_check_item("Aspect Ratio", MI_KEEPASPECT);
+		pm->add_check_item("Hilite Blank", MI_HILITEBLANK);
 		_hflowContainer->add_child(_options);
 		
 		// Separate control areas
@@ -219,18 +230,11 @@ namespace godot
 		_gridContainer->add_child(_moves);
 		
 		// Add margin around tiles
-		_marginContainer->set_margin(GlobalConstants::MARGIN_TOP, 73);
-		_marginContainer->set_margin(GlobalConstants::MARGIN_RIGHT, 1280);
-		_marginContainer->set_margin(GlobalConstants::MARGIN_BOTTOM, 720);
 		_marginContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_marginContainer->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_gameBoard->add_child(_marginContainer);
 
 		// Add tiles
-		_tiles->set_margin(GlobalConstants::MARGIN_LEFT, 10);
-		_tiles->set_margin(GlobalConstants::MARGIN_TOP, 10);
-		_tiles->set_margin(GlobalConstants::MARGIN_RIGHT, 1270);
-		_tiles->set_margin(GlobalConstants::MARGIN_BOTTOM, 637);
 		_tiles->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_tiles->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 		_tiles->numbers_font_set(font);
@@ -322,13 +326,28 @@ namespace godot
         // Update GUI for common settings
         _tiles->numbers_color_set(_preferences->numbers_color_get());
         _tiles->outlines_color_set(_preferences->outlines_color_get());
+
+		// Numbers visible
 		bool b = _preferences->numbers_visible_get();
         _tiles->numbers_visible_set(b);
-        pm->set_item_checked(1, b);
+        pm->set_item_checked(MI_NUMBERSVISIBLE, b);
+
+		// Outlines visible
 		b = _preferences->outlines_visible_get();
         _tiles->outlines_visible_set(b);
-        pm->set_item_checked(0, b);
+        pm->set_item_checked(MI_OUTLINESVISIBLE, b);
 
+		// Keep aspect
+		b = _globals->tiles_keep_aspect_get();
+		_tiles->keep_aspect_set(b);
+		pm->set_item_checked(MI_KEEPASPECT, b);
+		
+		// Hilite blank
+		b = _globals->tiles_hilite_blank_get();
+		_tiles->hilite_blank_set(b);
+		pm->set_item_checked(MI_HILITEBLANK, b);
+		_tiles->hilite_blank_color_set(_preferences->hilite_blank_color_get());
+		
         // Not all globals are used if loading a game.
         if (_globals->tiles_loading_get())
         {
@@ -341,30 +360,36 @@ namespace godot
         {
             _tiles->columns_set(_preferences->columns_get());
             _tiles->rows_set(_preferences->rows_get());
-            if (_preferences->use_image_get())
+            if (_globals->tiles_use_image_get())
             {
                 if (_globals->tiles_default_image_get())
                     _tiles->image_path_set(_preferences->default_image_get());
                 else
                     _tiles->image_path_set(_preferences->last_image_get());
-                pm->set_item_disabled(0, false);
-                pm->set_item_disabled(1, false);
+                pm->set_item_disabled(MI_KEEPASPECT, false);
+                pm->set_item_disabled(MI_NUMBERSVISIBLE, false);
+                pm->set_item_disabled(MI_OUTLINESVISIBLE, false);
 				FUNCP_("Game::_ready: tiles using image");
             }
             else
             {
                 _tiles->image_path_set("");
-                pm->set_item_disabled(0, true);
-                pm->set_item_disabled(1, true);
+                pm->set_item_disabled(MI_KEEPASPECT, true);
+                pm->set_item_disabled(MI_NUMBERSVISIBLE, true);
+				pm->set_item_disabled(MI_OUTLINESVISIBLE, true);
 				FUNCP_("Game::_ready: tiles not using image");
             }
             _tiles->start();
         }
+
+		// Haven't quit yet
+		_globals->tiles_quit_set(false);
 	}
 	
 	void Game::abort()
 	{
 		FUNC_("Game::abort");
+		_globals->tiles_quit_set(true);
         _tree->change_scene("res://Main.tscn");
 	}
 	
@@ -482,13 +507,25 @@ namespace godot
         const bool on = pm->is_item_checked(index);
         switch (index)
         {
-        case 0: // Outlines
+		case MI_KEEPASPECT:
+			_tiles->keep_aspect_set(on);
+			break;
+			
+		case MI_HILITEBLANK:
+			_tiles->hilite_blank_set(on);
+			break;
+			
+        case MI_NUMBERSVISIBLE:
+            _tiles->numbers_visible_set(on);
+            break;
+			
+        case MI_OUTLINESVISIBLE:
             _tiles->outlines_visible_set(on);
             break;
 
-        case 1: // Numbers
-            _tiles->numbers_visible_set(on);
-            break;
+		default:
+			FUNCPF_("Invalid menu item index");
+			break;
         }
 	}
 	
@@ -544,11 +581,14 @@ namespace godot
 		
 		// Update options
         PopupMenu* pm = _options->get_popup();
-        pm->set_item_checked(1, _tiles->numbers_visible_get());
-        pm->set_item_checked(0, _tiles->outlines_visible_get());
+        pm->set_item_checked(MI_KEEPASPECT, _tiles->keep_aspect_get());
+        pm->set_item_checked(MI_HILITEBLANK, _tiles->hilite_blank_get());
+        pm->set_item_checked(MI_NUMBERSVISIBLE, _tiles->numbers_visible_get());
+        pm->set_item_checked(MI_OUTLINESVISIBLE, _tiles->outlines_visible_get());
 		const bool disabled = _tiles->image_path_get().length() > 0 ? false : true;
-		pm->set_item_disabled(0, disabled);
-		pm->set_item_disabled(1, disabled);
+		pm->set_item_disabled(MI_KEEPASPECT, disabled);
+		pm->set_item_disabled(MI_NUMBERSVISIBLE, disabled);
+		pm->set_item_disabled(MI_OUTLINESVISIBLE, disabled);
 	}
 	
 	void Game::on_tiles_moved(int count)
@@ -582,8 +622,6 @@ namespace godot
 
         // Notify user.
         _winnerDialog->popup_centered();
-		FUNCP_("_winnerDialog: p {0} s {1}", _winnerDialog->get_position(), _winnerDialog->get_size());
-		FUNCP_("_winnerLabel: p {0} s {1}", _winnerLabel->get_position(), _winnerLabel->get_size());
 	}
 	
 	void Game::on_winnerDialog_close_pressed()

@@ -4,8 +4,8 @@
 #define FUNC_(name) FUNCTION ___func___(name)
 #define FUNCQ_(name) FUNCTION ___func___(name, true)
 #define FUNCV_(name) FUNCTION ___func___(name, false)
-#define FUNCP_ ___func___.print
-#define FUNCPF_ ___func___.fprint
+#define FUNCP_ Godot::print
+#define FUNCPF_ Godot::print
 #define FUNCQ() ___func___.quiet()
 #define FUNCV() ___func___.verbose()
 
@@ -14,24 +14,18 @@ namespace godot
 	class FUNCTION
 	{
 	public:
-		FUNCTION(const char* func, bool quiet=true)
+		FUNCTION(const char* func, bool quiet=false)
 			: _name(func),
 			  _quiet(quiet)
 		{
 			if (!_quiet)
-				Godot::print(_name, ": --> enter");
+				Godot::print("{0}: --> enter", _name);
 		}
 		~FUNCTION()
 		{
 			if (!_quiet)
-				Godot::print(_name, ": <-- exit");
+				Godot::print("{0}: <-- exit", _name);
 		}
-
-		template <typename... Args>
-		void fprint(const Args&... args) { Godot::print(_name, ": ", args...); }
-
-		template <typename... Args>
-		void print(const Args&... args) { if (!_quiet) Godot::print(_name, ": ", args...); }
 
 		void quiet() { _quiet = true; }
 		
