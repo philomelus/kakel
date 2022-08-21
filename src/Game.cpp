@@ -61,35 +61,6 @@ namespace godot
 	void Game::_init()
 	{
 		FUNC_("Game::_init");
-		
-		_abort = Button::_new();
-		_gameBoard = VBoxContainer::_new();
-		_gridContainer = GridContainer::_new();
-		_hflowContainer = HFlowContainer::_new();
-		_hflowContainer2 = HFlowContainer::_new();
-		_hint = Button::_new();
-		_hintClose = Button::_new();
-		_hintDialog = WindowDialog::_new();
-		_hintImage = TextureRect::_new();
-		_load = Button::_new();
-		_loadDialog = FileDialog::_new();
-		_marginContainer = MarginContainer::_new();
-		_moves = LineEdit::_new();
-		_movesLabel = Label::_new();
-		_panelContainer = PanelContainer::_new();
-		_options = MenuButton::_new();
-		_quit = Button::_new();
-		_save = Button::_new();
-		_saveDialog = FileDialog::_new();
-		_tiles = TilesControl::_new();
-		_vseparator = VSeparator::_new();
-		_vseparator2 = VSeparator::_new();
-		_vseparator3 = VSeparator::_new();
-		_vseparator4 = VSeparator::_new();
-		_vseparator5 = VSeparator::_new();
-		_winnerClose = Button::_new();
-		_winnerDialog = WindowDialog::_new();
-		_winnerLabel = Label::_new();
 	}
 
 	void Game::_input(const Ref<InputEvent> ev)
@@ -114,194 +85,67 @@ namespace godot
 		FUNC_("Game::_ready");
 		
 		_globals = get_node<AppGlobals>("/root/Globals");
-		_preferences = get_node<AppPreferences>("/root/Preferences");
-		_tree = get_tree();
-
 		ERR_FAIL_COND(_globals == nullptr);
+
+		_preferences = get_node<AppPreferences>("/root/Preferences");
 		ERR_FAIL_COND(_preferences == nullptr);
+
+		_tree = get_tree();
+		ERR_FAIL_COND(_tree == nullptr);
 		
-		Ref<Theme> theme = _globals->theme_get();
-
-		ERR_FAIL_COND(theme == nullptr);
-
 		Ref<DynamicFont> font = ResourceLoader::get_singleton()->load("res://font_24.tres", "DynamicFont");
+		ERR_FAIL_COND(font == nullptr);
 		
-		// Our settings
-		set_anchor(GlobalConstants::MARGIN_RIGHT, 1, false, false);
-		set_anchor(GlobalConstants::MARGIN_BOTTOM, 1, false, false);
-		set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
+		_abort = get_node<Button>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Abort");
+		ERR_FAIL_COND(_abort == nullptr);
 
-		// Add v box control to hold everything
-		_gameBoard->set_anchor(GlobalConstants::MARGIN_RIGHT, 1, false, false);
-		_gameBoard->set_anchor(GlobalConstants::MARGIN_BOTTOM, 1, false, false);
-		_gameBoard->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_gameBoard->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		add_child(_gameBoard);
-		
-		// Add panel container around top area
-		_panelContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_gameBoard->add_child(_panelContainer);
+		_gameBoard = get_node<VBoxContainer>("GameBoard");
+		ERR_FAIL_COND(_gameBoard == nullptr);
 
-		// Add h flow connector for full toolbar
-		_hflowContainer2->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_hflowContainer2->set_theme(theme);
-		_panelContainer->add_child(_hflowContainer2);
+		_hint = get_node<Button>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Hint");
+		ERR_FAIL_COND(_hint == nullptr);
 
-		// Add h flow container for left part of toolbar
-		_hflowContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_hflowContainer2->add_child(_hflowContainer);
+		_hintClose = get_node<Button>("HintDialog/HintClose");
+		ERR_FAIL_COND(_hintClose == nullptr);
 
-		// Add quit button
-		_abort->set_text("Quit Game");
-		_abort->set_h_size_flags(0);
-		_abort->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_hflowContainer->add_child(_abort);
+		_hintDialog = get_node<WindowDialog>("HintDialog");
+		ERR_FAIL_COND(_hintDialog == nullptr);
 
-		// Separate buttons
-		_hflowContainer->add_child(_vseparator);
+		_hintImage = get_node<TextureRect>("HintDialog/HintImage");
+		ERR_FAIL_COND(_hintImage == nullptr);
 
-		// Add exit button
-		_quit->set_text("Exit Kakel");
-		_quit->set_h_size_flags(0);
-		_quit->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_hflowContainer->add_child(_quit);
+		_load = get_node<Button>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Load");
+		ERR_FAIL_COND(_load == nullptr);
 
-		// Separate buttons
-		_hflowContainer->add_child(_vseparator2);
+		_loadDialog = get_node<FileDialog>("LoadDialog");
+		ERR_FAIL_COND(_loadDialog == nullptr);
 
-		// Add load game button
-		_load->set_text("Load");
-		_load->set_h_size_flags(0);
-		_load->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_hflowContainer->add_child(_load);
+		_moves = get_node<LineEdit>("GameBoard/PanelContainer/HFlowContainer2/GridContainer/Moves");
+		ERR_FAIL_COND(_moves == nullptr);
 
-		// Separate buttons
-		_hflowContainer->add_child(_vseparator3);
+		_options = get_node<MenuButton>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Options");
+		ERR_FAIL_COND(_options == nullptr);
 
-		// Add save game button
-		_save->set_text("Save");
-		_save->set_h_size_flags(0);
-		_save->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_hflowContainer->add_child(_save);
+		_quit = get_node<Button>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Quit");
+		ERR_FAIL_COND(_quit == nullptr);
 
-		// Separate buttons
-		_hflowContainer->add_child(_vseparator4);
+		_save = get_node<Button>("GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Save");
+		ERR_FAIL_COND(_save == nullptr);
 
-		// Add options menu
-		_options->set_text("Options");
-		_options->set_h_size_flags(0);
-		_options->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		PopupMenu* pm = _options->get_popup();
-		pm->add_check_item("Outlines", MI_OUTLINESVISIBLE);
-		pm->add_check_item("Numbers", MI_NUMBERSVISIBLE);
-		pm->add_check_item("Aspect Ratio", MI_KEEPASPECT);
-		pm->add_check_item("Hilite Blank", MI_HILITEBLANK);
-		_hflowContainer->add_child(_options);
-		
-		// Separate control areas
-		_hflowContainer->add_child(_vseparator5);
+		_saveDialog = get_node<FileDialog>("SaveDialog");
+		ERR_FAIL_COND(_saveDialog == nullptr);
 
-		// Add hint button
-		_hint->set_text("Hint");
-		_hint->set_h_size_flags(0);
-		_hint->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_hflowContainer->add_child(_hint);
-		
-		// Add moves section
-		_gridContainer->set_h_size_flags(Control::SizeFlags::SIZE_SHRINK_END);
-		_gridContainer->set_columns(2);
-		_hflowContainer2->add_child(_gridContainer);
+		_tiles = get_node<TilesControl>("GameBoard/MarginContainer/Tiles");
+		ERR_FAIL_COND(_tiles == nullptr);
 
-		// Add moves label
-		_movesLabel->set_text("Moves");
-		_gridContainer->add_child(_movesLabel);
+		_winnerClose = get_node<Button>("WinnerDialog/WinnerClose");
+		ERR_FAIL_COND(_winnerClose == nullptr);
 
-		// Add moves line edit
-		_moves->set_text("0");
-		_moves->set_v_size_flags(Control::SizeFlags::SIZE_FILL
-								 + Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_moves->set_align(LineEdit::Align::ALIGN_CENTER);
-		_moves->set_editable(false);
-		_moves->set_context_menu_enabled(false);
-		_moves->set_virtual_keyboard_enabled(false);
-		_moves->set_shortcut_keys_enabled(false);
-		_moves->set_middle_mouse_paste_enabled(false);
-		_gridContainer->add_child(_moves);
-		
-		// Add margin around tiles
-		_marginContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_marginContainer->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_gameBoard->add_child(_marginContainer);
+		_winnerDialog = get_node<WindowDialog>("WinnerDialog");
+		ERR_FAIL_COND(_winnerDialog == nullptr);
 
-		// Add tiles
-		_tiles->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_tiles->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_tiles->numbers_font_set(font);
-		_marginContainer->add_child(_tiles);
-
-		// Add winner dialog
-		_winnerDialog->set_custom_minimum_size(Vector2(320, 320));
-		_winnerDialog->set_exclusive(true);
-		_winnerDialog->set_title("Winner!");
-		add_child(_winnerDialog);
-
-		// Add the label to the dialog
-		_winnerLabel->set_theme(theme);
-		_winnerLabel->set_align(Label::Align::ALIGN_CENTER);
-		_winnerLabel->set_valign(Label::VAlign::VALIGN_CENTER);
-		_winnerLabel->set_h_size_flags(0);
-		_winnerLabel->set_v_size_flags(0);
-		_winnerDialog->add_child(_winnerLabel);
-
-		// Add the close button to the dialog
-		_winnerClose->set_text("Close");
-		_winnerClose->set_theme(theme);
-		_winnerDialog->add_child(_winnerClose);
-
-		// Add hint dialog
-		_hintDialog->set_custom_minimum_size(Vector2(480, 320));
-		_hintDialog->set_resizable(true);
-		_hintDialog->set_exclusive(true);
-		_hintDialog->set_title("Hint");
-		add_child(_hintDialog);
-
-		// Add hint image to dialog
-		_hintImage->set_expand(true);
-		_hintImage->set_stretch_mode(TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED);
-		_hintDialog->add_child(_hintImage);
-
-		// Add close button to dialog
-		_hintClose->set_text("Close");
-		_hintClose->set_h_size_flags(0);
-		_hintClose->set_v_size_flags(0);
-		_hintDialog->add_child(_hintClose);
-
-		// Add load game dialog
-		_loadDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
-		_loadDialog->set_custom_minimum_size(Vector2(480, 320));
-		_loadDialog->set_exclusive(true);
-		_loadDialog->set_title("Open A Game");
-		_loadDialog->set_resizable(true);
-		_loadDialog->set_mode_overrides_title(false);
-		_loadDialog->set_mode(FileDialog::Mode::MODE_OPEN_FILE);
-		_loadDialog->set_access(FileDialog::Access::ACCESS_FILESYSTEM);
-		PoolStringArray filters;
-		filters.append("*.kakel;Kakel Games");
-		_loadDialog->set_filters(filters);
-		add_child(_loadDialog);
-
-		// Add save game dialog
-		_saveDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
-		_saveDialog->set_custom_minimum_size(Vector2(480, 320));
-		_saveDialog->set_exclusive(true);
-		_saveDialog->set_title("Save Game");
-		_saveDialog->set_resizable(true);
-		_saveDialog->set_mode_overrides_title(false);
-		_saveDialog->set_mode(FileDialog::Mode::MODE_SAVE_FILE);
-		_saveDialog->set_access(FileDialog::Access::ACCESS_FILESYSTEM);
-		_saveDialog->set_filters(filters);
-		add_child(_saveDialog);
+		_winnerLabel = get_node<Label>("WinnerDialog/WinnerLabel");
+		ERR_FAIL_COND(_winnerLabel == nullptr);
 
 		// Connect signals
 		_abort->connect("pressed", this, "on_abort_pressed");
@@ -321,12 +165,16 @@ namespace godot
 		_tiles->connect("moved", this, "on_tiles_moved");
 		_tiles->connect("won", this, "on_tiles_won");
 		_winnerClose->connect("pressed", this, "on_winnerDialog_close_pressed");
+
+		PopupMenu* pm = _options->get_popup();
+		ERR_FAIL_COND(pm == nullptr);
         pm->connect("index_pressed", this, "on_options_itemSelected");
 
         // Update GUI for common settings
         _tiles->numbers_color_set(_preferences->numbers_color_get());
         _tiles->outlines_color_set(_preferences->outlines_color_get());
-
+		_tiles->numbers_font_set(font);
+		
 		// Numbers visible
 		bool b = _preferences->numbers_visible_get();
         _tiles->numbers_visible_set(b);

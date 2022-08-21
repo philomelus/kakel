@@ -37,21 +37,6 @@ namespace godot
 	void NewGame::_init()
 	{
 		FUNC_("NewGame::_init");
-
-		_browse = Button::_new();
-		_cancel = Button::_new();
-		_centerContainer = CenterContainer::_new();
-		_gridContainer = GridContainer::_new();
-		_hboxContainer = HBoxContainer::_new();
-		_keepAspect = CheckButton::_new();
-		_keepAspectLabel = Label::_new();
-		_marginContainer = MarginContainer::_new();
-		_start = Button::_new();
-		_tilesImageDialog = FileDialog::_new();
-		_tilesImage = TextureRect::_new();
-		_useImageLabel = Label::_new();
-		_useImage = CheckButton::_new();
-		_vboxContainer = VBoxContainer::_new();
 	}
 
 	void NewGame::_ready()
@@ -59,102 +44,35 @@ namespace godot
 		FUNC_("NewGame::_ready");
 		
 		_globals = get_node<AppGlobals>("/root/Globals");
-		_preferences = get_node<AppPreferences>("/root/Preferences");
-		_tree = get_tree();
-
 		ERR_FAIL_COND(_globals == nullptr);
+
+		_preferences = get_node<AppPreferences>("/root/Preferences");
 		ERR_FAIL_COND(_preferences == nullptr);
+
+		_tree = get_tree();
+		ERR_FAIL_COND(_tree == nullptr);
 		
-		Ref<Theme> theme = _globals->theme_get();
-
-		ERR_FAIL_COND(theme == nullptr);
-
-		// Set our settings
-		set_anchors_preset(Control::LayoutPreset::PRESET_WIDE);
-		set_margin(GlobalConstants::MARGIN_LEFT, 0);
-		set_margin(GlobalConstants::MARGIN_RIGHT, 0);
-		set_margin(GlobalConstants::MARGIN_TOP, 0);
-		set_margin(GlobalConstants::MARGIN_BOTTOM, 0);
-		set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		set_h_grow_direction(Control::GrowDirection::GROW_DIRECTION_BOTH);
-		set_v_grow_direction(Control::GrowDirection::GROW_DIRECTION_BOTH);
-
-		// Add center container
-		add_child(_centerContainer);
-
-		// Add v box container
-		_centerContainer->set_theme(theme);
-		_centerContainer->add_child(_vboxContainer);
-
-		// Add grid container
-		_gridContainer->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_gridContainer->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_gridContainer->set_columns(2);
-		_vboxContainer->add_child(_gridContainer);
-
-		// Add use image label
-		_useImageLabel->set_text("Use Image");
-		_gridContainer->add_child(_useImageLabel);
-
-		// Add use image
-		_gridContainer->add_child(_useImage);
-
-		// Add keep aspect label
-		_keepAspectLabel->set_text("Keep Aspect Ratio");
-		_gridContainer->add_child(_keepAspectLabel);
-
-		// Add keep aspect
-		_gridContainer->add_child(_keepAspect);
-			
-		// Add tiles image
-		_tilesImage->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_tilesImage->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-		_tilesImage->set_custom_minimum_size(Vector2(200, 200));
-		_tilesImage->set_stretch_mode(_globals->tiles_keep_aspect_get()
-									  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
-									  : TextureRect::StretchMode::STRETCH_SCALE);
-		_vboxContainer->add_child(_tilesImage);
-
-		// Add browse button
-		_browse->set_text("Browse");
-		_browse->set_v_size_flags(0);
-		_browse->set_h_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
-		_browse->set_text_align(Button::TextAlign::ALIGN_CENTER);
-		_vboxContainer->add_child(_browse);
+		_browse = get_node<Button>("CenterContainer/VBoxContainer/Browse");
+		ERR_FAIL_COND(_browse == nullptr);
 		
-		// Add margin around command buttons
-		_vboxContainer->add_child(_marginContainer);
+		_cancel = get_node<Button>("CenterContainer/VBoxContainer/MarginContainer/HBoxContainer/Cancel");
+		ERR_FAIL_COND(_cancel == nullptr);
+		
+		_keepAspect = get_node<CheckButton>("CenterContainer/VBoxContainer/GridContainer/KeepAspect");
+		ERR_FAIL_COND(_keepAspect == nullptr);
+		
+		_start = get_node<Button>("CenterContainer/VBoxContainer/MarginContainer/HBoxContainer/Start");
+		ERR_FAIL_COND(_start == nullptr);
+		
+		_tilesImage = get_node<TextureRect>("CenterContainer/VBoxContainer/TilesImage");
+		ERR_FAIL_COND(_tilesImage == nullptr);
+		
+		_tilesImageDialog = get_node<FileDialog>("TilesImageDialog");
+		ERR_FAIL_COND(_tilesImageDialog == nullptr);
+		
+		_useImage = get_node<CheckButton>("CenterContainer/VBoxContainer/GridContainer/UseImage");
+		ERR_FAIL_COND(_useImage == nullptr);
 
-		// Add h box container
-		_hboxContainer->set_alignment(BoxContainer::AlignMode::ALIGN_CENTER);
-		_marginContainer->add_child(_hboxContainer);
-		
-		// Add cancel button
-		_cancel->set_text("Cancel");
-		_hboxContainer->add_child(_cancel);
-
-		// Add start button
-		_start->set_text("Start");
-		_hboxContainer->add_child(_start);
-		
-		// Add tile image dialog
-		_tilesImageDialog->set_pause_mode(Node::PauseMode::PAUSE_MODE_PROCESS);
-		_tilesImageDialog->set_custom_minimum_size(Vector2(480, 320));
-		_tilesImageDialog->set_exclusive(true);
-		_tilesImageDialog->set_title("Open Image");
-		_tilesImageDialog->set_resizable(true);
-		_tilesImageDialog->set_mode_overrides_title(false);
-		_tilesImageDialog->set_mode(FileDialog::Mode::MODE_OPEN_FILE);
-		_tilesImageDialog->set_access(FileDialog::Access::ACCESS_FILESYSTEM);
-		PoolStringArray filters;
-		filters.append("*.bmp,*.jpg,*.jpeg,*.png;Images");
-		filters.append("*.bmp;Bitmap Images");
-		filters.append("*.jpg;*.jpeg;JPEG Images");
-		filters.append("*.png;PNG Images");
-		_tilesImageDialog->set_filters(filters);
-		add_child(_tilesImageDialog);
-		
 		// Signals
 		_browse->connect("pressed", this, "on_browse_pressed");
 		_cancel->connect("pressed", this, "on_cancel_pressed");

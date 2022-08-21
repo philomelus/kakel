@@ -1,17 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
-[sub_resource type="GDNativeLibrary" id=1]
-entry/X11.64 = "res://bin/x11/kakel.so"
-entry/Windows.64 = "res://bin/kakel.dll"
-entry/OSX.64 = "res://bin/osx/kakel.dylib"
-dependency/X11.64 = [  ]
-dependency/Windows.64 = [  ]
-dependency/OSX.64 = [  ]
-
-[sub_resource type="NativeScript" id=2]
-resource_name = "Main"
-class_name = "Main"
-library = SubResource( 1 )
+[ext_resource path="res://bin/Main.gdns" type="Script" id=1]
+[ext_resource path="res://theme.tres" type="Theme" id=2]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -20,6 +10,63 @@ anchor_bottom = 1.0
 [node name="PanelContainer" type="PanelContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+rect_min_size = Vector2( 1280, 720 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = SubResource( 2 )
+script = ExtResource( 1 )
+
+[node name="CenterContainer" type="CenterContainer" parent="PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 1273.0
+margin_bottom = 713.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CenterContainer"]
+margin_left = 567.0
+margin_top = 220.0
+margin_right = 698.0
+margin_bottom = 485.0
+theme = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="PanelContainer/CenterContainer/VBoxContainer"]
+margin_right = 131.0
+margin_bottom = 45.0
+text = "KAKEL"
+align = 1
+valign = 1
+
+[node name="Start" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+margin_top = 49.0
+margin_right = 131.0
+margin_bottom = 100.0
+text = "New"
+
+[node name="Load" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+margin_top = 104.0
+margin_right = 131.0
+margin_bottom = 155.0
+text = "Load"
+
+[node name="Options" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+margin_top = 159.0
+margin_right = 131.0
+margin_bottom = 210.0
+text = "Options"
+
+[node name="Quit" type="Button" parent="PanelContainer/CenterContainer/VBoxContainer"]
+margin_top = 214.0
+margin_right = 131.0
+margin_bottom = 265.0
+text = "Quit"
+
+[node name="LoadDialog" type="FileDialog" parent="PanelContainer"]
+margin_right = 480.0
+margin_bottom = 320.0
+rect_min_size = Vector2( 480, 320 )
+popup_exclusive = true
+window_title = "Load Game"
+resizable = true
+mode_overrides_title = false
+mode = 0
+access = 2
+filters = PoolStringArray( "*.kakel;Kakel Games" )
