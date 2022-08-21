@@ -92,7 +92,10 @@ namespace godot
         else
             _imagePath = _preferences->last_image_get();
         _image = load_image(_imagePath);
-
+        _tilesImage->set_stretch_mode(_globals->tiles_keep_aspect_get()
+									  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
+									  : TextureRect::StretchMode::STRETCH_SCALE);
+		
 		// Resize image and set as texture
         call_deferred("update_image");
 	}
