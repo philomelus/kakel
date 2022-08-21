@@ -413,10 +413,7 @@ void Game::on_tiles_itemRectChanged()
 {
 	FUNC_("Game::on_tiles_itemRectChanged");
 	if (_tiles != nullptr)
-	{
-		FUNCP_("p ", _tiles->get_position(), " s ", _tiles->get_size());
 		_tiles->recalc_tiles();
-	}
 }
 
 void Game::on_tiles_loaded()
@@ -425,11 +422,14 @@ void Game::on_tiles_loaded()
 		
 	// Update options
 	PopupMenu* pm = _options->get_popup();
-	pm->set_item_checked(1, _tiles->numbers_visible_get());
-	pm->set_item_checked(0, _tiles->outlines_visible_get());
+	pm->set_item_checked(MI_KEEPASPECT, _tiles->keep_aspect_get());
+	pm->set_item_checked(MI_HILITEBLANK, _tiles->hilite_blank_get());
+	pm->set_item_checked(MI_NUMBERSVISIBLE, _tiles->numbers_visible_get());
+	pm->set_item_checked(MI_OUTLINESVISIBLE, _tiles->outlines_visible_get());
 	const bool disabled = _tiles->image_path_get().length() > 0 ? false : true;
-	pm->set_item_disabled(0, disabled);
-	pm->set_item_disabled(1, disabled);
+	pm->set_item_disabled(MI_KEEPASPECT, disabled);
+	pm->set_item_disabled(MI_NUMBERSVISIBLE, disabled);
+	pm->set_item_disabled(MI_OUTLINESVISIBLE, disabled);
 }
 	
 void Game::on_tiles_moved(int count)

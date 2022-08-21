@@ -43,6 +43,8 @@ void TilesControl::_bind_methods()
 	ClassDB::bind_method(D_METHOD("start"), &TilesControl::start);
 
 	// Non-api functions
+	ClassDB::bind_method(D_METHOD("background_color_get"), &TilesControl::background_color_get);
+	ClassDB::bind_method(D_METHOD("background_color_set", "newVal"), &TilesControl::background_color_set);
 	ClassDB::bind_method(D_METHOD("can_move_down_get"), &TilesControl::can_move_down_get);
 	ClassDB::bind_method(D_METHOD("can_move_down_set", "newVal"), &TilesControl::can_move_down_set);
 	ClassDB::bind_method(D_METHOD("can_move_left_get"), &TilesControl::can_move_left_get);
@@ -81,6 +83,7 @@ void TilesControl::_bind_methods()
 	ClassDB::bind_method(D_METHOD("tiles_count_set", "newVal"), &TilesControl::tiles_count_set);
 	
 	// Properties
+	ADD_PROPERTY(PropertyInfo(Variant::COLOR, "background_color"), "background_color_set", "background_color_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "can_move_down"), "can_move_down_set", "can_move_down_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "can_move_left"), "can_move_left_set", "can_move_left_get");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "can_move_right"), "can_move_right_set", "can_move_right_get");
@@ -382,6 +385,20 @@ void TilesControl::_unhandled_input(const Ref<InputEvent>& ev)
 	}
 }
 	
+Color TilesControl::background_color_get() const
+{
+	return _backgroundColor;
+}
+
+void TilesControl::background_color_set(const Color newVal)
+{
+	if (_backgroundColor != newVal)
+	{
+		_backgroundColor = newVal;
+		update();
+	}
+}
+
 void TilesControl::calc_movables()
 {
 	FUNC_("TilesControl::calc_movables");
@@ -557,20 +574,6 @@ void TilesControl::hilite_blank_color_set(const Color newVal)
 	}
 }
 	
-bool TilesControl::keep_aspect_get() const
-{
-	return _keepAspect;
-}
-
-void TilesControl::keep_aspect_set(const bool newVal)
-{
-	if (_keepAspect != newVal)
-	{
-		_keepAspect = newVal;
-		recalc_tiles(true);
-	}
-}
-
 String TilesControl::image_path_get() const
 {
 	return _imagePath;
@@ -588,6 +591,20 @@ void TilesControl::image_path_set(const String newVal)
 	}
 }
 	
+bool TilesControl::keep_aspect_get() const
+{
+	return _keepAspect;
+}
+
+void TilesControl::keep_aspect_set(const bool newVal)
+{
+	if (_keepAspect != newVal)
+	{
+		_keepAspect = newVal;
+		recalc_tiles(true);
+	}
+}
+
 void TilesControl::load_game(const String path)
 {
 	FUNC_("TilesControl::load_game");
@@ -757,9 +774,12 @@ Ref<Font> TilesControl::numbers_font_get() const
 	
 void TilesControl::numbers_font_set(Ref<Font> newVal)
 {
-	_numbersFont = newVal;
-	if (_numbersVisible)
-		update();
+	if (_numbersFont != newVal)
+	{
+		_numbersFont = newVal;
+		if (_numbersVisible)
+			update();
+	}
 }
 	
 Color TilesControl::numbers_color_get() const

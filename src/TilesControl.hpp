@@ -40,9 +40,11 @@ namespace godot
 		int columns_get() const;
 		void columns_set(const int newVal);
 
+		// When true, the blank tiles is hilited
 		bool hilite_blank_get() const;
 		void hilite_blank_set(const bool newVal);
 
+		// Color used to hilite the blank tile
 		Color hilite_blank_color_get() const;
 		void hilite_blank_color_set(const Color newVal);
 		

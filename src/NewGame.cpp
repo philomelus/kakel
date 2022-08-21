@@ -87,6 +87,7 @@ void NewGame::_ready()
 	else
 		_imagePath = _preferences->last_image_get();
 	_image = load_image(_imagePath);
+
 	ERR_FAIL_COND(_image == nullptr);
 	_tilesImage->set_stretch_mode(_globals->tiles_keep_aspect_get()
 								  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
