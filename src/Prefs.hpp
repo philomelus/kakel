@@ -21,6 +21,11 @@ namespace godot
 		GDCLASS(Prefs, PanelContainer);
 
 	private:
+		// Common
+		AppPreferences* _preferences;
+		AppGlobals* _globals;
+
+		// UI
 		CheckButton* _autoLoad;
 		Label* _autoLoadLabel;
 		CheckButton* _autoSave;
@@ -29,7 +34,6 @@ namespace godot
 		CenterContainer* _centerContainer;
 		SpinBox* _columns;
 		Label* _columnsLabel;
-		AppGlobals* _globals;
 		GridContainer* _gridContainer;
 		HBoxContainer* _hboxContainer;
 		CheckButton* _hiliteBlank;
@@ -47,7 +51,6 @@ namespace godot
 		Label* _outlinesColorLabel;
 		CheckButton* _outlinesVisible;
 		Label* _outlinesVisibleLabel;
-		AppPreferences* _preferences;
 		SpinBox* _rows;
 		Label* _rowsLabel;
 		Button* _save;

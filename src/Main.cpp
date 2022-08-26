@@ -123,11 +123,16 @@ void Main::_ready()
 	add_child(_loadDialog);
 		
 	// Connect signals
-	_start->connect("pressed", Callable(this, "on_new_pressed"));
-	_load->connect("pressed", Callable(this, "on_load_pressed"));
-	_options->connect("pressed", Callable(this, "on_options_pressed"));
-	_quit->connect("pressed", Callable(this, "on_quit_pressed"));
-	_loadDialog->connect("file_selected", Callable(this, "on_loadDialog_fileSelected"));
+	Error err = _start->connect("pressed", Callable(this, "on_new_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _load->connect("pressed", Callable(this, "on_load_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _options->connect("pressed", Callable(this, "on_options_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _quit->connect("pressed", Callable(this, "on_quit_pressed"));
+	ERR_FAIL_COND(err != Error::OK);
+	err = _loadDialog->connect("file_selected", Callable(this, "on_loadDialog_fileSelected"));
+	ERR_FAIL_COND(err != Error::OK);
 
 	// If an image was loaded previously, then default is no longer known
 	if (_preferences->last_image_get().length() > 0)

@@ -29,32 +29,32 @@ namespace godot
 		GDCLASS(Game, Control);
 		
 	private:
+		// Common
+		AppGlobals* _globals;
+		AppPreferences* _preferences;
+		SceneTree* _tree;
+
+		// UI
 		Button* _abort;
 		VBoxContainer* _gameBoard;
-		AppGlobals* _globals;
 		GridContainer* _gridContainer;
 		HFlowContainer* _hflowContainer;
 		HFlowContainer* _hflowContainer2;
 		Button* _hint;
 		Button* _hintClose;
 		Window* _hintDialog;
-		bool _hintDialogUsed;
 		TextureRect* _hintImage;
 		Button* _load;
 		FileDialog* _loadDialog;
-		bool _loadDialogUsed;
 		MarginContainer* _marginContainer;
 		LineEdit* _moves;
 		Label* _movesLabel;
 		MenuButton* _options;
 		PanelContainer* _panelContainer;
-		AppPreferences* _preferences;
 		Button* _quit;
 		Button* _save;
 		FileDialog* _saveDialog;
-		bool _saveDialogUsed;
 		TilesControl* _tiles;
-		SceneTree* _tree;
 		VSeparator* _vseparator;
 		VSeparator* _vseparator2;
 		VSeparator* _vseparator3;
@@ -63,6 +63,11 @@ namespace godot
 		Button* _winnerClose;
 		Window* _winnerDialog;
 		Label* _winnerLabel;
+
+		// Internal
+		bool _hintDialogUsed;
+		bool _loadDialogUsed;
+		bool _saveDialogUsed;
 
 	protected:
 		static void _bind_methods();

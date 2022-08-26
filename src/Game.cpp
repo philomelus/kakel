@@ -189,6 +189,7 @@ void Game::_ready()
 	_options->set_h_size_flags(0);
 	_options->set_v_size_flags(Control::SizeFlags::SIZE_SHRINK_CENTER);
 	PopupMenu* pm = _options->get_popup();
+	ERR_FAIL_COND(pm == nullptr);
 	pm->add_check_item("Outlines", MI_OUTLINESVISIBLE);
 	pm->add_check_item("Numbers", MI_NUMBERSVISIBLE);
 	pm->add_check_item("Aspect Ratio", MI_KEEPASPECT);
@@ -233,7 +234,6 @@ void Game::_ready()
 	// Add tiles
 	_tiles->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 	_tiles->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
-	_tiles->numbers_font_set(theme->get_default_font());
 	_marginContainer->add_child(_tiles);
 
 	// Add winner dialog
@@ -321,6 +321,7 @@ void Game::_ready()
 	// Update GUI for common settings
 	_tiles->numbers_color_set(_preferences->numbers_color_get());
 	_tiles->outlines_color_set(_preferences->outlines_color_get());
+	_tiles->numbers_font_set(theme->get_default_font());
 
 	// Numbers visible?
 	bool b = _preferences->numbers_visible_get();

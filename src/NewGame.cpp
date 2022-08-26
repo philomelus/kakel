@@ -100,9 +100,6 @@ void NewGame::_ready()
 	_tilesImage->set_h_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 	_tilesImage->set_v_size_flags(Control::SizeFlags::SIZE_EXPAND_FILL);
 	_tilesImage->set_custom_minimum_size(Vector2(200, 200));
-	_tilesImage->set_stretch_mode(_globals->tiles_keep_aspect_get()
-								  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
-								  : TextureRect::StretchMode::STRETCH_SCALE);
 	_vboxContainer->add_child(_tilesImage);
 
 	// Add browse button
@@ -165,8 +162,10 @@ void NewGame::_ready()
 	else
 		_imagePath = _preferences->last_image_get();
 	_image = load_image(_imagePath);
-
 	ERR_FAIL_COND(_image == nullptr);
+	_tilesImage->set_stretch_mode(_globals->tiles_keep_aspect_get()
+								  ? TextureRect::StretchMode::STRETCH_KEEP_ASPECT_CENTERED
+								  : TextureRect::StretchMode::STRETCH_SCALE);
 	
 	// Resize image and set as texture
 	call_deferred("update_image");
