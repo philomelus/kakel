@@ -7,14 +7,18 @@ onready var _tree: SceneTree = get_tree()
 
 
 func _ready() -> void:
-	# Load or initialize preferences
-	Globals.preferences.load_(Preferences.P_PREFS)
+	# If an image was loaded previously, then default is no longer known
+	Globals.tiles_default_image = true if Preferences.last_image == "" else false
 
-	# If an image has been loaded before, then default image is gone
-	Globals.tiles_default_image = true if Globals.preferences.last_image == "" else false
+	# Queue call to auto start
+#	if not Globals.tiles_quit:
+#		call_deferred("check_auto_start")
 
-	# Queue call to auto start if desired
-	call_deferred("check_auto_start")
+	# Import preferences once
+	if not Globals.preferences_imported:
+		Globals.tiles_hilite_blank = Preferences.hilite_blank
+		Globals.tiles_keep_aspect = Preferences.keep_aspect
+		Globals.preferences_imported = true
 
 
 func _unhandled_input(ev: InputEvent) -> void:
@@ -34,9 +38,9 @@ func _unhandled_input(ev: InputEvent) -> void:
 
 func _on_load_dialog_file_selected(path: String) -> void:
 	# Save path if different than last loaded game
-	if Globals.preferences.last_game != path:
-		Globals.preferences.last_game = path
-		Globals.preferences.save(Preferences.P_PREFS)
+	if Preferences.last_game != path:
+		Preferences.last_game = path
+		Preferences.save(Preferences.P_PREFS)
 	load_game(path)
 
 
@@ -57,11 +61,12 @@ func _on_quit_pressed():
 
 
 func check_auto_start() -> void:
-	if Globals.preferences.auto_load:
+	if Preferences.auto_load:
 		var d: Directory = Directory.new()
-		if d.file_exists(Globals.preferences.auto_path):
+		if d.file_exists(Preferences.auto_path):
 			Globals.auto_started = true
-			load_game(Globals.preferences.auto_path)
+			print("loading game from \"%s\"" % [Preferences.auto_path])
+			load_game(Preferences.auto_path)
 
 
 func load_() -> void:
@@ -70,24 +75,24 @@ func load_() -> void:
 		_load_dialog.popup()
 	else:
 		_load_dialog_used = true
-		if Globals.preferences.last_game != "":
-			_load_dialog.current_path = Globals.preferences.last_game
+		if Preferences.last_game.length() > 0:
+			_load_dialog.current_path = Preferences.last_game
 		_load_dialog.popup_centered()
 
 
 func load_game(path: String) -> void:
 	Globals.tiles_loading = true
 	Globals.tiles_load_path = path
-	_tree.change_scene("res://Game.tscn")
+	var _r = _tree.change_scene("res://Game.tscn")
 
 
 func new_game() -> void:
 	Globals.auto_started = false
-	_tree.change_scene("res://NewGame.tscn")
+	var _r = _tree.change_scene("res://NewGame.tscn")
 
 
 func prefs() -> void:
-	_tree.change_scene("res://Prefs.tscn")
+	var _r = _tree.change_scene("res://Prefs.tscn")
 
 
 func quit() -> void:

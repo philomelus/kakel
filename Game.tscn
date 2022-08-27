@@ -3,11 +3,8 @@
 [ext_resource path="res://TilesControl.gd" type="Script" id=1]
 [ext_resource path="res://Game.gd" type="Script" id=2]
 [ext_resource path="res://NotoSansUI_Regular.woff2" type="DynamicFontData" id=3]
-[ext_resource path="res://prefs_theme.tres" type="Theme" id=4]
-
-[sub_resource type="DynamicFont" id=5]
-size = 24
-font_data = ExtResource( 3 )
+[ext_resource path="res://theme.tres" type="Theme" id=4]
+[ext_resource path="res://font_32.tres" type="DynamicFont" id=5]
 
 [sub_resource type="ImageTexture" id=4]
 
@@ -109,7 +106,7 @@ margin_left = 555.0
 margin_right = 686.0
 margin_bottom = 51.0
 text = "Options"
-items = [ "Outlines", null, 1, false, false, 0, 0, null, "", false, "Numbers", null, 1, true, false, 1, 0, null, "", false ]
+items = [ "Outlines", null, 1, false, false, 0, 0, null, "", false, "Numbers", null, 1, true, false, 1, 0, null, "", false, "Aspect Ratio", null, 1, false, false, 2, 0, null, "", false, "Hilite Blank", null, 1, false, false, 3, 0, null, "", false ]
 
 [node name="VSeparator5" type="VSeparator" parent="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer"]
 margin_left = 690.0
@@ -170,7 +167,7 @@ margin_bottom = 637.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 1 )
-number_font = SubResource( 5 )
+numbers_font = ExtResource( 5 )
 
 [node name="WinnerDialog" type="WindowDialog" parent="."]
 pause_mode = 2

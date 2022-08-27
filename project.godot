@@ -9,15 +9,20 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "AppGlobals",
+"language": "GDScript",
+"path": "res://AppGlobals.gd"
+}, {
+"base": "Node",
+"class": "AppPreferences",
+"language": "GDScript",
+"path": "res://AppPreferences.gd"
+}, {
 "base": "EditorVCSInterface",
 "class": "GitAPI",
 "language": "NativeScript",
 "path": "res://addons/godot-git-plugin/git_api.gdns"
-}, {
-"base": "Resource",
-"class": "Preferences",
-"language": "GDScript",
-"path": "res://Preferences.gd"
 }, {
 "base": "Control",
 "class": "TilesControl",
@@ -25,8 +30,9 @@ _global_script_classes=[ {
 "path": "res://TilesControl.gd"
 } ]
 _global_script_class_icons={
+"AppGlobals": "",
+"AppPreferences": "",
 "GitAPI": "",
-"Preferences": "",
 "TilesControl": ""
 }
 
@@ -42,7 +48,8 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Globals="*res://Globals.gd"
+Globals="*res://AppGlobals.gd"
+Preferences="*res://AppPreferences.gd"
 
 [debug]
 
