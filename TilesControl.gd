@@ -31,7 +31,7 @@ const FILE_VERSION: int = 1
 # Color used for unused area of tiles when keeping aspect ratio
 export var background_color: Color setget background_color_set, background_color_get
 func background_color_get() -> Color:
-	return background_color;
+	return background_color
 func background_color_set(newVal: Color) -> void:
 	if background_color != newVal:
 		background_color = newVal
@@ -212,14 +212,14 @@ func _draw() -> void:
 	var tileIndex: int
 	for i in range(self.tiles_count):
 		# Get actual location of tile
-		tileIndex = _tilesOrder[i];
+		tileIndex = _tilesOrder[i]
 
 		# If its not the blank tile
 		if tileIndex != _emptyId:
 			if use_image():
 				# Copy image to screen
 				draw_texture_rect_region(_tilesTexture, _tilesRectScreen[index],
-										 _tilesRectTexture[_tilesOrder[index]]);
+										 _tilesRectTexture[_tilesOrder[index]])
 
 				# Add the tile number is desired
 				if self.numbers_visible:
@@ -249,12 +249,12 @@ func _draw() -> void:
 				var text: String = "Blank Tile"
 				extent = self.numbers_font.get_string_size(text)
 				draw_string(self.numbers_font, Vector2(area.position.x + ((area.size.x - extent.x) / 2),
-						area.position.y + ((area.size.y - extent.y) / 2) + extent.y), text, self.hilite_blank_color);
+						area.position.y + ((area.size.y - extent.y) / 2) + extent.y), text, self.hilite_blank_color)
 		index += 1
 
 
 func _init() -> void:
-	background_color = Color(1, 1, 1, 0)
+	background_color = Color.transparent
 	columns = 4
 	_columns0 = 3
 	_gameComplete = false
@@ -309,7 +309,7 @@ func _input(ev: InputEvent) -> void:
 
 	# Adjust position of click to local coordinates
 	var evmb: InputEventMouseButton = make_input_local(iemb) as InputEventMouseButton
-	var position: Vector2 = evmb.get_position();
+	var position: Vector2 = evmb.get_position()
 
 	# Take appropriate action if needed
 	if can_move_down:
@@ -416,27 +416,27 @@ func calc_movables() -> void:
 		can_move_left = true
 		can_move_right = true
 	if can_move_left:
-		_moveLeftIndex = (row * columns) + column + 1;
+		_moveLeftIndex = (row * columns) + column + 1
 	if can_move_right:
-		_moveRightIndex = (row * columns) + column - 1;
+		_moveRightIndex = (row * columns) + column - 1
 
 	# Determine tiles that can move vertically
 	var top_side: bool = (row == 0)
 	var bottom_side: bool = (row == _rows0)
 	var inside_v: bool = (row > 0 and row < _rows0)
 	if top_side:
-		can_move_up = true;
-		can_move_down = false;
+		can_move_up = true
+		can_move_down = false
 	elif bottom_side:
-		can_move_up = false;
-		can_move_down = true;
+		can_move_up = false
+		can_move_down = true
 	elif inside_v:
-		can_move_up = true;
-		can_move_down = true;
+		can_move_up = true
+		can_move_down = true
 	if can_move_up:
-		_moveUpIndex = ((row + 1) * columns) + column;
+		_moveUpIndex = ((row + 1) * columns) + column
 	if can_move_down:
-		_moveDownIndex = ((row - 1) * columns) + column;
+		_moveDownIndex = ((row - 1) * columns) + column
 
 
 func check_complete() -> void:
@@ -496,7 +496,7 @@ func load_game(path: String) -> void:
 	var keepAspect_: bool = (inp.get_8() != 0)
 
 	# Done loading data
-	inp.close();
+	inp.close()
 
 	# Re/Initialize all settings for loaded game
 	if useImage_:
@@ -512,17 +512,17 @@ func load_game(path: String) -> void:
 	self.numbers_visible = numbersVisible_
 	self.outlines_visible = outlinesVisible_
 	self.keep_aspect = keepAspect_
-	_movedSignal += 1;
+	_movedSignal += 1
 
 	# Let owner know a game was loaded
-	emit_signal("loaded");
+	emit_signal("loaded")
 
 	# All ready
 	_readyToRun = true
 	self.movable = true
 	_tilesReady = false
-	call_deferred("update");
-	call_deferred("calc_movables");
+	call_deferred("update")
+	call_deferred("calc_movables")
 
 
 func load_image(path: String) -> Image:
@@ -591,7 +591,7 @@ func outline(on: TilesControl, where: Rect2, color: Color) -> void:
 	v.x += 2
 	v.y += 2
 	area.size = v
-	on.draw_rect(area, color, false);
+	on.draw_rect(area, color, false)
 
 func recalc_tiles(forced: bool = false) -> void:
 	if not _readyToRun:
@@ -620,17 +620,18 @@ func recalc_tiles(forced: bool = false) -> void:
 			_image = load_image(image_path)
 			if keep_aspect:
 				var imageSize: Vector2 = _image.get_size()
-				var h: float = canvasSize.x * (imageSize.y / imageSize.x);
-				var w: float = canvasSize.y * (imageSize.x / imageSize.y);
+				var h: float = canvasSize.x * (imageSize.y / imageSize.x)
+				var w: float = canvasSize.y * (imageSize.x / imageSize.y)
 				var newSize: Vector2 = Vector2(canvasSize.x, h) if h <= canvasSize.y else Vector2(w, canvasSize.y)
 				if newSize.x < canvasSize.x or newSize.y < canvasSize.y:
 					# Resize original image
 					var tempImage: Image = _image.duplicate()
 					tempImage.resize(int(newSize.x), int(newSize.y))
+					tempImage.convert(Image.FORMAT_RGBA8);
 
 					# Create and fill final image with transparency
 					i = Image.new()
-					i.create(int(canvasSize.x), int(canvasSize.y), false, tempImage.get_format())
+					i.create(int(canvasSize.x), int(canvasSize.y), false, Image.FORMAT_RGBA8)
 					i.fill(self.background_color)
 
 					# Copy resized image into final image, centered
@@ -650,7 +651,7 @@ func recalc_tiles(forced: bool = false) -> void:
 				i = _image.duplicate()
 				i.resize(int(canvasSize.x), int(canvasSize.y))
 		var it: ImageTexture = ImageTexture.new()
-		it.create_from_image(i)
+		it.create_from_image(i, 0)
 		_tilesTexture = it
 
 	# Determine width and height of tiles from our size.
@@ -659,7 +660,7 @@ func recalc_tiles(forced: bool = false) -> void:
 	if _tileSize.x <= 0 or _tileSize.y <= 0:
 		# If this happens, its a fluke at startup and this will get called again
 		# which will be succesful.  In Godot 4+, this doesn't happen.
-		print("TilesControl::recalc_tiles: invalid _tileSize = {0}" % [_tileSize])
+		print("TilesControl::recalc_tiles: invalid _tileSize = %s" % [_tileSize])
 		return
 
 	# Calculate the bounding boxes for each tile for both display and image
@@ -671,8 +672,8 @@ func recalc_tiles(forced: bool = false) -> void:
 		for col in range(self.columns):
 			var idx: int = (row * columns) + col
 			_tilesRectScreen[idx] = Rect2(Vector2(2 + (col * _tileSize.x) + (col * self.spacing.x),
-					2 + (row * _tileSize.y) + (row * self.spacing.y)), _tileSize);
-			_tilesRectTexture[idx] = Rect2(Vector2(col * _tileSize.x, row * _tileSize.y), _tileSize);
+					2 + (row * _tileSize.y) + (row * self.spacing.y)), _tileSize)
+			_tilesRectTexture[idx] = Rect2(Vector2(col * _tileSize.x, row * _tileSize.y), _tileSize)
 	_tilesReady = true
 	call_deferred("update")
 
@@ -751,7 +752,7 @@ func save_game(path: String) -> void:
 	sav.store_8(1 if self.keep_aspect else 0)
 
 	# All done
-	sav.close();
+	sav.close()
 
 	# Let owner know a game was saved
 	emit_signal("saved")

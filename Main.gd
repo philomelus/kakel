@@ -2,7 +2,7 @@ extends Control
 
 
 onready var _load_dialog: FileDialog = get_node("LoadDialog")
-var _load_dialog_used: bool = false;
+var _load_dialog_used: bool = false
 onready var _tree: SceneTree = get_tree()
 
 

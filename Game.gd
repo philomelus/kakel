@@ -169,7 +169,7 @@ func _on_tiles_moved(count: int) -> void:
 
 func _on_tiles_won() -> void:
 	# Update message.
-	_winner_label.text = "Congratulations!\nYou won in\n%s\nmoves!" % _moves.text;
+	_winner_label.text = "Congratulations!\nYou won in\n%s\nmoves!" % _moves.text
 
 	# Size everything correctly.
 	_winner_label.rect_position = Vector2(0, 0)
@@ -215,7 +215,7 @@ func _ready() -> void:
 
 	# Hilite blank
 	_tiles.hilite_blank = Globals.tiles_hilite_blank
-	pm.set_item_checked(MI_HILITE_BLANK, Globals.tiles_hilite_blank);
+	pm.set_item_checked(MI_HILITE_BLANK, Globals.tiles_hilite_blank)
 	_tiles.hilite_blank_color = Preferences.hilite_blank_color
 
 	# Not all globals are used if loading a game.

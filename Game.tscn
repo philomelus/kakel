@@ -253,6 +253,7 @@ popup_exclusive = true
 window_title = "Save Game"
 resizable = true
 mode_overrides_title = false
+access = 2
 filters = PoolStringArray( "*.kakel;Kakel Games" )
 
 [connection signal="pressed" from="GameBoard/PanelContainer/HFlowContainer2/HFlowContainer/Abort" to="." method="_on_abort_pressed"]

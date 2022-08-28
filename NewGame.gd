@@ -20,7 +20,7 @@ func _on_browse_pressed() -> void:
 	if _tiles_image_dialog_used:
 		_tiles_image_dialog.popup()
 	else:
-		_tiles_image_dialog_used = true;
+		_tiles_image_dialog_used = true
 		var lastImage = Preferences.last_image
 		if lastImage != "":
 			_tiles_image_dialog.current_path = lastImage
