@@ -17,4 +17,3 @@ var tiles_load_path: String
 
 # When true, use image for tiles.  Otherwise draw outlines with numbers.
 var tiles_use_image: bool = true
-
